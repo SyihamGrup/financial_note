@@ -27,10 +27,9 @@ class AppDrawerState extends State<AppDrawer> {
             )),
             child: new Container(
               alignment: FractionalOffset.bottomLeft,
-              child: new Text(Lang.of(context).title(), style: new TextStyle(
+              child: new Text(Lang.of(context).title(), style: theme.textTheme.headline.copyWith(
                 color: Colors.white,
-                fontWeight: FontWeight.w200,
-                fontSize: 25.0,
+                fontWeight: FontWeight.w300,
               )),
             ),
           ),
