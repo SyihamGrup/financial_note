@@ -1,0 +1,10 @@
+{
+  "_locale": "en_US",
+
+  "title": "Financial Note",
+  "@title": {
+    "description": "Title for the application",
+    "type": "text",
+    "placeholders": {}
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "_locale": "id_ID",
+
+  "title": "Catatan Keuangan",
+  "@title": {
+    "description": "Title for the application",
+    "type": "text",
+    "placeholders": {}
+  }
+}
