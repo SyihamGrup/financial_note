@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../data/types.dart';
-import '../strings.dart';
 import '../widget/drawer.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,9 +17,21 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  DateTime filterDate = new DateTime.now();
+  DateFormat headerDateFormatter = new DateFormat.yMMMM();
 
   Widget _buildAppBar(BuildContext context) {
-    return new AppBar(title: new Text(Lang.of(context).title()));
+    return new AppBar(title: new InkWell(
+      onTap: () => null,
+      child: new Container(
+        height: kToolbarHeight,
+        child: new Row(children: <Widget>[
+          new Text(headerDateFormatter.format(filterDate),
+              style: Theme.of(context).primaryTextTheme.title),
+          new Icon(Icons.arrow_drop_down),
+        ]),
+      ),
+    ));
   }
 
   Widget _buildBody(BuildContext context) {
