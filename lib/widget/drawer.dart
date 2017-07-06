@@ -53,7 +53,7 @@ class AppDrawerState extends State<AppDrawer> {
 
           new AboutListTile(
             icon: null,
-            applicationVersion: 'Jully 2017 Preview',
+            applicationVersion: 'July 2017 Preview',
             applicationLegalese: '© 2017 Adi Sayoga',
             aboutBoxChildren: <Widget>[new Padding(
               padding: const EdgeInsets.only(top: 24.0),
