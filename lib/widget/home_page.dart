@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../data/types.dart';
+import '../strings.dart';
 import '../widget/drawer.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,17 +22,43 @@ class HomePageState extends State<HomePage> {
   DateFormat headerDateFormatter = new DateFormat.yMMMM();
 
   Widget _buildAppBar(BuildContext context) {
-    return new AppBar(title: new InkWell(
-      onTap: () => null,
-      child: new Container(
-        height: kToolbarHeight,
-        child: new Row(children: <Widget>[
-          new Text(headerDateFormatter.format(filterDate),
-              style: Theme.of(context).primaryTextTheme.title),
-          new Icon(Icons.arrow_drop_down),
-        ]),
+    return new AppBar(
+      title: new InkWell(
+        onTap: () => null,
+        child: new Container(
+          height: kToolbarHeight,
+          child: new Row(children: <Widget>[
+            new Text(headerDateFormatter.format(filterDate),
+                style: Theme.of(context).primaryTextTheme.title),
+            new Icon(Icons.arrow_drop_down),
+          ]),
+        ),
       ),
-    ));
+      actions: <Widget>[
+        new IconButton(
+          icon: const Icon(Icons.search),
+          tooltip: Lang.of(context).menuSearch(),
+          onPressed: () => null,
+        ),
+        new PopupMenuButton<String>(
+          onSelected: (String item) => null,
+          itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
+            const PopupMenuItem<String>(
+              value: 'Toolbar menu',
+              child: const Text('Toolbar menu')
+            ),
+            const PopupMenuItem<String>(
+              value: 'Right here',
+              child: const Text('Right here')
+            ),
+            const PopupMenuItem<String>(
+              value: 'Hooray!',
+              child: const Text('Hooray!')
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   Widget _buildBody(BuildContext context) {

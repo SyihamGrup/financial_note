@@ -1,5 +1,5 @@
-import 'package:intl/intl.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 // Wrappers for strings that are shown in the UI.
 // The strings can be translated for different locales using the Dart intl package.
@@ -26,6 +26,8 @@ class Lang extends LocaleQueryData {
   String drawerSettings() => Intl.message('Settings',             name: 'drawerSettings');
   String drawerHelp()     => Intl.message('Help & Feedback',      name: 'drawerHelp');
   String drawerAbout()    => Intl.message('About Financial Note', name: 'drawerAbout');
+
+  String menuSearch()     => Intl.message('Search', name: 'menuSearch');
 
   String prefUseDark()    => Intl.message('Use Dark Theme', name: 'prefUseDark');
 }
