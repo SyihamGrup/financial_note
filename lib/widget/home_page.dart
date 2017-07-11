@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../data/cash_flow.dart';
 import '../data/types.dart';
 import '../strings.dart';
 import '../widget/drawer.dart';
@@ -21,13 +22,34 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  DateTime filterDate = new DateTime.now();
+  var isLoading = false;
+  var filterDate = new DateTime.now();
+  List<CashFlow> data;
+
+  Future<List<CashFlow>> getData(DateTime date) async {
+    return new Future.delayed(const Duration(seconds: 2), () {
+      return <CashFlow>[
+        new CashFlow(),
+      ];
+    });
+  }
+
+  void updateData(DateTime date) {
+    setState(() => isLoading = true);
+    getData(date).then((List<CashFlow> ret) {
+      setState(() {
+        isLoading = false;
+        data = ret;
+      });
+    });
+  }
 
   Future<Null> _selectMonth(BuildContext context) async {
     final DateTime picked = await showMonthPicker(context: context, initialDate: filterDate);
-    if (picked != null) {
-      setState(() => filterDate = picked);
-    }
+    if (picked == null) return;
+
+    setState(() => filterDate = picked);
+    updateData(picked);
   }
 
   Widget _buildAppBar(BuildContext context) {
@@ -71,10 +93,31 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget _buildBody(BuildContext context) {
+    if (isLoading) {
+      return new Center(child: new CircularProgressIndicator());
+    }
+
+    var items = new Text('Home page...');
+
+    var emptyText = new Center(child: new Text(
+      Lang.of(context).msgEmptyData(),
+      style: Theme.of(context).textTheme.title.copyWith(
+        fontWeight: FontWeight.normal,
+        color: Theme.of(context).disabledColor,
+      ),
+    ));
+
     return new Container(
       margin: const EdgeInsets.all(16.0),
-      child: const Text('Home page...'),
+      child: (data != null && data.length > 0) ? items : emptyText,
     );
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    updateData(filterDate);
   }
 
   @override

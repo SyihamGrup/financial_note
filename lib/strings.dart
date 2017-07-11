@@ -33,4 +33,6 @@ class Lang extends LocaleQueryData {
   String btnCancel()      => Intl.message('CANCEL', name: 'btnCancel');
 
   String prefUseDark()    => Intl.message('Use Dark Theme', name: 'prefUseDark');
+
+  String msgEmptyData()   => Intl.message('Tidak ada data');
 }
