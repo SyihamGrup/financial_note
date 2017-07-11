@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../data/types.dart';
 import '../strings.dart';
 import '../widget/drawer.dart';
+import '../widget/month_picker.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/';
@@ -19,16 +22,22 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   DateTime filterDate = new DateTime.now();
-  DateFormat headerDateFormatter = new DateFormat.yMMMM();
+
+  Future<Null> _selectMonth(BuildContext context) async {
+    final DateTime picked = await showMonthPicker(context: context, initialDate: filterDate);
+    if (picked != null) {
+      setState(() => filterDate = picked);
+    }
+  }
 
   Widget _buildAppBar(BuildContext context) {
     return new AppBar(
       title: new InkWell(
-        onTap: () => null,
+        onTap: () => _selectMonth(context),
         child: new Container(
           height: kToolbarHeight,
           child: new Row(children: <Widget>[
-            new Text(headerDateFormatter.format(filterDate),
+            new Text(new DateFormat.yMMM().format(filterDate),
                 style: Theme.of(context).primaryTextTheme.title),
             new Icon(Icons.arrow_drop_down),
           ]),

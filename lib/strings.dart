@@ -29,5 +29,8 @@ class Lang extends LocaleQueryData {
 
   String menuSearch()     => Intl.message('Search', name: 'menuSearch');
 
+  String btnOK()          => Intl.message('OK', name: 'btnOK');
+  String btnCancel()      => Intl.message('CANCEL', name: 'btnCancel');
+
   String prefUseDark()    => Intl.message('Use Dark Theme', name: 'prefUseDark');
 }
