@@ -4,11 +4,16 @@ description: A financial note application.
 dependencies:
   flutter:
     sdk: flutter
-  intl: '>=0.14.0 <0.15.0'
-  intl_translation: '>=0.14.0 <0.15.0'
-  http: '>=0.11.3+12'
-  isolate: '>=1.0.0'
-  url_launcher: '^0.4.0'
+  intl: ">=0.14.0 <0.15.0"
+  intl_translation: ">=0.14.0 <0.15.0"
+  http: ">=0.11.3+12"
+  isolate: ">=1.0.0"
+  url_launcher: "^0.4.0"
+  google_sign_in: "^0.3.1"
+  firebase_analytics: "^0.0.4"
+  firebase_auth: "^0.1.1"
+  firebase_database: "^0.0.12"
+  firebase_storage: "^0.0.5"
 
 dev_dependencies:
   flutter_test:

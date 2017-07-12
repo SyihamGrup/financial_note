@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../data/types.dart';
-import '../strings.dart';
+import '../i18n/strings.dart';
 
 class SettingsPage extends StatefulWidget {
   static const routeName = '/settings';

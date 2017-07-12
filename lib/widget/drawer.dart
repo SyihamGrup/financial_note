@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../strings.dart';
 import '../helpers/widget.dart';
+import '../i18n/strings.dart';
 import 'settings_page.dart';
 
 class AppDrawer extends StatefulWidget {

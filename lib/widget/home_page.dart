@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../data/cash_flow.dart';
 import '../data/types.dart';
-import '../strings.dart';
+import '../i18n/strings.dart';
 import '../widget/drawer.dart';
 import '../widget/month_picker.dart';
 

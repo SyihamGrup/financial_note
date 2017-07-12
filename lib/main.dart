@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 
 import 'data/types.dart';
 import 'i18n/lang_messages_all.dart';
-import 'strings.dart';
+import 'i18n/strings.dart';
 import 'widget/home_page.dart';
 import 'widget/settings_page.dart';
 
