@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1024945066003",
+    "firebase_url": "https://financialnote-d6d95.firebaseio.com",
+    "project_id": "financialnote-d6d95",
+    "storage_bucket": "financialnote-d6d95.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1024945066003:android:b15b50769d781631",
+        "android_client_info": {
+          "package_name": "com.adisayoga.financialnote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1024945066003-lgnj27ju441epe5jrefeup0hodsjeq58.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.adisayoga.financialnote",
+            "certificate_hash": "9922117196cf73e5f3d1c705cfec3fc2f16795f0"
+          }
+        },
+        {
+          "client_id": "1024945066003-umiroqvg0j5a2l6esivh84ush03n94tc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBz56aFgZ_sjW2J0r2PPL1Q0PSlYX4L3M8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1024945066003-umiroqvg0j5a2l6esivh84ush03n94tc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

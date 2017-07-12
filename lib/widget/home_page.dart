@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../auth/auth.dart';
 import '../data/cash_flow.dart';
 import '../data/types.dart';
 import '../i18n/strings.dart';
@@ -26,7 +27,9 @@ class HomePageState extends State<HomePage> {
   var filterDate = new DateTime.now();
   List<CashFlow> data;
 
-  Future<List<CashFlow>> getData(DateTime date) async {
+  Future<List<CashFlow>> _getData(DateTime date) async {
+    await ensureLoggedIn();
+
     return new Future.delayed(const Duration(seconds: 2), () {
       return <CashFlow>[
         new CashFlow(),
@@ -34,9 +37,9 @@ class HomePageState extends State<HomePage> {
     });
   }
 
-  void updateData(DateTime date) {
+  void _updateData(DateTime date) {
     setState(() => isLoading = true);
-    getData(date).then((List<CashFlow> ret) {
+    _getData(date).then((List<CashFlow> ret) {
       setState(() {
         isLoading = false;
         data = ret;
@@ -49,7 +52,7 @@ class HomePageState extends State<HomePage> {
     if (picked == null) return;
 
     setState(() => filterDate = picked);
-    updateData(picked);
+    _updateData(picked);
   }
 
   Widget _buildAppBar(BuildContext context) {
@@ -117,7 +120,7 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    updateData(filterDate);
+    _updateData(filterDate);
   }
 
   @override
