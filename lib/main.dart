@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -28,15 +29,23 @@ class MainAppState extends State<MainApp> {
           brightness: Brightness.light,
           primarySwatch: Colors.teal,
           primaryColor: Colors.teal[700],
-          accentColor: Colors.tealAccent[700],
+          accentColor: Colors.orangeAccent[700],
         );
       case AppTheme.dark:
         return new ThemeData(
           brightness: Brightness.dark,
-          accentColor: Colors.tealAccent,
+          primarySwatch: Colors.teal,
+          accentColor: Colors.tealAccent[700],
         );
     }
     return null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseDatabase.instance.setPersistenceEnabled(true);
+    FirebaseDatabase.instance.setPersistenceCacheSizeBytes(10 * 1000 * 1000);
   }
 
   Route<Null> _getRoute(RouteSettings settings) {
@@ -71,7 +80,7 @@ class MainAppState extends State<MainApp> {
       showPerformanceOverlay: _config.showPerformanceOverlay,
       showSemanticsDebugger: _config.showSemanticsDebugger,
       onGenerateRoute: _getRoute,
-      onLocaleChanged: _onLocaleChanged
+      onLocaleChanged: _onLocaleChanged,
     );
   }
 }

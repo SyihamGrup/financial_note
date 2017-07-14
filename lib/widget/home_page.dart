@@ -1,10 +1,11 @@
 import 'dart:async';
 
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../auth/auth.dart';
-import '../data/cash_flow.dart';
 import '../data/types.dart';
 import '../i18n/strings.dart';
 import '../widget/drawer.dart';
@@ -23,36 +24,56 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  var isLoading = false;
-  var filterDate = new DateTime.now();
-  List<CashFlow> data;
+  var _filterDate = new DateTime.now();
+  var _counter = 0;
 
-  Future<List<CashFlow>> _getData(DateTime date) async {
-    await ensureLoggedIn();
+  final _ref = FirebaseDatabase.instance.reference();
+  StreamSubscription<Event> _counterSubscr;
+  StreamSubscription<Event> _messageSubscr;
 
-    return new Future.delayed(const Duration(seconds: 2), () {
-      return <CashFlow>[
-        new CashFlow(),
-      ];
+  @override
+  void initState() {
+    super.initState();
+
+    final _counterRef = _ref.child(kRefCounter);
+    final _messageRef = _ref.child(kRefMessages);
+
+    _counterRef.keepSynced(true);
+
+    _counterSubscr = _counterRef.onValue.listen((Event event) {
+      setState(() => _counter = event.snapshot.value ?? 0);
+    });
+
+    _messageSubscr = _messageRef.onValue.listen((Event event) {
+      print('Child added : ${event.snapshot.value}');
     });
   }
 
-  void _updateData(DateTime date) {
-    setState(() => isLoading = true);
-    _getData(date).then((List<CashFlow> ret) {
-      setState(() {
-        isLoading = false;
-        data = ret;
-      });
-    });
+  @override
+  void dispose() {
+    super.dispose();
+    _messageSubscr.cancel();
+    _counterSubscr.cancel();
   }
 
   Future<Null> _selectMonth(BuildContext context) async {
-    final DateTime picked = await showMonthPicker(context: context, initialDate: filterDate);
+    final DateTime picked = await showMonthPicker(context: context, initialDate: _filterDate);
     if (picked == null) return;
 
-    setState(() => filterDate = picked);
-    _updateData(picked);
+    setState(() => _filterDate = picked);
+  }
+
+  Future<Null> _increment() async {
+    await ensureLoggedIn();
+
+    // TODO(jackson): This illustrates a case where transactions are needed
+    final _counterRef = _ref.child(kRefCounter);
+    final snapshot = await _counterRef.once();
+    setState(() => _counter = (snapshot.value ?? 0) + 1);
+    _counterRef.set(_counter);
+
+    final _messageRef = _ref.child(kRefMessages);
+    _messageRef.push().set(<String, String>{'Hello': 'World $_counter'});
   }
 
   Widget _buildAppBar(BuildContext context) {
@@ -62,7 +83,7 @@ class HomePageState extends State<HomePage> {
         child: new Container(
           height: kToolbarHeight,
           child: new Row(children: <Widget>[
-            new Text(new DateFormat.yMMM().format(filterDate),
+            new Text(new DateFormat.yMMM().format(_filterDate),
                 style: Theme.of(context).primaryTextTheme.title),
             new Icon(Icons.arrow_drop_down),
           ]),
@@ -96,31 +117,32 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget _buildBody(BuildContext context) {
-    if (isLoading) {
-      return new Center(child: new CircularProgressIndicator());
-    }
-
-    var items = new Text('Home page...');
-
-    var emptyText = new Center(child: new Text(
-      Lang.of(context).msgEmptyData(),
-      style: Theme.of(context).textTheme.title.copyWith(
-        fontWeight: FontWeight.normal,
-        color: Theme.of(context).disabledColor,
+    return new Column(children: <Widget>[
+      new Container(
+        padding: const EdgeInsets.all(16.0),
+        child: new Column(children: <Widget>[
+          new Text(
+           'Button tapped $_counter time${_counter == 1 ? '' : 's'}',
+            style: Theme.of(context).textTheme.title,
+          ),
+          new Text('This includes all devices, ever.'),
+        ]),
       ),
-    ));
-
-    return new Container(
-      margin: const EdgeInsets.all(16.0),
-      child: (data != null && data.length > 0) ? items : emptyText,
-    );
-  }
-
-
-  @override
-  void initState() {
-    super.initState();
-    _updateData(filterDate);
+      new Flexible(child: new FirebaseAnimatedList(
+        query: _ref.child(kRefMessages),
+        reverse: true,
+        sort: (DataSnapshot a, DataSnapshot b) => b.key.compareTo(a.key),
+        itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation) {
+          return new SizeTransition(
+            sizeFactor: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
+            child: new Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+              child: new Text(snapshot.value.toString()),
+            ),
+          );
+        },
+      ))
+    ]);
   }
 
   @override
@@ -129,6 +151,11 @@ class HomePageState extends State<HomePage> {
       appBar: _buildAppBar(context),
       drawer: new AppDrawer(),
       body: _buildBody(context),
+      floatingActionButton: new FloatingActionButton(
+        onPressed: _increment,
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
