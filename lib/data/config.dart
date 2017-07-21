@@ -1,9 +1,6 @@
 enum AppTheme { light, dark }
 enum BackupMode { enabled, disabled }
 
-final kRefCounter = 'counter';
-final kRefMessages = 'messages';
-
 class Config {
   final AppTheme theme;
   final BackupMode backupMode;

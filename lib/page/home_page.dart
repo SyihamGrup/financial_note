@@ -1,15 +1,15 @@
 import 'dart:async';
 
+import 'package:financial_note/auth/auth.dart';
+import 'package:financial_note/data/config.dart';
+import 'package:financial_note/data/data.dart';
+import 'package:financial_note/i18n/strings.dart';
+import 'package:financial_note/widget/drawer.dart';
+import 'package:financial_note/widget/month_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import '../auth/auth.dart';
-import '../data/types.dart';
-import '../i18n/strings.dart';
-import '../widget/drawer.dart';
-import '../widget/month_picker.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/';
@@ -27,7 +27,9 @@ class HomePageState extends State<HomePage> {
   var _filterDate = new DateTime.now();
   var _counter = 0;
 
-  final _ref = FirebaseDatabase.instance.reference();
+  final _counterRef = FirebaseDatabase.instance.reference().child(Counter.name);
+  final _messagesRef = FirebaseDatabase.instance.reference().child(Message.name);
+
   StreamSubscription<Event> _counterSubscr;
   StreamSubscription<Event> _messageSubscr;
 
@@ -35,16 +37,13 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    final _counterRef = _ref.child(kRefCounter);
-    final _messageRef = _ref.child(kRefMessages);
-
     _counterRef.keepSynced(true);
 
     _counterSubscr = _counterRef.onValue.listen((Event event) {
       setState(() => _counter = event.snapshot.value ?? 0);
     });
 
-    _messageSubscr = _messageRef.onValue.listen((Event event) {
+    _messageSubscr = _messagesRef.onValue.listen((Event event) {
       print('Child added : ${event.snapshot.value}');
     });
   }
@@ -64,16 +63,16 @@ class HomePageState extends State<HomePage> {
   }
 
   Future<Null> _increment() async {
+    setState(() => _counter++);
+
     await ensureLoggedIn();
 
     // TODO(jackson): This illustrates a case where transactions are needed
-    final _counterRef = _ref.child(kRefCounter);
     final snapshot = await _counterRef.once();
     setState(() => _counter = (snapshot.value ?? 0) + 1);
     _counterRef.set(_counter);
 
-    final _messageRef = _ref.child(kRefMessages);
-    _messageRef.push().set(<String, String>{'Hello': 'World $_counter'});
+    _messagesRef.push().set(<String, String>{'Hello': 'World $_counter'});
   }
 
   Widget _buildAppBar(BuildContext context) {
@@ -129,7 +128,7 @@ class HomePageState extends State<HomePage> {
         ]),
       ),
       new Flexible(child: new FirebaseAnimatedList(
-        query: _ref.child(kRefMessages),
+        query: _messagesRef,
         reverse: true,
         sort: (DataSnapshot a, DataSnapshot b) => b.key.compareTo(a.key),
         itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation) {

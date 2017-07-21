@@ -1,8 +1,7 @@
+import 'package:financial_note/data/config.dart';
+import 'package:financial_note/i18n/strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-import '../data/types.dart';
-import '../i18n/strings.dart';
 
 class SettingsPage extends StatefulWidget {
   static const routeName = '/settings';

@@ -1,14 +1,13 @@
 import 'dart:async';
 
+import 'package:financial_note/data/config.dart';
+import 'package:financial_note/i18n/lang_messages_all.dart';
+import 'package:financial_note/i18n/strings.dart';
+import 'package:financial_note/page/home_page.dart';
+import 'package:financial_note/page/settings_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import 'data/types.dart';
-import 'i18n/lang_messages_all.dart';
-import 'i18n/strings.dart';
-import 'widget/home_page.dart';
-import 'widget/settings_page.dart';
 
 void main() {
   runApp(new MainApp());
