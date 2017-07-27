@@ -16,37 +16,27 @@ import 'package:financial_note/page/settings_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  runApp(new MainApp());
+  SharedPreferences.getInstance().then((prefs) {
+    runApp(new MainApp(new Config.fromPrefs(prefs)));
+  });
 }
 
 class MainApp extends StatefulWidget {
+  final Config _config;
+
+  const MainApp(this._config);
+
   @override
-  MainAppState createState() => new MainAppState();
+  MainAppState createState() => new MainAppState(_config);
 }
 
 class MainAppState extends State<MainApp> {
-  var _config = new Config();
+  Config _config;
 
-  ThemeData get theme {
-    switch (_config.theme) {
-      case AppTheme.light:
-        return new ThemeData(
-          brightness: Brightness.light,
-          primarySwatch: Colors.teal,
-          primaryColor: Colors.teal[700],
-          accentColor: Colors.orangeAccent[700],
-        );
-      case AppTheme.dark:
-        return new ThemeData(
-          brightness: Brightness.dark,
-          primarySwatch: Colors.teal,
-          accentColor: Colors.tealAccent[700],
-        );
-    }
-    return null;
-  }
+  MainAppState(this._config);
 
   @override
   void initState() {
@@ -60,14 +50,14 @@ class MainAppState extends State<MainApp> {
       settings: settings,
       builder: (BuildContext context) {
         if (settings.name == SettingsPage.routeName) {
-          return new SettingsPage(_config, configUpdater);
+          return new SettingsPage(_config, _configUpdater);
         }
-        return new HomePage(_config, configUpdater);
+        return new HomePage(_config, _configUpdater);
       }
     );
   }
 
-  void configUpdater(Config value) {
+  void _configUpdater(Config value) {
     setState(() => _config = value);
   }
 
@@ -82,7 +72,7 @@ class MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: 'Financial Note',
-      theme: theme,
+      theme: _config.themeData,
       debugShowMaterialGrid: _config.debugShowGrid,
       showPerformanceOverlay: _config.showPerformanceOverlay,
       showSemanticsDebugger: _config.showSemanticsDebugger,

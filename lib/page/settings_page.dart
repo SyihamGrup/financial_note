@@ -26,7 +26,9 @@ class SettingsPage extends StatefulWidget {
 class SettingsPageState extends State<SettingsPage> {
 
   void _handleThemeChanged(AppTheme theme) {
-    widget.updateConfig(widget.config.copyWith(theme: theme));
+    var config = widget.config.copyWith(theme: theme);
+    config.flushTheme();
+    widget.updateConfig(config);
   }
 
   Widget buildSettingsPane(BuildContext context) {
