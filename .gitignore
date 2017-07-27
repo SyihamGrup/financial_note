@@ -4,7 +4,9 @@
 .packages
 .pub/
 build/
+node_modules/
 ios/.generated/
 packages
 pubspec.lock
 .flutter-plugins
+firebase-debug.log
