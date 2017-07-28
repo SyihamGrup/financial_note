@@ -10,6 +10,7 @@ import 'package:financial_note/data/config.dart';
 import 'package:financial_note/i18n/strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
   static const routeName = '/settings';
@@ -27,7 +28,9 @@ class SettingsPageState extends State<SettingsPage> {
 
   void _handleThemeChanged(AppTheme theme) {
     var config = widget.config.copyWith(theme: theme);
-    config.flushTheme();
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString(Config.kTheme, theme == AppTheme.light ? Config.kThemeLight : Config.kThemeDark);
+    });
     widget.updateConfig(config);
   }
 

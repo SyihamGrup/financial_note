@@ -138,9 +138,9 @@ class Transaction {
   static Future<double> getOpeningBalance(DateTime dateEnd) async {
     var httpClient = createHttpClient();
     var response = await httpClient.get(new Uri(
-      scheme: firebaseUriScheme,
-      host: firebaseHost,
-      path: openingBalancePath,
+      scheme: Config.kFirebaseUriScheme,
+      host: Config.kFirebaseHost,
+      path: Config.kOpeningBalancePath,
       queryParameters: <String, String>{
         "uid": googleSignIn.currentUser?.id,
         "date": new DateFormat('yyyy-MM-dd').format(dateEnd),

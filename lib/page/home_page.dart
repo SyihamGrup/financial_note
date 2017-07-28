@@ -16,6 +16,7 @@ import 'package:financial_note/widget/month_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/';
@@ -48,6 +49,10 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    
+    SharedPreferences.getInstance().then((prefs) {
+      var bookId = prefs.getString(key)
+    });
 
     Book.ref.keepSynced(true);
     _bookSubscr = Book.ref.onValue.listen((event) {

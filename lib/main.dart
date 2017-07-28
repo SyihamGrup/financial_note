@@ -73,9 +73,6 @@ class MainAppState extends State<MainApp> {
     return new MaterialApp(
       title: 'Financial Note',
       theme: _config.themeData,
-      debugShowMaterialGrid: _config.debugShowGrid,
-      showPerformanceOverlay: _config.showPerformanceOverlay,
-      showSemanticsDebugger: _config.showSemanticsDebugger,
       onGenerateRoute: _getRoute,
       onLocaleChanged: _onLocaleChanged,
     );
