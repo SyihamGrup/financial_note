@@ -1,10 +1,12 @@
-// Copyright (c) 2017. All rights reserved.
-//
-// Unauthorized copying of this file, via any medium is strictly prohibited.
-// Proprietary and confidential.
-//
-// Written by:
-//   - Adi Sayoga <adisayoga@gmail.com>
+/*
+ * Copyright (c) 2017. All rights reserved.
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ *
+ * Written by:
+ *   - Adi Sayoga <adisayoga@gmail.com>
+ */
 
 import 'package:financial_note/i18n/strings.dart';
 import 'package:financial_note/page/settings_page.dart';
