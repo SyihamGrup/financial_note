@@ -1,30 +1,30 @@
-// Copyright (c) 2017. All rights reserved.
-//
-// Unauthorized copying of this file, via any medium is strictly prohibited.
-// Proprietary and confidential.
-//
-// Written by:
-//   - Adi Sayoga <adisayoga@gmail.com>
+/*
+ * Copyright (c) 2017. All rights reserved.
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ *
+ * Written by:
+ *   - Adi Sayoga <adisayoga@gmail.com>
+ */
 
 import 'dart:async';
 
+import 'package:financial_note/auth/auth.dart';
 import 'package:financial_note/data/book.dart';
 import 'package:financial_note/data/config.dart';
 import 'package:financial_note/i18n/strings.dart';
 import 'package:financial_note/widget/drawer.dart';
 import 'package:financial_note/widget/month_picker.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/';
 
   final Config config;
-  final ValueChanged<Config> updateConfig;
 
-  const HomePage(this.config, this.updateConfig);
+  const HomePage(this.config);
 
   @override
   HomePageState createState() => new HomePageState();
@@ -32,9 +32,6 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   var _filterDate = new DateTime.now();
-
-  StreamSubscription<Event> _bookSubscr;
-
 
 //  var _counter = 0;
 //  final _data = new List<Transaction>();
@@ -49,16 +46,8 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    
-    SharedPreferences.getInstance().then((prefs) {
-      var bookId = prefs.getString(key)
-    });
 
-    Book.ref.keepSynced(true);
-    _bookSubscr = Book.ref.onValue.listen((event) {
-      print(event.snapshot.value);
-    });
-
+    initData();
 //    _counterRef.keepSynced(true);
 //
 //    _dataSubscr = Transaction.listen((event) {
@@ -73,11 +62,19 @@ class HomePageState extends State<HomePage> {
 //    });
   }
 
+  Future<Null> initData() async {
+    var user = await ensureLoggedIn();
+
+    Book.ref(user.uid).keepSynced(true);
+
+    var book = Book.getDefault(user.uid);
+    print(book);
+  }
+
   @override
   void dispose() {
     super.dispose();
 
-    _bookSubscr.cancel();
 //    _messageSubscr.cancel();
 //    _counterSubscr.cancel();
   }

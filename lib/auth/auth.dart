@@ -17,21 +17,30 @@ import 'package:google_sign_in/google_sign_in.dart';
 final googleSignIn = new GoogleSignIn();
 final analytics = new FirebaseAnalytics();
 
-Future<Null> ensureLoggedIn() async {
-  var user = googleSignIn.currentUser;
-  if (user == null) {
-   user = await googleSignIn.signInSilently();
-  }
-  if (user == null) {
-   await googleSignIn.signIn();
-   analytics.logLogin();
-  }
+Future<FirebaseUser> ensureLoggedIn() async {
+  var user = await signInWithGoogle();
+  if (user == null) return null;
+
+  analytics.logLogin();
+
   final auth = FirebaseAuth.instance;
   if (auth.currentUser == null) {
-    var credentials = await googleSignIn.currentUser.authentication;
+    final credentials = await user.authentication;
     await auth.signInWithGoogle(
       idToken: credentials.idToken,
       accessToken: credentials.accessToken,
     );
   }
+  return auth.currentUser;
+}
+
+Future<GoogleSignInAccount> signInWithGoogle() async {
+  var user = googleSignIn.currentUser;
+  if (user == null) {
+    user = await googleSignIn.signInSilently();
+  }
+  if (user == null) {
+    user = await googleSignIn.signIn();
+  }
+  return user;
 }

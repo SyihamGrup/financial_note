@@ -23,15 +23,16 @@ class SettingsPage extends StatefulWidget {
   const SettingsPage(this.config, this.updateConfig);
 
   @override
-  SettingsPageState createState() => new SettingsPageState();
+  _SettingsPageState createState() => new _SettingsPageState();
 }
 
-class SettingsPageState extends State<SettingsPage> {
+class _SettingsPageState extends State<SettingsPage> {
 
-  void _handleThemeChanged(AppTheme theme) {
+  void _handleThemeChanged(ThemePick theme) {
     var config = widget.config.copyWith(theme: theme);
     SharedPreferences.getInstance().then((prefs) {
-      prefs.setString(Config.kTheme, theme == AppTheme.light ? Config.kThemeLight : Config.kThemeDark);
+      final themeName = theme == ThemePick.light ? Config.kThemeLight : Config.kThemeDark;
+      prefs.setString(Config.kTheme, themeName);
     });
     widget.updateConfig(config);
   }
@@ -42,10 +43,15 @@ class SettingsPageState extends State<SettingsPage> {
       children: <Widget>[
         new ListTile(
           title: new Text(Lang.of(context).prefUseDark()),
-          onTap: () => _handleThemeChanged(widget.config.theme == AppTheme.light ? AppTheme.dark : AppTheme.light),
+          onTap: () {
+            _handleThemeChanged(widget.config.theme == ThemePick.dark
+                ? ThemePick.light : ThemePick.dark);
+          },
           trailing:  new Switch(
-            value: widget.config.theme == AppTheme.dark,
-            onChanged: (bool value) => _handleThemeChanged(value ? AppTheme.dark : AppTheme.light),
+            value: widget.config.theme == ThemePick.dark,
+            onChanged: (bool value) {
+              _handleThemeChanged(value ? ThemePick.dark : ThemePick.light);
+            },
           ),
         )
       ],

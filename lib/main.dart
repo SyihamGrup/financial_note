@@ -20,10 +20,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  SharedPreferences.getInstance().then((prefs) {
-    runApp(new MainApp(new Config.fromPrefs(prefs)));
-  });
+const kTitle = 'Financial Note';
+
+Future<Null> main() async {
+  final prefs = await SharedPreferences.getInstance();
+  final config = new Config.fromPrefs(prefs);
+  runApp(new MainApp(config));
 }
 
 class MainApp extends StatefulWidget {
@@ -32,13 +34,13 @@ class MainApp extends StatefulWidget {
   const MainApp(this._config);
 
   @override
-  MainAppState createState() => new MainAppState(_config);
+  _MainAppState createState() => new _MainAppState(_config);
 }
 
-class MainAppState extends State<MainApp> {
+class _MainAppState extends State<MainApp> {
   Config _config;
 
-  MainAppState(this._config);
+  _MainAppState(this._config);
 
   @override
   void initState() {
@@ -54,7 +56,7 @@ class MainAppState extends State<MainApp> {
         if (settings.name == SettingsPage.routeName) {
           return new SettingsPage(_config, _configUpdater);
         }
-        return new HomePage(_config, _configUpdater);
+        return new HomePage(_config);
       }
     );
   }
@@ -73,7 +75,7 @@ class MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Financial Note',
+      title: kTitle,
       theme: _config.themeData,
       onGenerateRoute: _getRoute,
       onLocaleChanged: _onLocaleChanged,

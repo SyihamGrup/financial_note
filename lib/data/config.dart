@@ -1,15 +1,17 @@
-// Copyright (c) 2017. All rights reserved.
-//
-// Unauthorized copying of this file, via any medium is strictly prohibited.
-// Proprietary and confidential.
-//
-// Written by:
-//   - Adi Sayoga <adisayoga@gmail.com>
+/*
+ * Copyright (c) 2017. All rights reserved.
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ *
+ * Written by:
+ *   - Adi Sayoga <adisayoga@gmail.com>
+ */
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum AppTheme { light, dark }
+enum ThemePick { light, dark }
 
 class Config {
   static const kFirebaseHost = 'us-central1-financialnote-d6d95.cloudfunctions.net';
@@ -17,33 +19,35 @@ class Config {
 
   static const kOpeningBalancePath = '/getOpeningBalance';
 
+  static const kCurrentUserId = 'currentUserId';
   static const kTheme = 'theme';
   static const kThemeLight = 'light';
   static const kThemeDark = 'dark';
   static const kBookId = 'bookId';
 
-  final AppTheme theme;
+  final ThemePick theme;
   final String bookId;
 
   Config({
-    this.theme: AppTheme.light,
+    this.theme: ThemePick.light,
     this.bookId,
   });
 
   Config.fromPrefs(SharedPreferences prefs)
-    : theme = (prefs.getString(kTheme) ?? kThemeLight) == kThemeLight ? AppTheme.light : AppTheme.dark,
-      bookId = prefs.getString(kBookId);
+      : theme = (prefs.getString(kTheme) ?? kThemeLight) == kThemeLight
+                     ? ThemePick.light : ThemePick.dark,
+        bookId = prefs.getString(kBookId);
 
   ThemeData get themeData {
     switch (theme) {
-      case AppTheme.light:
+      case ThemePick.light:
         return new ThemeData(
           brightness: Brightness.light,
           primarySwatch: Colors.teal,
           primaryColor: Colors.teal[700],
           accentColor: Colors.orangeAccent[700],
         );
-      case AppTheme.dark:
+      case ThemePick.dark:
         return new ThemeData(
           brightness: Brightness.dark,
           primarySwatch: Colors.teal,
@@ -54,7 +58,7 @@ class Config {
   }
 
   Config copyWith({
-    AppTheme theme,
+    ThemePick theme,
     String bookId,
   }) {
     return new Config(
