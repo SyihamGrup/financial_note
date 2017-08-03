@@ -17,10 +17,10 @@ admin.initializeApp(functions.config().firebase);
 
 // Get opening balance
 exports.getOpeningBalance = functions.https.onRequest((req, res) => {
-  const uid = req.query.uid;
+  const bookId = req.query.bookId;
   const date = req.query.date;
 
-  admin.database().ref('/balances/' + uid).orderByChild('date').endAt(date).once('value', snapshot => {
+  admin.database().ref('/balances/' + bookId).orderByChild('date').endAt(date).once('value', snapshot => {
     const data = snapshot.val();
     if (typeof(data) !== 'object') {
       res.json({balance: 0});

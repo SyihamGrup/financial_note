@@ -8,20 +8,10 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
-import 'dart:async';
-import 'dart:convert';
-
-import 'package:financial_note/auth/auth.dart';
-import 'package:financial_note/data/config.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
-
-final _ref = FirebaseDatabase.instance.reference();
+part of data;
 
 class TransactionGroup {
-  static const nodeName = 'transactions_groups';
+  static const kNodeName = 'transactions_groups';
 
   String id;
   DateTime dueDate;
@@ -38,6 +28,10 @@ class TransactionGroup {
     this.totalValue,
     this.paidValue
   });
+
+  static DatabaseReference ref(String bookId) {
+    return _db.child(kNodeName).child(bookId);
+  }
 
 //  TransactionGroup.fromJson(Map json)
 //      : id = json['id'],
@@ -58,98 +52,86 @@ class TransactionGroup {
 }
 
 class Transaction {
-  static const nodeName = 'transactions';
+  static const kNodeName = 'transactions';
 
-  String userId;
+  final String id;
+  final String groupId;
+  final String budgetId;
+  final String descr;
+  final String period;
+  final DateTime date;
+  final double value;
+  final double balance;
+  final String note;
 
-  String id;
-  String groupId;
-  String budgetId;
-  String period;
-  DateTime dueDate;
-  DateTime paidDate;
-  double value;
-  double paidValue;
-  String note;
-
-  Transaction({
-    @required this.userId,
-
+  const Transaction({
     this.id,
     this.groupId,
     this.budgetId,
+    this.descr,
     this.period,
-    this.dueDate,
-    this.paidDate,
-    this.value,
-    this.paidValue,
+    this.date,
+    this.value : 0.0,
+    this.balance: 0.0,
     this.note,
   });
 
-  Transaction.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        groupId = json['groupId'],
-        budgetId = json['budgetId'],
-        period = json['period'],
-        dueDate = json['dueDate'],
-        paidDate = json['paidDate'],
-        value = json['value'],
-        paidValue = json['paidValue'],
-        note = json['note'];
+  Transaction.fromJson(this.id, Map<String, dynamic> json)
+    : groupId   = json != null && json.containsKey('groupId')  ? json['groupId']              : null,
+      budgetId  = json != null && json.containsKey('budgetId') ? json['budgetId']             : null,
+      descr     = json != null && json.containsKey('descr')    ? json['descr']                : null,
+      period    = json != null && json.containsKey('period')   ? json['period']               : null,
+      date      = json != null && json.containsKey('date')     ? DateTime.parse(json['date']) : null,
+      value     = json != null && json.containsKey('value')    ? parseDouble(json['value'])   : 0.0,
+      balance   = json != null && json.containsKey('balance')  ? parseDouble(json['balance']) : 0.0,
+      note      = json != null && json.containsKey('note')     ? json['note']                 : null;
 
-  static Future<List<Transaction>> list(String userId, DateTime dateStart, DateTime dateEnd) async {
+  static DatabaseReference ref(String bookId) {
+    return _db.child(kNodeName).child(bookId);
+  }
+
+  static Future<List<Transaction>> list(
+      BuildContext context, String bookId, DateTime dateStart, DateTime dateEnd
+  ) async {
     var formatter = new DateFormat('yyyy-MM-dd');
     var ret = new List<Transaction>();
 
-    var openingBalance = await getOpeningBalance(dateEnd);
+    var openingBalance = await getOpeningBalance(bookId, dateEnd);
     ret.add(new Transaction(
-      userId: userId,
-      paidDate: dateStart,
-      paidValue: openingBalance
+      descr: Lang.of(context).titleOpeningBalance(),
+      balance: openingBalance
     ));
 
-    var snap = await _ref.child(nodeName)
+    var snap = await ref(bookId)
         .orderByChild('paidDate')
         .startAt(formatter.format(dateStart), key: 'paidDate')
         .endAt(formatter.format(dateEnd), key: 'paidDate')
         .once();
 
-    var items = JSON.decode(snap.value);
-    items.foEach((item, key) {
-      ret.add(new Transaction(
-        userId: userId,
-        id: key,
-        groupId: item['groupId'],
-        budgetId: item['budgetId'],
-        period: item['period'],
-        dueDate: item['dueDate'],
-        paidDate: item['paidDate'],
-        value: item['value'],
-        paidValue: item['paidValue'],
-        note: item['note'],
-      ));
+    if (snap.value == null) return ret;
+
+    var balance = openingBalance;
+    Map<String, Map<String, dynamic>> items = snap.value;
+    items.forEach((key, item) {
+      balance += item.containsKey('value') ? parseDouble(item['value']) : 0.0;
+      item['balance'] = balance;
+      ret.add(new Transaction.fromJson(key, item));
     });
 
     return ret;
   }
 
-  static StreamSubscription<Event> listen(Function cb) {
-    return _ref.child(nodeName).onValue.listen(cb);
-  }
-
-  static Future<double> getOpeningBalance(DateTime dateEnd) async {
+  static Future<double> getOpeningBalance(String bookId, DateTime dateEnd) async {
     var httpClient = createHttpClient();
-    var response = await httpClient.get(new Uri(
-      scheme: Config.kFirebaseUriScheme,
-      host: Config.kFirebaseHost,
-      path: Config.kOpeningBalancePath,
-      queryParameters: <String, String>{
-        "uid": googleSignIn.currentUser?.id,
-        "date": new DateFormat('yyyy-MM-dd').format(dateEnd),
-      }
-    ));
-    var json = JSON.decode(response.body);
-    return json.containsKey('balance') ? json['balance'] : 0;
+
+    final params = <String, String>{
+      'bookId': bookId,
+      'date':   new DateFormat('yyyy-MM-dd').format(dateEnd),
+    };
+    final response = await httpClient.get(firebaseUri(kOpeningBalancePath, params));
+
+    Map<String, dynamic> json = JSON.decode(response.body);
+    return json.containsKey('balance') ? parseDouble(json['balance']) : 0.0;
   }
 
   Future<Null> add(Transaction v) async {

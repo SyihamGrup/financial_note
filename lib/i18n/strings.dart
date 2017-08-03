@@ -35,12 +35,14 @@ class Lang extends LocaleQueryData {
   String drawerHelp()     => Intl.message('Help & Feedback',      name: 'drawerHelp');
   String drawerAbout()    => Intl.message('About Financial Note', name: 'drawerAbout');
 
-  String menuSearch()     => Intl.message('Search', name: 'menuSearch');
+  String menuSearch()  => Intl.message('Search', name: 'menuSearch');
 
-  String btnOK()          => Intl.message('OK', name: 'btnOK');
-  String btnCancel()      => Intl.message('CANCEL', name: 'btnCancel');
+  String btnOK()     => Intl.message('OK', name: 'btnOK');
+  String btnCancel() => Intl.message('CANCEL', name: 'btnCancel');
 
-  String prefUseDark()    => Intl.message('Use Dark Theme', name: 'prefUseDark');
+  String prefUseDark() => Intl.message('Use Dark Theme', name: 'prefUseDark');
+
+  String titleOpeningBalance() => Intl.message('Opening Balance', name: 'titleOpeningBalance');
 
   String msgEmptyData()   => Intl.message('Tidak ada data');
 }

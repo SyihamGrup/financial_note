@@ -14,11 +14,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 enum ThemePick { light, dark }
 
 class Config {
-  static const kFirebaseHost = 'us-central1-financialnote-d6d95.cloudfunctions.net';
-  static const kFirebaseUriScheme = 'https';
-
-  static const kOpeningBalancePath = '/getOpeningBalance';
-
   static const kCurrentUserId = 'currentUserId';
   static const kTheme = 'theme';
   static const kThemeLight = 'light';
@@ -28,7 +23,7 @@ class Config {
   final ThemePick theme;
   final String bookId;
 
-  Config({
+  const Config({
     this.theme: ThemePick.light,
     this.bookId,
   });

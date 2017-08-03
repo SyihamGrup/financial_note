@@ -15,7 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
-  static const routeName = '/settings';
+  static const kRouteName = '/settings';
 
   final Config config;
   final ValueChanged<Config> updateConfig;

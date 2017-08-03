@@ -9,7 +9,7 @@
  */
 
 class Budget {
-  static const nodeName = 'budgets';
+  static const kNodeName = 'budgets';
 
   String id;
   final transactions = <String, bool>{};

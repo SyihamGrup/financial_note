@@ -53,7 +53,7 @@ class _MainAppState extends State<MainApp> {
     return new MaterialPageRoute<Null>(
       settings: settings,
       builder: (BuildContext context) {
-        if (settings.name == SettingsPage.routeName) {
+        if (settings.name == SettingsPage.kRouteName) {
           return new SettingsPage(_config, _configUpdater);
         }
         return new HomePage(_config);

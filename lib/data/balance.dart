@@ -9,7 +9,7 @@
  */
 
 class Balance {
-  static const nodeName = 'balances';
+  static const kNodeName = 'balances';
 
   String _userId;
 

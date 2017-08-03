@@ -54,7 +54,7 @@ class AppDrawerState extends State<AppDrawer> {
 
           new ListTile(
             title: new Text(Lang.of(context).drawerSettings()),
-            onTap: () => Navigator.popAndPushNamed(context, SettingsPage.routeName),
+            onTap: () => Navigator.popAndPushNamed(context, SettingsPage.kRouteName),
           ),
 
           new ListTile(

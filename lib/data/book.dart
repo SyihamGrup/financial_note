@@ -8,25 +8,23 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
-import 'dart:async';
-
-import 'package:financial_note/data/config.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-final _db = FirebaseDatabase.instance.reference();
+part of data;
 
 class Book {
-  static const nodeName = 'books';
+  static const kNodeName = 'books';
 
   final String id;
   final String name;
   final String description;
 
-  Book({this.id, this.name, this.description});
+  const Book({this.id, this.name, this.description});
+
+  Book.fromJson(this.id, Map<String, dynamic> json)
+    : name        = json != null && json.containsKey('name')        ? json['name']        : null,
+      description = json != null && json.containsKey('description') ? json['description'] : null;
 
   static DatabaseReference ref(String userId) {
-    return _db.child(nodeName).child(userId);
+    return _db.child(kNodeName).child(userId);
   }
 
   /// Get book saat ini dari preference, atau buat default jika belum ada.
@@ -52,18 +50,19 @@ class Book {
     final bookId = prefs.getString(Config.kBookId);
     if (bookId == null) return null;
 
-    final item = await ref(userId).child(bookId).once();
-    if (item.value == null) return null;
+    final snap = await ref(userId).child(bookId).once();
+    if (snap.value == null) return null;
 
-    return new Book.fromJson(item.key, item.value);
+    return new Book.fromJson(snap.key, snap.value);
   }
 
   static Future<Book> _getFirstItem(String userId) async {
-    final item = await ref(userId).limitToFirst(1).once();
-    if (item.value == null) return null;
+    final snap = await ref(userId).limitToFirst(1).once();
+    if (snap.value == null) return null;
 
     Book book;
-    item.value.forEach((key, value) {
+    Map<String, Map<String, dynamic>> items = snap.value;
+    items.forEach((key, value) {
       book = new Book.fromJson(key, value);
     });
     return book;
@@ -71,7 +70,7 @@ class Book {
 
   static Future<Book> _createDefault(String userId) async {
     final data = <String, dynamic>{
-      'name': 'Default',
+      'name':        'Default',
       'description': 'Default book',
     };
     final newItem = ref(userId).push();
@@ -79,11 +78,6 @@ class Book {
 
     return new Book.fromJson(newItem.key, data);
   }
-
-  Book.fromJson(String id, Map<String, dynamic> json)
-      : this.id = id,
-        this.name = json != null && json.containsKey('name') ? json['name'] : null,
-        this.description = json != null && json.containsKey('description') ? json['description'] : null;
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{

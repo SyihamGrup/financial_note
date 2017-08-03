@@ -11,16 +11,17 @@
 import 'dart:async';
 
 import 'package:financial_note/auth/auth.dart';
-import 'package:financial_note/data/book.dart';
 import 'package:financial_note/data/config.dart';
+import 'package:financial_note/data/data.dart';
 import 'package:financial_note/i18n/strings.dart';
 import 'package:financial_note/widget/drawer.dart';
 import 'package:financial_note/widget/month_picker.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
-  static const routeName = '/';
+  static const kRouteName = '/';
 
   final Config config;
 
@@ -32,34 +33,14 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   var _filterDate = new DateTime.now();
-
-//  var _counter = 0;
-//  final _data = new List<Transaction>();
-//  StreamSubscription<Event> _dataSubscr;
-
-//  final _counterRef = FirebaseDatabase.instance.reference().child(Counter.name);
-//  final _messagesRef = FirebaseDatabase.instance.reference().child(Message.name);
-
-//  StreamSubscription<Event> _counterSubscr;
-//  StreamSubscription<Event> _messageSubscr;
+  List<Transaction> _data;
+  StreamSubscription<Event> _dataSubscr;
 
   @override
   void initState() {
     super.initState();
 
     initData();
-//    _counterRef.keepSynced(true);
-//
-//    _dataSubscr = Transaction.listen((event) {
-//    });
-//
-//    _counterSubscr = _counterRef.onValue.listen((Event event) {
-//      setState(() => _counter = event.snapshot.value ?? 0);
-//    });
-//
-//    _messageSubscr = _messagesRef.onValue.listen((Event event) {
-//      print('Child added : ${event.snapshot.value}');
-//    });
   }
 
   Future<Null> initData() async {
@@ -67,16 +48,25 @@ class HomePageState extends State<HomePage> {
 
     Book.ref(user.uid).keepSynced(true);
 
-    var book = Book.getDefault(user.uid);
-    print(book);
+    var book = await Book.getDefault(user.uid);
+
+    _dataSubscr = Transaction.ref(book.id).onChildChanged.listen((event) {
+      updateData(book.id);
+    });
+    updateData(book.id);
+  }
+
+  Future<Null> updateData(String bookId) async {
+    final dateStart = new DateTime(_filterDate.year, _filterDate.month);
+    final dateEnd = new DateTime(_filterDate.year, _filterDate.month + 1, 0);
+    var data = await Transaction.list(context, bookId, dateStart, dateEnd);
+    setState(() => _data = data);
   }
 
   @override
   void dispose() {
     super.dispose();
-
-//    _messageSubscr.cancel();
-//    _counterSubscr.cancel();
+    if (_dataSubscr != null) _dataSubscr.cancel();
   }
 
   Future<Null> _selectMonth(BuildContext context) async {
@@ -84,19 +74,6 @@ class HomePageState extends State<HomePage> {
     if (picked == null) return;
 
     setState(() => _filterDate = picked);
-  }
-
-  Future<Null> _increment() async {
-//    setState(() => _counter++);
-//
-//    await ensureLoggedIn();
-//
-//    // TODO(jackson): This illustrates a case where transactions are needed
-//    final snapshot = await _counterRef.once();
-//    setState(() => _counter = (snapshot.value ?? 0) + 1);
-//    _counterRef.set(_counter);
-//
-//    _messagesRef.push().set(<String, String>{'Hello': 'World $_counter'});
   }
 
   Widget _buildAppBar(BuildContext context) {
@@ -140,33 +117,14 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget _buildBody(BuildContext context) {
-    return new Column(children: <Widget>[
-      new Container(
-        padding: const EdgeInsets.all(16.0),
-        child: new Column(children: <Widget>[
-          new Text(
-            '...',
-//           'Button tapped $_counter time${_counter == 1 ? '' : 's'}',
-            style: Theme.of(context).textTheme.title,
-          ),
-          new Text('This includes all devices, ever.'),
-        ]),
-      ),
-//      new Flexible(child: new FirebaseAnimatedList(
-//        query: _messagesRef,
-//        reverse: true,
-//        sort: (DataSnapshot a, DataSnapshot b) => b.key.compareTo(a.key),
-//        itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation) {
-//          return new SizeTransition(
-//            sizeFactor: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
-//            child: new Container(
-//              margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-//              child: new Text(snapshot.value.toString()),
-//            ),
-//          );
-//        },
-//      ))
-    ]);
+    if (_data == null || _data.length == 0) return new _EmptyBody();
+
+    return new ListView.builder(
+      padding: const EdgeInsets.all(8.0),
+      itemCount: _data.length,
+      itemExtent: 40.0,
+      itemBuilder: (context, index) => new _ContentItem(context, _data[index]),
+    );
   }
 
   @override
@@ -176,10 +134,32 @@ class HomePageState extends State<HomePage> {
       drawer: new AppDrawer(),
       body: _buildBody(context),
       floatingActionButton: new FloatingActionButton(
-        onPressed: _increment,
+        onPressed: () => null,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
     );
+  }
+}
+
+class _ContentItem extends StatelessWidget {
+  final BuildContext context;
+  final Transaction item;
+
+  const _ContentItem(this.context, this.item);
+
+  @override
+  Widget build(BuildContext context) {
+    return new ListTile(
+      title: new Text(item.descr ?? ''),
+      subtitle: new Text('Balance: ${item.balance}'),
+    );
+  }
+}
+
+class _EmptyBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new Center(child: new Text(Lang.of(context).msgEmptyData()));
   }
 }
