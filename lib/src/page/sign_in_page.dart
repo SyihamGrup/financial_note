@@ -16,6 +16,19 @@ class SignInPage extends StatelessWidget {
 
   const SignInPage(this.config);
 
+  Future<Null> signIn(BuildContext context) async {
+    final google = await signInWithGoogle();
+    if (google == null) return;
+    analytics.logLogin();
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(Config.kSignInMethod, Config.kSignInGoogle);
+    final c = await google.authentication;
+    await auth.signInWithGoogle(idToken: c.idToken, accessToken: c.accessToken);
+
+    Navigator.pushReplacementNamed(context, HomePage.kRouteName);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -38,7 +51,7 @@ class SignInPage extends StatelessWidget {
             ),
             new Row(children: <Widget>[
               new Expanded(child: new RaisedButton(
-                onPressed: () => null,
+                onPressed: () => signIn(context),
                 child: new Text(Lang.of(context).btnSignInGoogle(),
                            style: theme.accentTextTheme.button),
                 color: theme.accentColor,
