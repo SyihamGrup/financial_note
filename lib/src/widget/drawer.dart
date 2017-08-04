@@ -8,11 +8,7 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
-import 'package:financial_note/i18n/strings.dart';
-import 'package:financial_note/page/settings_page.dart';
-import 'package:flutter/material.dart';
-
-import 'widget.dart';
+part of widget;
 
 class AppDrawer extends StatefulWidget {
   @override

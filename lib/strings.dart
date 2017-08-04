@@ -1,10 +1,12 @@
-// Copyright (c) 2017. All rights reserved.
-//
-// Unauthorized copying of this file, via any medium is strictly prohibited.
-// Proprietary and confidential.
-//
-// Written by:
-//   - Adi Sayoga <adisayoga@gmail.com>
+/*
+ * Copyright (c) 2017. All rights reserved.
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ *
+ * Written by:
+ *   - Adi Sayoga <adisayoga@gmail.com>
+ */
 
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
@@ -16,8 +18,8 @@ import 'package:intl/intl.dart';
 //
 // To generate the lang_messages_*.dart files from the ARB files, run:
 //   pub run intl:generate_from_arb \
-//     --output-dir=lib/i18n --generated-file-prefix=lang_ --no-use-deferred-loading \
-//     lib/strings.dart lib/i18n/lang_*.arb
+//     --output-dir=src/lib/i18n --generated-file-prefix=lang_ --no-use-deferred-loading \
+//     strings.dart src/lib/i18n/lang_*.arb
 
 class Lang extends LocaleQueryData {
 
@@ -29,6 +31,7 @@ class Lang extends LocaleQueryData {
 
   String title()          => Intl.message('Financial Note', name: 'title');
   String titleSettings()  => Intl.message('Settings',       name: 'titleSettings');
+  String titleSignIn()    => Intl.message('Sign In',       name: 'titleSignIn');
 
   String drawerHome()     => Intl.message('Home',                 name: 'drawerHome');
   String drawerSettings() => Intl.message('Settings',             name: 'drawerSettings');
@@ -37,8 +40,9 @@ class Lang extends LocaleQueryData {
 
   String menuSearch()  => Intl.message('Search', name: 'menuSearch');
 
-  String btnOK()     => Intl.message('OK', name: 'btnOK');
-  String btnCancel() => Intl.message('CANCEL', name: 'btnCancel');
+  String btnOK()           => Intl.message('OK', name: 'btnOK');
+  String btnCancel()       => Intl.message('Cancel', name: 'btnCancel');
+  String btnSignInGoogle() => Intl.message('Sign In With Google', name: 'btnSignInGoogle');
 
   String prefUseDark() => Intl.message('Use Dark Theme', name: 'prefUseDark');
 

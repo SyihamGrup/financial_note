@@ -10,11 +10,10 @@
 
 import 'dart:async';
 
-import 'package:financial_note/data/config.dart';
-import 'package:financial_note/i18n/lang_messages_all.dart';
-import 'package:financial_note/i18n/strings.dart';
-import 'package:financial_note/page/home_page.dart';
-import 'package:financial_note/page/settings_page.dart';
+import 'package:financial_note/config.dart';
+import 'package:financial_note/page.dart';
+import 'package:financial_note/src/i18n/lang_messages_all.dart';
+import 'package:financial_note/strings.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -53,10 +52,16 @@ class _MainAppState extends State<MainApp> {
     return new MaterialPageRoute<Null>(
       settings: settings,
       builder: (BuildContext context) {
-        if (settings.name == SettingsPage.kRouteName) {
-          return new SettingsPage(_config, _configUpdater);
+        switch (settings.name) {
+          case HomePage.kRouteName:
+            return new HomePage(_config);
+          case SignInPage.kRouteName:
+            return new SignInPage(_config);
+          case SettingsPage.kRouteName:
+            return new SettingsPage(_config, _configUpdater);
+          default:
+            return new HomePage(_config);
         }
-        return new HomePage(_config);
       }
     );
   }

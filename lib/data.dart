@@ -13,16 +13,17 @@ library data;
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:financial_note/data/config.dart';
-import 'package:financial_note/i18n/strings.dart';
+import 'package:financial_note/config.dart';
+import 'package:financial_note/strings.dart';
+import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-part 'book.dart';
-part 'transaction.dart';
+part 'src/data/book.dart';
+part 'src/data/transaction.dart';
 
 const kFirebaseUriScheme = 'https';
 const kFirebaseHost = 'us-central1-financialnote-d6d95.cloudfunctions.net';
@@ -41,18 +42,4 @@ Uri firebaseUri(String path, Map<String, dynamic> params, {
     path:   path,
     queryParameters: params,
   );
-}
-
-/// Parse double from dynamic variable.
-double parseDouble(dynamic value) {
-  if (value is num) return value.toDouble();
-  if (value is String) return double.parse(value);
-  return 0.0;
-}
-
-/// Parse integer from dynamic variable.
-int parseInt(dynamic value) {
-  if (value is num) return value.toInt();
-  if (value is String) return int.parse(value);
-  return 0;
 }

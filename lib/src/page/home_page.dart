@@ -8,17 +8,7 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
-import 'dart:async';
-
-import 'package:financial_note/auth/auth.dart';
-import 'package:financial_note/data/config.dart';
-import 'package:financial_note/data/data.dart';
-import 'package:financial_note/i18n/strings.dart';
-import 'package:financial_note/widget/drawer.dart';
-import 'package:financial_note/widget/month_picker.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+part of page;
 
 class HomePage extends StatefulWidget {
   static const kRouteName = '/';
@@ -45,6 +35,10 @@ class HomePageState extends State<HomePage> {
 
   Future<Null> initData() async {
     var user = await ensureLoggedIn();
+    if (user == null) {
+      Navigator.pushReplacementNamed(context, SignInPage.kRouteName);
+      return;
+    }
 
     Book.ref(user.uid).keepSynced(true);
 
