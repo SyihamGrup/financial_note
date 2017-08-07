@@ -48,5 +48,6 @@ class Lang extends LocaleQueryData {
 
   String titleOpeningBalance() => Intl.message('Opening Balance', name: 'titleOpeningBalance');
 
-  String msgEmptyData()   => Intl.message('Tidak ada data');
+  String msgEmptyData()   => Intl.message('Tidak ada data', name: 'msgEmptyData');
+  String msgLoading()     => Intl.message('Loading…', name: 'msgLoading');
 }

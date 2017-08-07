@@ -21,14 +21,28 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => new _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+  var _isLoading = true;
   var _filterDate = new DateTime.now();
+  AnimationController _animationCtrl;
+  Animation<double> _animation;
   List<Transaction> _data;
   StreamSubscription<Event> _dataSubscr;
 
   @override
   void initState() {
     super.initState();
+
+    _animationCtrl =  new AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..forward();
+
+    _animation = new CurvedAnimation(
+      parent: _animationCtrl,
+      curve: const Interval(0.0, 0.9, curve: Curves.fastOutSlowIn),
+      reverseCurve: Curves.fastOutSlowIn
+    );
 
     initData();
   }
@@ -51,10 +65,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<Null> updateData(String bookId) async {
+    setState(() => _isLoading = true);
+
     final dateStart = new DateTime(_filterDate.year, _filterDate.month);
     final dateEnd = new DateTime(_filterDate.year, _filterDate.month + 1, 0);
     var data = await Transaction.list(context, bookId, dateStart, dateEnd);
-    setState(() => _data = data);
+    setState(() {
+      _data = data;
+      _isLoading = false;
+    });
   }
 
   @override
@@ -110,8 +129,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildBody(BuildContext context) {
-    if (_data == null || _data.length == 0) return new _EmptyBody();
+  Widget _buildBody() {
+    if (_data == null || _data.length == 0)
+      return new _EmptyBody(isLoading: _isLoading);
 
     return new ListView.builder(
       padding: const EdgeInsets.all(8.0),
@@ -121,12 +141,22 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildProgress(bool isLoading) {
+    return new AnimatedBuilder(animation: _animation, builder: (context, child) {
+      if (!isLoading) return new Container();
+      return const SizedBox(height: 2.0, child: const LinearProgressIndicator());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: _buildAppBar(context),
       drawer: new AppDrawer(),
-      body: _buildBody(context),
+      body: new Stack(children: <Widget>[
+        _buildBody(),
+        _buildProgress(_isLoading),
+      ]),
       floatingActionButton: new FloatingActionButton(
         onPressed: () => null,
         tooltip: 'Increment',
@@ -152,8 +182,14 @@ class _ContentItem extends StatelessWidget {
 }
 
 class _EmptyBody extends StatelessWidget {
+  final isLoading;
+
+  _EmptyBody({this.isLoading: false});
+
   @override
   Widget build(BuildContext context) {
-    return new Center(child: new Text(Lang.of(context).msgEmptyData()));
+    final lang = Lang.of(context);
+    return new Center(child: new Text(
+      isLoading ? lang.msgLoading() : lang.msgEmptyData()));
   }
 }
