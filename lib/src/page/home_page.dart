@@ -18,10 +18,10 @@ class HomePage extends StatefulWidget {
   const HomePage(this.config);
 
   @override
-  HomePageState createState() => new HomePageState();
+  _HomePageState createState() => new _HomePageState();
 }
 
-class HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> {
   var _filterDate = new DateTime.now();
   List<Transaction> _data;
   StreamSubscription<Event> _dataSubscr;
