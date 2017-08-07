@@ -60,7 +60,7 @@ class _MainAppState extends State<MainApp> {
           case SettingsPage.kRouteName:
             return new SettingsPage(_config, _configUpdater);
           default:
-            return new HomePage(_config);
+            return new SplashPage(_config);
         }
       }
     );

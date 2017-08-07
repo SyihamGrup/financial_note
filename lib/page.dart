@@ -21,9 +21,11 @@ import 'package:financial_note/widget.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'src/page/home_page.dart';
 part 'src/page/settings_page.dart';
 part 'src/page/sign_in_page.dart';
+part 'src/page/splash_page.dart';

@@ -11,7 +11,7 @@
 part of page;
 
 class HomePage extends StatefulWidget {
-  static const kRouteName = '/';
+  static const kRouteName = '/home';
 
   final Config config;
 
