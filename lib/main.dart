@@ -59,6 +59,8 @@ class _MainAppState extends State<MainApp> {
             return new SignInPage(_config);
           case SettingsPage.kRouteName:
             return new SettingsPage(_config, _configUpdater);
+          case TransactionPage.kRouteName:
+            return new TransactionPage(_config);
           default:
             return new SplashPage(_config);
         }

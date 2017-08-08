@@ -158,8 +158,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         _buildProgress(_isLoading),
       ]),
       floatingActionButton: new FloatingActionButton(
-        onPressed: () => null,
-        tooltip: 'Increment',
+        onPressed: () => Navigator.pushNamed(context, TransactionPage.kRouteName),
+        tooltip: Lang.of(context).btnAdd(),
         child: const Icon(Icons.add),
       ),
     );

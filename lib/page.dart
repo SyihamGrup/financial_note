@@ -29,3 +29,4 @@ part 'src/page/home_page.dart';
 part 'src/page/settings_page.dart';
 part 'src/page/sign_in_page.dart';
 part 'src/page/splash_page.dart';
+part 'src/page/transaction.dart';

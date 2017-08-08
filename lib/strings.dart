@@ -43,10 +43,13 @@ class Lang extends LocaleQueryData {
   String btnOK()           => Intl.message('OK', name: 'btnOK');
   String btnCancel()       => Intl.message('Cancel', name: 'btnCancel');
   String btnSignInGoogle() => Intl.message('Sign In With Google', name: 'btnSignInGoogle');
+  String btnAdd()          => Intl.message('Add', name: 'btnAdd');
+  String btnSave()         => Intl.message('Save', name: 'btnSave');
 
   String prefUseDark() => Intl.message('Use Dark Theme', name: 'prefUseDark');
 
   String titleOpeningBalance() => Intl.message('Opening Balance', name: 'titleOpeningBalance');
+  String titleAddTransaction() => Intl.message('Add Transaction', name: 'titleAddTransaction');
 
   String msgEmptyData()   => Intl.message('Tidak ada data', name: 'msgEmptyData');
   String msgLoading()     => Intl.message('Loading…', name: 'msgLoading');
