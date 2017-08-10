@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   Future<Null> initData() async {
-    var user = await ensureLoggedIn();
+    final user = await ensureLoggedIn();
     if (user == null) {
       Navigator.pushReplacementNamed(context, SignInPage.kRouteName);
       return;
@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
     Book.ref(user.uid).keepSynced(true);
 
-    var book = await Book.getDefault(user.uid);
+    final book = await Book.getDefault(user.uid);
 
     _dataSubscr = Transaction.ref(book.id).onChildChanged.listen((event) {
       updateData(book.id);
@@ -69,7 +69,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
     final dateStart = new DateTime(_filterDate.year, _filterDate.month);
     final dateEnd = new DateTime(_filterDate.year, _filterDate.month + 1, 0);
-    var data = await Transaction.list(context, bookId, dateStart, dateEnd);
+    final openingBalance = await Transaction.getOpeningBalance(bookId, dateStart);
+    final data = await Transaction.list(bookId, dateStart, dateEnd, openingBalance);
     setState(() {
       _data = data;
       _isLoading = false;
@@ -137,7 +138,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       padding: const EdgeInsets.all(8.0),
       itemCount: _data.length,
       itemExtent: 40.0,
-      itemBuilder: (context, index) => new _ContentItem(context, _data[index]),
+      itemBuilder: (context, index) {
+        final item = (index == 0)
+          ? _data[index].copyWith(title: Lang.of(context).titleOpeningBalance())
+          : _data[index];
+        return new _ContentItem(context, item);
+      },
     );
   }
 
@@ -175,7 +181,7 @@ class _ContentItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new ListTile(
-      title: new Text(item.descr ?? ''),
+      title: new Text(item.title ?? ''),
       subtitle: new Text('Balance: ${item.balance}'),
     );
   }

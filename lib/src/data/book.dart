@@ -14,14 +14,14 @@ class Book {
   static const kNodeName = 'books';
 
   final String id;
-  final String name;
-  final String description;
+  final String title;
+  final String descr;
 
-  const Book({this.id, this.name, this.description});
+  const Book({this.id, this.title, this.descr});
 
   Book.fromJson(this.id, Map<String, dynamic> json)
-    : name        = json != null && json.containsKey('name')        ? json['name']        : null,
-      description = json != null && json.containsKey('description') ? json['description'] : null;
+    : title = json != null && json.containsKey('title') ? json['title'] : null,
+      descr = json != null && json.containsKey('descr') ? json['descr'] : null;
 
   static DatabaseReference ref(String userId) {
     return _db.child(kNodeName).child(userId);
@@ -70,8 +70,8 @@ class Book {
 
   static Future<Book> _createDefault(String userId) async {
     final data = <String, dynamic>{
-      'name':        'Default',
-      'description': 'Default book',
+      'title' : 'Default',
+      'descr' : 'Default book'
     };
     final newItem = ref(userId).push();
     await newItem.set(data);
@@ -81,9 +81,21 @@ class Book {
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'name': name,
-      'description': description,
+      'title' : title,
+      'descr' : descr,
     };
+  }
+
+  Book copyWith({
+    String id,
+    String title,
+    String descr,
+  }) {
+    return new Book(
+      id    : id    ?? this.id,
+      title : title ?? this.title,
+      descr : descr ?? this.descr,
+    );
   }
 
 }

@@ -25,7 +25,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
 
   void _handleThemeChanged(ThemePick theme) {
-    var config = widget.config.copyWith(theme: theme);
+    final config = widget.config.copyWith(theme: theme);
     SharedPreferences.getInstance().then((prefs) {
       final themeName = theme == ThemePick.light ? Config.kThemeLight : Config.kThemeDark;
       prefs.setString(Config.kTheme, themeName);
@@ -43,7 +43,7 @@ class _SettingsPageState extends State<SettingsPage> {
             _handleThemeChanged(widget.config.theme == ThemePick.dark
                 ? ThemePick.light : ThemePick.dark);
           },
-          trailing:  new Switch(
+          trailing: new Switch(
             value: widget.config.theme == ThemePick.dark,
             onChanged: (bool value) {
               _handleThemeChanged(value ? ThemePick.dark : ThemePick.light);

@@ -8,24 +8,17 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
+part of data;
+
 class Balance {
   static const kNodeName = 'balances';
 
-  String _userId;
-
-  static final _cache = <String, Balance>{};
-
-  factory Balance(String userId) {
-    if (_cache.containsKey(userId)) return _cache[userId];
-
-    final instance = new Balance._internal(userId);
-    _cache[userId] = instance;
-    return instance;
+  static Future<Null> get(String bookId, int year, int month) async {
+    return null;
   }
 
-  Balance._internal(this._userId);
-
-  double get(DateTime period) {
-    return 0.0;
+  static Future<Null> calculate(String bookId, int year, int month) async {
+    return null;
   }
+
 }

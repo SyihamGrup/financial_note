@@ -10,55 +10,13 @@
 
 part of data;
 
-class TransactionGroup {
-  static const kNodeName = 'transactions_groups';
-
-  String id;
-  DateTime dueDate;
-  DateTime lastPaid;
-  double totalValue;
-  double paidValue;
-
-  final transactions = <String, bool>{};
-
-  TransactionGroup({
-    this.id,
-    this.dueDate,
-    this.lastPaid,
-    this.totalValue,
-    this.paidValue
-  });
-
-  static DatabaseReference ref(String bookId) {
-    return _db.child(kNodeName).child(bookId);
-  }
-
-//  TransactionGroup.fromJson(Map json)
-//      : id = json['id'],
-//        dueDate = json['dueDate'],
-//        lastPaid = json['lastPaid'],
-//        totalValue = json['totalValue'],
-//        paidValue = json['paidValue'];
-//
-//  Map<String, dynamic> toJson() {
-//    return <String, dynamic>{
-//      'id': id,
-//      'dueDate': dueDate,
-//      'lastPaid': lastPaid,
-//      'totalValue': totalValue,
-//      'paidValue': paidValue
-//    };
-//  }
-}
-
 class Transaction {
   static const kNodeName = 'transactions';
 
   final String id;
-  final String groupId;
+  final String billId;
   final String budgetId;
-  final String descr;
-  final String period;
+  final String title;
   final DateTime date;
   final double value;
   final double balance;
@@ -66,21 +24,19 @@ class Transaction {
 
   const Transaction({
     this.id,
-    this.groupId,
+    this.billId,
     this.budgetId,
-    this.descr,
-    this.period,
-    this.date,
-    this.value : 0.0,
+    @required this.title,
+    @required this.date,
+    @required this.value,
     this.balance: 0.0,
     this.note,
   });
 
   Transaction.fromJson(this.id, Map<String, dynamic> json)
-    : groupId   = json != null && json.containsKey('groupId')  ? json['groupId']              : null,
+    : billId    = json != null && json.containsKey('billId')   ? json['billId']               : null,
       budgetId  = json != null && json.containsKey('budgetId') ? json['budgetId']             : null,
-      descr     = json != null && json.containsKey('descr')    ? json['descr']                : null,
-      period    = json != null && json.containsKey('period')   ? json['period']               : null,
+      title     = json != null && json.containsKey('title')    ? json['title']                : null,
       date      = json != null && json.containsKey('date')     ? DateTime.parse(json['date']) : null,
       value     = json != null && json.containsKey('value')    ? parseDouble(json['value'])   : 0.0,
       balance   = json != null && json.containsKey('balance')  ? parseDouble(json['balance']) : 0.0,
@@ -91,18 +47,19 @@ class Transaction {
   }
 
   static Future<List<Transaction>> list(
-      BuildContext context, String bookId, DateTime dateStart, DateTime dateEnd
+      String bookId, DateTime dateStart, DateTime dateEnd, openingBalance,
   ) async {
-    var formatter = new DateFormat('yyyy-MM-dd');
-    var ret = new List<Transaction>();
+    final formatter = new DateFormat('yyyy-MM-dd');
+    final ret = new List<Transaction>();
 
-    var openingBalance = await getOpeningBalance(bookId, dateEnd);
     ret.add(new Transaction(
-      descr: Lang.of(context).titleOpeningBalance(),
-      balance: openingBalance
+      title   : 'Opening Balance',
+      date    : dateStart,
+      value   : openingBalance,
+      balance : openingBalance,
     ));
 
-    var snap = await ref(bookId)
+    final snap = await ref(bookId)
         .orderByChild('paidDate')
         .startAt(formatter.format(dateStart), key: 'paidDate')
         .endAt(formatter.format(dateEnd), key: 'paidDate')
@@ -122,11 +79,11 @@ class Transaction {
   }
 
   static Future<double> getOpeningBalance(String bookId, DateTime dateEnd) async {
-    var httpClient = createHttpClient();
+    final httpClient = createHttpClient();
 
     final params = <String, String>{
-      'bookId': bookId,
-      'date':   new DateFormat('yyyy-MM-dd').format(dateEnd),
+      'bookId' : bookId,
+      'date'   : new DateFormat('yyyy-MM-dd').format(dateEnd),
     };
     final response = await httpClient.get(firebaseUri(kOpeningBalancePath, params));
 
@@ -137,5 +94,39 @@ class Transaction {
   Future<Null> add(Transaction v) async {
 
     return null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'billId'   : billId,
+      'budgetId' : budgetId,
+      'title'    : title,
+      'date'     : new DateFormat('yyyy-MM-dd').format(date),
+      'value'    : value,
+      'balance'  : balance,
+      'note'     : note,
+    };
+  }
+
+  Transaction copyWith({
+    String id,
+    String billId,
+    String budgetId,
+    String title,
+    DateTime date,
+    double value,
+    double balance,
+    String note,
+  }) {
+    return new Transaction(
+      id       : id       ?? this.id,
+      billId   : billId   ?? this.billId,
+      budgetId : budgetId ?? this.budgetId,
+      title    : title    ?? this.title,
+      date     : date     ?? this.date,
+      value    : value    ?? this.value,
+      balance  : balance  ?? this.balance,
+      note     : note     ?? this.note,
+    );
   }
 }

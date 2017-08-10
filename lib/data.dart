@@ -14,14 +14,15 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:financial_note/config.dart';
-import 'package:financial_note/strings.dart';
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+part 'src/data/balance.dart';
+part 'src/data/bill.dart';
 part 'src/data/book.dart';
 part 'src/data/transaction.dart';
 
