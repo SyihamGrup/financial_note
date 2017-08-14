@@ -55,8 +55,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     }
 
     Book.ref(user.uid).keepSynced(true);
-
     final book = await Book.getDefault(user.uid);
+
+    Balance.ref(book.id).keepSynced(true);
+    Bill.ref(book.id).keepSynced(true);
+    Transaction.ref(book.id).keepSynced(true);
 
     _dataSubscr = Transaction.ref(book.id).onChildChanged.listen((event) {
       updateData(book.id);
@@ -69,7 +72,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
     final dateStart = new DateTime(_filterDate.year, _filterDate.month);
     final dateEnd = new DateTime(_filterDate.year, _filterDate.month + 1, 0);
-    final openingBalance = await Transaction.getOpeningBalance(bookId, dateStart);
+    final openingBalance = await Balance.get(bookId, _filterDate.year, _filterDate.month);
     final data = await Transaction.list(bookId, dateStart, dateEnd, openingBalance);
     setState(() {
       _data = data;

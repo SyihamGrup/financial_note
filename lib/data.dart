@@ -30,6 +30,7 @@ const kFirebaseUriScheme = 'https';
 const kFirebaseHost = 'us-central1-financialnote-d6d95.cloudfunctions.net';
 
 const kOpeningBalancePath = '/getOpeningBalance';
+const kCalcOpeningBalancePath = '/calcOpeningBalance';
 
 final _db = FirebaseDatabase.instance.reference();
 

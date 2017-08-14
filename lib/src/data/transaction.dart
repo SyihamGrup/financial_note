@@ -78,24 +78,6 @@ class Transaction {
     return ret;
   }
 
-  static Future<double> getOpeningBalance(String bookId, DateTime dateEnd) async {
-    final httpClient = createHttpClient();
-
-    final params = <String, String>{
-      'bookId' : bookId,
-      'date'   : new DateFormat('yyyy-MM-dd').format(dateEnd),
-    };
-    final response = await httpClient.get(firebaseUri(kOpeningBalancePath, params));
-
-    Map<String, dynamic> json = JSON.decode(response.body);
-    return json.containsKey('balance') ? parseDouble(json['balance']) : 0.0;
-  }
-
-  Future<Null> add(Transaction v) async {
-
-    return null;
-  }
-
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'billId'   : billId,
