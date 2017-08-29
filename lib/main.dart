@@ -53,12 +53,12 @@ class _MainAppState extends State<MainApp> {
       settings: settings,
       builder: (BuildContext context) {
         switch (settings.name) {
-          case HomePage.kRouteName:
-            return new HomePage(_config);
           case SignInPage.kRouteName:
             return new SignInPage(_config);
           case SettingsPage.kRouteName:
             return new SettingsPage(_config, _configUpdater);
+          case HomePage.kRouteName:
+            return new HomePage(_config);
           case TransactionPage.kRouteName:
             return new TransactionPage(_config);
           default:

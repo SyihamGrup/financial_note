@@ -30,10 +30,12 @@ class Lang extends LocaleQueryData {
   static final instance = new Lang();
 
   String title()          => Intl.message('Financial Note', name: 'title');
+  String titleBill()      => Intl.message('Bill',           name: 'titleBill');
   String titleSettings()  => Intl.message('Settings',       name: 'titleSettings');
-  String titleSignIn()    => Intl.message('Sign In',       name: 'titleSignIn');
+  String titleSignIn()    => Intl.message('Sign In',        name: 'titleSignIn');
 
   String drawerHome()     => Intl.message('Home',                 name: 'drawerHome');
+  String drawerBills()    => Intl.message('Bills',                name: 'drawerBills');
   String drawerSettings() => Intl.message('Settings',             name: 'drawerSettings');
   String drawerHelp()     => Intl.message('Help & Feedback',      name: 'drawerHelp');
   String drawerAbout()    => Intl.message('About Financial Note', name: 'drawerAbout');

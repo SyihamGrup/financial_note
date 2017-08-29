@@ -10,7 +10,7 @@
 
 part of page;
 
-class SettingsPage extends StatefulWidget {
+class SettingsPage extends StatelessWidget {
   static const kRouteName = '/settings';
 
   final Config config;
@@ -18,19 +18,13 @@ class SettingsPage extends StatefulWidget {
 
   const SettingsPage(this.config, this.updateConfig);
 
-  @override
-  _SettingsPageState createState() => new _SettingsPageState();
-}
-
-class _SettingsPageState extends State<SettingsPage> {
-
   void _handleThemeChanged(ThemePick theme) {
-    final config = widget.config.copyWith(theme: theme);
+    final newConfig = config.copyWith(theme: theme);
     SharedPreferences.getInstance().then((prefs) {
       final themeName = theme == ThemePick.light ? Config.kThemeLight : Config.kThemeDark;
       prefs.setString(Config.kTheme, themeName);
     });
-    widget.updateConfig(config);
+    updateConfig(newConfig);
   }
 
   Widget buildSettingsPane(BuildContext context) {
@@ -40,11 +34,11 @@ class _SettingsPageState extends State<SettingsPage> {
         new ListTile(
           title: new Text(Lang.of(context).prefUseDark()),
           onTap: () {
-            _handleThemeChanged(widget.config.theme == ThemePick.dark
+            _handleThemeChanged(config.theme == ThemePick.dark
                 ? ThemePick.light : ThemePick.dark);
           },
           trailing: new Switch(
-            value: widget.config.theme == ThemePick.dark,
+            value: config.theme == ThemePick.dark,
             onChanged: (bool value) {
               _handleThemeChanged(value ? ThemePick.dark : ThemePick.light);
             },

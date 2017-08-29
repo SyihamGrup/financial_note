@@ -26,7 +26,9 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'src/page/home_page.dart';
+part 'src/page/home_page_bill.dart';
+part 'src/page/home_page_transaction.dart';
 part 'src/page/settings_page.dart';
 part 'src/page/sign_in_page.dart';
 part 'src/page/splash_page.dart';
-part 'src/page/transaction.dart';
+part 'src/page/transaction_page.dart';

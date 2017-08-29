@@ -18,12 +18,14 @@ class HomePage extends StatefulWidget {
   const HomePage(this.config);
 
   @override
-  _HomePageState createState() => new _HomePageState();
+  State<StatefulWidget> createState() => new _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   var _isLoading = true;
   var _filterDate = new DateTime.now();
+  var _currentRoute = HomePageTransaction.kRouteName;
+
   AnimationController _animationCtrl;
   Animation<double> _animation;
   List<Transaction> _data;
@@ -80,57 +82,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     });
   }
 
+  void onDrawerTap(String route) {
+    setState(() => _currentRoute = route);
+  }
+
   @override
   void dispose() {
     super.dispose();
     if (_dataSubscr != null) _dataSubscr.cancel();
-  }
-
-  Future<Null> _selectMonth(BuildContext context) async {
-    final DateTime picked = await showMonthPicker(context: context, initialDate: _filterDate);
-    if (picked == null) return;
-
-    setState(() => _filterDate = picked);
-  }
-
-  Widget _buildAppBar(BuildContext context) {
-    return new AppBar(
-      title: new InkWell(
-        onTap: () => _selectMonth(context),
-        child: new Container(
-          height: kToolbarHeight,
-          child: new Row(children: <Widget>[
-            new Text(new DateFormat.yMMM().format(_filterDate),
-                style: Theme.of(context).primaryTextTheme.title),
-            new Icon(Icons.arrow_drop_down),
-          ]),
-        ),
-      ),
-      actions: <Widget>[
-        new IconButton(
-          icon: const Icon(Icons.search),
-          tooltip: Lang.of(context).menuSearch(),
-          onPressed: () => null,
-        ),
-        new PopupMenuButton<String>(
-          onSelected: (String item) => null,
-          itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
-            const PopupMenuItem<String>(
-              value: 'Toolbar menu',
-              child: const Text('Toolbar menu')
-            ),
-            const PopupMenuItem<String>(
-              value: 'Right here',
-              child: const Text('Right here')
-            ),
-            const PopupMenuItem<String>(
-              value: 'Hooray!',
-              child: const Text('Hooray!')
-            ),
-          ],
-        ),
-      ],
-    );
   }
 
   Widget _buildBody() {
@@ -160,8 +119,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: _buildAppBar(context),
-      drawer: new AppDrawer(),
+      appBar: new TransactionAppBar(),
+      drawer: new AppDrawer(selectedRoute: _currentRoute, onListTap: onDrawerTap),
       body: new Stack(children: <Widget>[
         _buildBody(),
         _buildProgress(_isLoading),

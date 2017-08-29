@@ -10,12 +10,12 @@
 
 part of widget;
 
-class AppDrawer extends StatefulWidget {
-  @override
-  AppDrawerState createState() => new AppDrawerState();
-}
+class AppDrawer extends StatelessWidget {
+  final String selectedRoute;
+  final ValueChanged<String> onListTap;
 
-class AppDrawerState extends State<AppDrawer> {
+  const AppDrawer({String selectedRoute, this.onListTap})
+    :  this.selectedRoute  = selectedRoute ?? HomePageTransaction.kRouteName;
 
   @override
   Widget build(BuildContext context) {
@@ -43,18 +43,27 @@ class AppDrawerState extends State<AppDrawer> {
           new ListTile(
             leading: const Icon(Icons.home),
             title: new Text(Lang.of(context).drawerHome()),
-            selected: true,
+            selected: selectedRoute == HomePageTransaction.kRouteName,
+            onTap: () => listTapped(context, HomePageTransaction.kRouteName),
+          ),
+
+          new ListTile(
+            leading: const Icon(Icons.monetization_on),
+            title: new Text(Lang.of(context).drawerBills()),
+            selected: selectedRoute == HomePageBill.kRouteName,
+            onTap: () => listTapped(context, HomePageBill.kRouteName),
           ),
 
           const Divider(),
 
           new ListTile(
             title: new Text(Lang.of(context).drawerSettings()),
-            onTap: () => Navigator.popAndPushNamed(context, SettingsPage.kRouteName),
+            onTap: () => listTapped(context, SettingsPage.kRouteName),
           ),
 
           new ListTile(
             title: new Text(Lang.of(context).drawerHelp()),
+            onTap: () => listTapped(context, null),
           ),
 
           new AboutListTile(
@@ -84,5 +93,11 @@ class AppDrawerState extends State<AppDrawer> {
         ],
       ),
     );
+  }
+
+  void listTapped(BuildContext context, String routeName) {
+    Navigator.pop(context); // Close drawer
+    if (selectedRoute == routeName) return;
+    if (onListTap != null) onListTap(routeName);
   }
 }

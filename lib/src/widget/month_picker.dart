@@ -15,9 +15,7 @@ Future<DateTime> showMonthPicker({
 }) async {
   return await showDialog(
     context: context,
-    child: new _MonthPickerDialog(
-      initialDate: initialDate,
-    )
+    child: new _MonthPickerDialog(initialDate: initialDate)
   );
 }
 
@@ -112,9 +110,9 @@ class _MonthPickerDialogState extends State<_MonthPickerDialog> {
                 _buildMonth(10, selected: _selectedDate.month == 10),
                 _buildMonth(11, selected: _selectedDate.month == 11),
                 _buildMonth(12, selected: _selectedDate.month == 12),
-              ]
-            )
-          ]
+              ],
+            ),
+          ],
         ));
       }
     ));
