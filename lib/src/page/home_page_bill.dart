@@ -15,7 +15,7 @@ class HomePageBill extends StatefulWidget {
 
   final Config config;
 
-  const HomePageBill(this.config);
+  const HomePageBill({this.config});
 
   @override
   State<StatefulWidget> createState() => new _HomePageBillState();
@@ -23,27 +23,8 @@ class HomePageBill extends StatefulWidget {
 
 class _HomePageBillState extends State<HomePageBill> {
 
-  Widget _buildAppBar(BuildContext context) {
-    return new AppBar(
-      title: new Text(Lang.of(context).titleBill()),
-    );
-  }
-
-  Widget _buildBody() {
-    return new Container();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: _buildAppBar(context),
-      drawer: new AppDrawer(selectedRoute: HomePageBill.kRouteName),
-      body: _buildBody(),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: () => null,
-        tooltip: Lang.of(context).btnAdd(),
-        child: const Icon(Icons.add),
-      ),
-    );
+    return new Container();
   }
 }
