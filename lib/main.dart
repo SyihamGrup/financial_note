@@ -12,11 +12,9 @@ import 'dart:async';
 
 import 'package:financial_note/config.dart';
 import 'package:financial_note/page.dart';
-import 'package:financial_note/src/i18n/lang_messages_all.dart';
 import 'package:financial_note/strings.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const kTitle = 'Financial Note';
@@ -72,20 +70,27 @@ class _MainAppState extends State<MainApp> {
     setState(() => _config = value);
   }
 
-  Future<LocaleQueryData> _onLocaleChanged(Locale locale) async {
-    final localeString = locale.toString();
-    await initializeMessages(localeString);
-    Intl.defaultLocale = localeString;
-    return Lang.instance;
-  }
-
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: kTitle,
       theme: _config.themeData,
+      localizationsDelegates: <_LocalizationsDelegate>[
+        new _LocalizationsDelegate()
+      ],
+      supportedLocales: const <Locale>[
+        const Locale('en', 'US'),
+        const Locale('id', 'ID'),
+      ],
       onGenerateRoute: _getRoute,
-      onLocaleChanged: _onLocaleChanged,
     );
   }
+}
+
+class _LocalizationsDelegate extends LocalizationsDelegate<Lang> {
+  @override
+  Future<Lang> load(Locale locale) => Lang.load(locale);
+
+  @override
+  bool shouldReload(_LocalizationsDelegate old) => false;
 }
