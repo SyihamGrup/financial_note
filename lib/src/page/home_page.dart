@@ -48,6 +48,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         return new TransactionAppBar(initialDate: _filterDate, onDateChange: _onDateChange);
       case HomePageBill.kRouteName:
         return new AppBar(title: new Text(Lang.of(context).titleBill()));
+      case HomePageBudget.kRouteName:
+        return new AppBar(title: new Text(Lang.of(context).titleBudget()));
     }
     return new AppBar(title: new Text(Lang.of(context).title()));
   }

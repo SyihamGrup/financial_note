@@ -54,6 +54,13 @@ class AppDrawer extends StatelessWidget {
             onTap: () => listTapped(context, HomePageBill.kRouteName),
           ),
 
+          new ListTile(
+            leading: const Icon(Icons.insert_chart),
+            title: new Text(Lang.of(context).drawerBudgets()),
+            selected: selectedRoute == HomePageBudget.kRouteName,
+            onTap: () => listTapped(context, HomePageBudget.kRouteName),
+          ),
+
           const Divider(),
 
           new ListTile(

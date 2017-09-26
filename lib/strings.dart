@@ -34,7 +34,8 @@ class Lang {
   }
 
   String title()          => Intl.message('Financial Note', locale: _localeName, name: 'title');
-  String titleBill()      => Intl.message('Bill',           locale: _localeName, name: 'titleBill');
+  String titleBill()      => Intl.message('Bills',          locale: _localeName, name: 'titleBill');
+  String titleBudget()    => Intl.message('Budgets',        locale: _localeName, name: 'titleBudget');
   String titleSettings()  => Intl.message('Settings',       locale: _localeName, name: 'titleSettings');
   String titleSignIn()    => Intl.message('Sign In',        locale: _localeName, name: 'titleSignIn');
 

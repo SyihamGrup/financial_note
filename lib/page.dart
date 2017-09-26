@@ -28,6 +28,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 part 'src/page/home_page.dart';
 part 'src/page/home_page_bill.dart';
+part 'src/page/home_page_budget.dart';
 part 'src/page/home_page_transaction.dart';
 part 'src/page/page.dart';
 part 'src/page/settings_page.dart';
