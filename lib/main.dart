@@ -52,15 +52,15 @@ class _MainAppState extends State<MainApp> {
       builder: (BuildContext context) {
         switch (settings.name) {
           case SignInPage.kRouteName:
-            return new SignInPage(_config);
+            return new SignInPage();
           case SettingsPage.kRouteName:
             return new SettingsPage(_config, _configUpdater);
           case HomePage.kRouteName:
-            return new HomePage(_config);
+            return new HomePage();
           case TransactionPage.kRouteName:
-            return new TransactionPage(_config);
+            return new TransactionPage();
           default:
-            return new SplashPage(_config);
+            return new SplashPage();
         }
       }
     );

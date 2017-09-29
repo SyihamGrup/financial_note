@@ -12,9 +12,8 @@ part of page;
 
 class SplashPage extends StatefulWidget {
   static const kRouteName = '/splash';
-  final Config config;
 
-  const SplashPage(this.config);
+  const SplashPage();
 
   @override
   State<StatefulWidget> createState() => new _SplashPageState();

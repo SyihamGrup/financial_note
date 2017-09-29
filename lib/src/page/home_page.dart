@@ -12,9 +12,8 @@ part of page;
 
 class HomePage extends StatefulWidget {
   static const kRouteName = '/home';
-  final Config config;
 
-  const HomePage(this.config);
+  const HomePage();
 
   @override
   State<StatefulWidget> createState() => new _HomePageState();

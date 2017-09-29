@@ -50,6 +50,8 @@ class Lang {
 
   String btnOK()           => Intl.message('OK',                  locale: _localeName, name: 'btnOK');
   String btnCancel()       => Intl.message('Cancel',              locale: _localeName, name: 'btnCancel');
+  String btnYes()          => Intl.message('Yes',                 locale: _localeName, name: 'btnYes');
+  String btnNo()           => Intl.message('No',                  locale: _localeName, name: 'btnNo');
   String btnSignInGoogle() => Intl.message('Sign In With Google', locale: _localeName, name: 'btnSignInGoogle');
   String btnAdd()          => Intl.message('Add',                 locale: _localeName, name: 'btnAdd');
   String btnSave()         => Intl.message('Save',                locale: _localeName, name: 'btnSave');
@@ -59,8 +61,11 @@ class Lang {
   String titleOpeningBalance() => Intl.message('Opening Balance', locale: _localeName, name: 'titleOpeningBalance');
   String titleAddTransaction() => Intl.message('Add Transaction', locale: _localeName, name: 'titleAddTransaction');
 
-  String msgEmptyData()   => Intl.message('Tidak ada data', locale: _localeName, name: 'msgEmptyData');
-  String msgLoading()     => Intl.message('Loading…',       locale: _localeName, name: 'msgLoading');
+  String msgSaved()        => Intl.message('Data saved',                                     locale: _localeName, name: 'msgSaved');
+  String msgEmptyData()    => Intl.message('Tidak ada data',                                 locale: _localeName, name: 'msgEmptyData');
+  String msgLoading()      => Intl.message('Loading…',                                       locale: _localeName, name: 'msgLoading');
+  String msgFormHasError() => Intl.message('This form has errors',                           locale: _localeName, name: 'msgFormHasError');
+  String msgConfirmLeave() => Intl.message('Really leave this form?',                        locale: _localeName, name: 'msgConfirmLeave');
+  String msgFixFormError() => Intl.message('Please fix the errors in red before submitting', locale: _localeName, name: 'msgFixFormError');
 
-  String text() => Intl.message('', locale: _localeName, name: 'text');
 }

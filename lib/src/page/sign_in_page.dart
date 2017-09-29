@@ -12,9 +12,8 @@ part of page;
 
 class SignInPage extends StatelessWidget {
   static const kRouteName = '/sign-in';
-  final Config config;
 
-  const SignInPage(this.config);
+  const SignInPage();
 
   Future<Null> signIn(BuildContext context) async {
     final google = await signInWithGoogle();
