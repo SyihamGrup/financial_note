@@ -13,22 +13,22 @@ part of data;
 class Transaction {
   static const kNodeName = 'transactions';
 
-  final String id;
-  final String billId;
-  final String budgetId;
-  final String title;
-  final DateTime date;
-  final double value;
-  final double balance;
-  final String note;
+  String id;
+  String billId;
+  String budgetId;
+  String title;
+  DateTime date;
+  double value;
+  double balance;
+  String note;
 
-  const Transaction({
+  Transaction({
     this.id,
     this.billId,
     this.budgetId,
-    @required this.title,
-    @required this.date,
-    @required this.value,
+    this.title,
+    this.date,
+    this.value : 0.0,
     this.balance: 0.0,
     this.note,
   });
