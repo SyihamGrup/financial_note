@@ -31,7 +31,7 @@ class Book {
   static Future<Book> getDefault(String userId) async {
     final prefs = await SharedPreferences.getInstance();
 
-    Book book = await _getFromPrefs(userId);
+    var book = await _getFromPrefs(userId);
     if (book != null) return book;
 
     book = await _getFirstItem(userId);

@@ -18,3 +18,8 @@ Future<FirebaseUser> showLoginIfUnauthenticated(BuildContext context) async {
   }
   return user;
 }
+
+Future<Book> getCurrentBook(BuildContext context) async {
+  var user = await showLoginIfUnauthenticated(context);
+  return await Book.getDefault(user.uid);
+}

@@ -15,9 +15,12 @@ enum TransType { income, expense }
 class TransactionPage extends StatefulWidget {
   static const kRouteName = '/transaction';
 
+  final String bookId;
+  final DatabaseReference ref;
   final TransType transType;
 
-  const TransactionPage({this.transType: TransType.expense});
+  TransactionPage({@required this.bookId, this.transType: TransType.expense})
+    : ref = FirebaseDatabase.instance.reference().child('transactions/' + bookId);
 
   @override
   State<StatefulWidget> createState() {
@@ -44,6 +47,11 @@ class _TransactionPageState extends State<TransactionPage> {
 //  final _passwordFieldKey = new GlobalKey<FormFieldState<String>>();
 //  final _phoneNumberFormatter = new _UsNumberTextInputFormatter();
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   void showInSnackBar(String value) {
     _scaffoldKey.currentState.showSnackBar(new SnackBar(
       content: new Text(value),
@@ -59,6 +67,13 @@ class _TransactionPageState extends State<TransactionPage> {
       form.save();
       showInSnackBar(Lang.of(context).msgSaved());
     }
+
+//    reference.push().set({
+//      'text': text,
+//      'imageUrl': imageUrl,
+//      'senderName': googleSignIn.currentUser.displayName,
+//      'senderPhotoUrl': googleSignIn.currentUser.photoUrl,
+//    });
   }
 
   // TODO: Menyimpan data disini
@@ -243,90 +258,6 @@ class _TransactionPageState extends State<TransactionPage> {
             onSaved: (String value) => setState(() => _trans.value = double.parse(value)),
             validator: _validateValue,
           ),
-
-//          new TextFormField(
-//            decoration: const InputDecoration(
-//              icon: const Icon(Icons.person),
-//              hintText: 'What do people call you?',
-//              labelText: 'Name *',
-//            ),
-//            onSaved: (String value) { person.name = value; },
-//            validator: _validateName,
-//          ),
-//          new TextFormField(
-//            decoration: const InputDecoration(
-//              icon: const Icon(Icons.phone),
-//              hintText: 'Where can we reach you?',
-//              labelText: 'Phone Number *',
-//              prefixText: '+1'
-//            ),
-//            keyboardType: TextInputType.phone,
-//            onSaved: (String value) { person.phoneNumber = value; },
-//            validator: _validatePhoneNumber,
-//            // TextInputFormatters are applied in sequence.
-//            inputFormatters: <TextInputFormatter> [
-//              WhitelistingTextInputFormatter.digitsOnly,
-//              // Fit the validating format.
-//              _phoneNumberFormatter,
-//            ],
-//          ),
-//          new TextFormField(
-//            decoration: const InputDecoration(
-//              hintText: 'Tell us about yourself',
-//              helperText: 'Keep it short, this is just a demo',
-//              labelText: 'Life story',
-//            ),
-//            maxLines: 3,
-//          ),
-//          new TextFormField(
-//            keyboardType: TextInputType.number,
-//            decoration: const InputDecoration(
-//              labelText: 'Salary',
-//              prefixText: '\$',
-//              suffixText: 'USD',
-//              suffixStyle: const TextStyle(color: Colors.green)
-//            ),
-//            maxLines: 1,
-//          ),
-//          new Row(
-//            crossAxisAlignment: CrossAxisAlignment.start,
-//            children: <Widget>[
-//              new Expanded(
-//                child: new TextFormField(
-//                  key: _passwordFieldKey,
-//                  decoration: const InputDecoration(
-//                    hintText: 'How do you log in?',
-//                    labelText: 'New Password *',
-//                  ),
-//                  obscureText: true,
-//                  onSaved: (String value) { person.password = value; },
-//                ),
-//              ),
-//              const SizedBox(width: 16.0),
-//              new Expanded(
-//                child: new TextFormField(
-//                  decoration: const InputDecoration(
-//                    hintText: 'How do you log in?',
-//                    labelText: 'Re-type Password *',
-//                  ),
-//                  obscureText: true,
-//                  validator: _validatePassword,
-//                ),
-//              ),
-//            ],
-//          ),
-//          new Container(
-//            padding: const EdgeInsets.all(20.0),
-//            alignment: const FractionalOffset(0.5, 0.5),
-//            child: new RaisedButton(
-//              child: const Text('SUBMIT'),
-//              onPressed: _handleSubmitted,
-//            ),
-//          ),
-//          new Container(
-//            padding: const EdgeInsets.only(top: 20.0),
-//            child: new Text('* indicates required field', style: Theme.of(context).textTheme.caption),
-//          ),
         ],
       ),
     );

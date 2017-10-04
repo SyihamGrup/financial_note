@@ -58,7 +58,7 @@ class _MainAppState extends State<MainApp> {
           case HomePage.kRouteName:
             return new HomePage();
           case TransactionPage.kRouteName:
-            return new TransactionPage();
+            return new TransactionPage(bookId: _config.bookId);
           default:
             return new SplashPage();
         }
