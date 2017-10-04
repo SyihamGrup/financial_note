@@ -20,6 +20,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  String _subtitle;
 
   @override
   void initState() {
@@ -31,20 +32,26 @@ class _SplashPageState extends State<SplashPage> {
       } else {
         Navigator.pushReplacementNamed(context, HomePage.kRouteName);
       }
+    }).catchError((e) {
+      setState(() => _subtitle = e.toString());
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    _subtitle = _subtitle == null ? Lang.of(context).msgLoading() : _subtitle;
 
     return new Scaffold(
       body: new Container(
         decoration: new BoxDecoration(color: theme.primaryColor),
-        child: new Center(
-          child: new Text(Lang.of(context).title(),
-            style: theme.primaryTextTheme.display1)
-        ),
+        child: new Center(child: new Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            new Text(Lang.of(context).title(), style: theme.primaryTextTheme.display1),
+            new Text(_subtitle, style: theme.primaryTextTheme.body1),
+          ]
+        )),
       ),
     );
   }
