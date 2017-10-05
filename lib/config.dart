@@ -26,18 +26,15 @@ class Config {
 
   final ThemePick theme;
   final SignInMethod signInMethod;
-  final String bookId;
 
   const Config({
     this.theme: ThemePick.light,
     this.signInMethod,
-    this.bookId,
   });
 
   Config.fromPrefs(SharedPreferences prefs)
       : theme        = getTheme(prefs),
-        signInMethod = getSignInMethod(prefs),
-        bookId       = prefs.getString(kBookId);
+        signInMethod = getSignInMethod(prefs);
 
   ThemeData get themeData {
     switch (theme) {
@@ -66,7 +63,6 @@ class Config {
     return new Config(
       theme: theme ?? this.theme,
       signInMethod: signInMethod ?? this.signInMethod,
-      bookId: bookId ?? this.bookId,
     );
   }
 

@@ -12,6 +12,7 @@
 library page;
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:financial_note/auth.dart';
 import 'package:financial_note/config.dart';
@@ -35,3 +36,19 @@ part 'src/page/settings_page.dart';
 part 'src/page/sign_in_page.dart';
 part 'src/page/splash_page.dart';
 part 'src/page/transaction_page.dart';
+
+/// Push named navigator dengan params.
+Future<dynamic> pushNamed(BuildContext context, String routeName, Map<String, dynamic> params) {
+  if (params != null) routeName += '?' + params.toString();
+  return Navigator.pushNamed(context, routeName);
+}
+
+/// Get route name dan parameter dari route RouteSettings
+/// return array Index 0 -> route name, Index 1 -> params
+List<dynamic> getRoute(RouteSettings settings) {
+  var routes = settings.name.split('?');
+  return [
+    routes[0],
+    routes.length > 1 ? JSON.encode(routes[1]) : null,
+  ];
+}
