@@ -13,10 +13,10 @@ part of page;
 class HomePageTransaction extends StatefulWidget {
   static const kRouteName = '/home/transactions';
 
-  final Config config;
+  final String bookId;
   final DateTime date;
 
-  const HomePageTransaction({this.config, this.date});
+  const HomePageTransaction({@required this.bookId, this.date});
 
   @override
   State<StatefulWidget> createState() => new _HomePageTransactionState();
@@ -37,7 +37,11 @@ class _HomePageTransactionState extends State<HomePageTransaction>
     super.initState();
 
     _initProgress();
-    _initData();
+
+    _dataSubscr = Transaction.ref(widget.bookId).onChildChanged.listen((event) {
+      _updateData(widget.bookId);
+    });
+    _updateData(widget.bookId);
   }
 
   void _initProgress() {
@@ -51,22 +55,6 @@ class _HomePageTransactionState extends State<HomePageTransaction>
       curve: const Interval(0.0, 0.9, curve: Curves.fastOutSlowIn),
       reverseCurve: Curves.fastOutSlowIn
     );
-  }
-
-  Future<Null> _initData() async {
-    var user = await showLoginIfUnauthenticated(context);
-
-    Book.ref(user.uid).keepSynced(true);
-    final book = await Book.getDefault(user.uid);
-
-    Balance.ref(book.id).keepSynced(true);
-    Bill.ref(book.id).keepSynced(true);
-    Transaction.ref(book.id).keepSynced(true);
-
-    _dataSubscr = Transaction.ref(book.id).onChildChanged.listen((event) {
-      _updateData(book.id);
-    });
-    _updateData(book.id);
   }
 
   Future<Null> _updateData(String bookId) async {

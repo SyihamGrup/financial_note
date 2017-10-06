@@ -50,15 +50,27 @@ class _MainAppState extends State<MainApp> {
     return new MaterialPageRoute<Null>(
       settings: settings,
       builder: (BuildContext context) {
-        switch (settings.name) {
+        var routes = getRoute(settings), routeName = routes[0], params = routes[1];
+        var bookId = (params is Map && params.containsKey('bookId')) ? params['bookId'] : null;
+
+        switch (routeName) {
+          // Sign In
           case SignInPage.kRouteName:
             return new SignInPage();
+
+          // Settings
           case SettingsPage.kRouteName:
             return new SettingsPage(_config, _configUpdater);
+
+          // Home Page
           case HomePage.kRouteName:
-            return new HomePage();
+            return new HomePage(bookId: bookId);
+
+          // Transaction Page
           case TransactionPage.kRouteName:
-            return new TransactionPage(bookId: _config.bookId);
+            return new TransactionPage(bookId: bookId);
+
+          // Splash
           default:
             return new SplashPage();
         }

@@ -13,9 +13,9 @@ part of page;
 class HomePageBill extends StatefulWidget {
   static const kRouteName = '/home/bills';
 
-  final Config config;
+  final String bookId;
 
-  const HomePageBill({this.config});
+  const HomePageBill({@required this.bookId});
 
   @override
   State<StatefulWidget> createState() => new _HomePageBillState();

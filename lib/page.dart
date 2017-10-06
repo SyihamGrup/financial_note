@@ -38,17 +38,19 @@ part 'src/page/splash_page.dart';
 part 'src/page/transaction_page.dart';
 
 /// Push named navigator dengan params.
-Future<dynamic> pushNamed(BuildContext context, String routeName, Map<String, dynamic> params) {
-  if (params != null) routeName += '?' + params.toString();
-  return Navigator.pushNamed(context, routeName);
+String routeWithParams(String routeName, Map<String, dynamic> params) {
+  if (params != null) routeName += '?' + JSON.encode(params);
+  return routeName;
 }
 
 /// Get route name dan parameter dari route RouteSettings
 /// return array Index 0 -> route name, Index 1 -> params
 List<dynamic> getRoute(RouteSettings settings) {
+  if (settings.name == null) return [null, null];
+
   var routes = settings.name.split('?');
   return [
     routes[0],
-    routes.length > 1 ? JSON.encode(routes[1]) : null,
+    routes.length > 1 ? JSON.decode(routes[1]) : null,
   ];
 }

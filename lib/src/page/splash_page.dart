@@ -26,15 +26,30 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
 
-    ensureLoggedIn().then((user) {
-      if (user == null) {
+    getBook().then((book) {
+      if (book == null) {
         Navigator.pushReplacementNamed(context, SignInPage.kRouteName);
       } else {
-        Navigator.pushReplacementNamed(context, HomePage.kRouteName);
+        var routeName = routeWithParams(HomePage.kRouteName, <String, String>{'bookId': book.id});
+        Navigator.pushReplacementNamed(context, routeName);
       }
     }).catchError((e) {
       setState(() => _subtitle = e.toString());
     });
+  }
+
+  Future<Book> getBook() async {
+    var user = await ensureLoggedIn();
+    if (user == null) return null;
+
+    var book = await Book.getDefault(user.uid);
+
+    Book.ref(user.uid).keepSynced(true);
+    Balance.ref(book.id).keepSynced(true);
+    Bill.ref(book.id).keepSynced(true);
+    Transaction.ref(book.id).keepSynced(true);
+
+    return book;
   }
 
   @override

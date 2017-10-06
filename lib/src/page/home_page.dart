@@ -12,8 +12,9 @@ part of page;
 
 class HomePage extends StatefulWidget {
   static const kRouteName = '/home';
+  final String bookId;
 
-  const HomePage();
+  const HomePage({@required this.bookId});
 
   @override
   State<StatefulWidget> createState() => new _HomePageState();
@@ -56,9 +57,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   Widget _buildBody(String route) {
     switch (route) {
       case HomePageTransaction.kRouteName:
-        return new HomePageTransaction(date: _filterDate);
+        return new HomePageTransaction(bookId: widget.bookId, date: _filterDate);
       case HomePageBill.kRouteName:
-        return new HomePageBill();
+        return new HomePageBill(bookId: widget.bookId);
     }
     return new Container();
   }
@@ -67,7 +68,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     switch (route) {
       case HomePageTransaction.kRouteName:
         return new FloatingActionButton(
-          onPressed: () => Navigator.pushNamed(context, TransactionPage.kRouteName),
+          onPressed: () {
+            var routeName = routeWithParams(
+                TransactionPage.kRouteName,
+                <String, String>{'bookId': widget.bookId}
+            );
+            Navigator.pushNamed(context, routeName);
+          },
           tooltip: Lang.of(context).btnAdd(),
           child: const Icon(Icons.add),
         );
