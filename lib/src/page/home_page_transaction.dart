@@ -11,7 +11,7 @@
 part of page;
 
 class HomePageTransaction extends StatefulWidget {
-  static const kRouteName = '/home/transactions';
+  static const kRouteName = '/home-transactions';
 
   final String bookId;
   final DateTime date;

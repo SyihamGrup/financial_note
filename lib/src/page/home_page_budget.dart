@@ -11,7 +11,7 @@
 part of page;
 
 class HomePageBudget extends StatelessWidget {
-  static const kRouteName = '/home/budgets';
+  static const kRouteName = '/home-budgets';
 
   final String bookId;
 

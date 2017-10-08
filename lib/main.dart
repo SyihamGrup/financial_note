@@ -71,9 +71,10 @@ class _MainAppState extends State<MainApp> {
             return new TransactionPage(bookId: bookId);
 
           // Splash
-          default:
+          case '/':
             return new SplashPage();
         }
+        return null;
       }
     );
   }

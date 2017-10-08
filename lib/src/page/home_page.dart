@@ -65,21 +65,24 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   Widget _buildFAB(String route) {
-    switch (route) {
-      case HomePageTransaction.kRouteName:
-        return new FloatingActionButton(
-          onPressed: () {
-            var routeName = routeWithParams(
-                TransactionPage.kRouteName,
-                <String, String>{'bookId': widget.bookId}
-            );
-            Navigator.pushNamed(context, routeName);
-          },
-          tooltip: Lang.of(context).btnAdd(),
-          child: const Icon(Icons.add),
-        );
-    }
-    return null;
+    return new FloatingActionButton(
+      child: const Icon(Icons.add),
+      tooltip: Lang.of(context).btnAdd(),
+      onPressed: () {
+        final params = <String, String>{'bookId': widget.bookId};
+        switch (route) {
+          case HomePageTransaction.kRouteName:
+            Navigator.pushNamed(context, routeWithParams(TransactionPage.kRouteName, params));
+            return;
+          case HomePageBill.kRouteName:
+
+            return;
+          case HomePageBudget.kRouteName:
+
+            return;
+        }
+      },
+    );
   }
 
 }

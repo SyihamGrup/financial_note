@@ -11,7 +11,7 @@
 part of page;
 
 class HomePageBill extends StatefulWidget {
-  static const kRouteName = '/home/bills';
+  static const kRouteName = '/home-bills';
 
   final String bookId;
 
