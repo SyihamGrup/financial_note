@@ -21,3 +21,8 @@ int parseInt(dynamic value) {
   if (value is String) return int.parse(value);
   return 0;
 }
+
+dynamic mapValue(Map map, String key, {dynamic def}) {
+  if (!map.containsKey(key)) return def;
+  return map[key];
+}

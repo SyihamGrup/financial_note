@@ -31,11 +31,11 @@ class Budget {
 
   Budget.fromSnapshot(DataSnapshot snapshot)
     : id = snapshot.key,
-      title = snapshot.value['title'],
-      date = DateTime.parse(snapshot.value['date']),
-      value = parseDouble(snapshot.value['value']),
-      usedValue = parseDouble(snapshot.value['usedValue']),
-      isExpire = snapshot.value['isExpire'] ?? false;
+      title = mapValue(snapshot.value, 'title'),
+      date = DateTime.parse(mapValue(snapshot.value, 'date')),
+      value = parseDouble(mapValue(snapshot.value, 'value')),
+      usedValue = parseDouble(mapValue(snapshot.value, 'usedValue')),
+      isExpire = mapValue(snapshot.value, 'isExpire', def: false);
 
   Map<String, dynamic> toJson({showId: false}) {
     var json = <String, dynamic>{

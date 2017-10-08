@@ -24,7 +24,7 @@ class HomePageBudget extends StatelessWidget {
     return new FirebaseAnimatedList(
       query: ref,
       sort: (a, b) => b.key.compareTo(a.key),
-      padding: new EdgeInsets.all(8.0),
+      padding: new EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       defaultChild: new _EmptyBody(),
       itemBuilder: (context, snapshot, animation) {
         return new _ContentBudgetItem(snapshot: snapshot, animation: animation);
