@@ -30,18 +30,18 @@ class Budget {
   });
 
   Budget.fromSnapshot(DataSnapshot snapshot)
-    : id = snapshot.value('id'),
-      title = snapshot.value('title'),
-      date = DateTime.parse(snapshot.value('date')),
-      value = snapshot.value('value'),
-      usedValue = snapshot.value('usedValue') ?? 0.0,
-      isExpire = snapshot.value('isExpire') ?? false;
+    : id = snapshot.key,
+      title = snapshot.value['title'],
+      date = DateTime.parse(snapshot.value['date']),
+      value = parseDouble(snapshot.value['value']),
+      usedValue = parseDouble(snapshot.value['usedValue']),
+      isExpire = snapshot.value['isExpire'] ?? false;
 
   Map<String, dynamic> toJson({showId: false}) {
     var json = <String, dynamic>{
       'id'        : id,
       'title'     : title,
-      'date'      : date,
+      'date'      : date.toIso8601String(),
       'value'     : value,
       'usedValue' : usedValue,
       'isExpire'  : isExpire,
