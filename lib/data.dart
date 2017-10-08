@@ -22,8 +22,9 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'src/data/balance.dart';
-part 'src/data/bill.dart';
 part 'src/data/book.dart';
+part 'src/data/budget.dart';
+part 'src/data/bill.dart';
 part 'src/data/transaction.dart';
 
 const kFirebaseUriScheme = 'https';
@@ -34,6 +35,15 @@ const kCalcOpeningBalancePath = '/calcOpeningBalance';
 
 final _db = FirebaseDatabase.instance.reference();
 
+/// Database reference sesuai dengan bookId.
+DatabaseReference ref(String nodeName, {String subNode}) {
+  if (subNode == null)
+    return _db.reference().child(nodeName);
+  else
+    return _db.reference().child(subNode).child(nodeName);
+}
+
+/// Get firebase uri
 Uri firebaseUri(String path, Map<String, dynamic> params, {
   String scheme: kFirebaseUriScheme,
   String host: kFirebaseHost,

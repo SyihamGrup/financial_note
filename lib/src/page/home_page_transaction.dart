@@ -39,9 +39,9 @@ class _HomePageTransactionState extends State<HomePageTransaction>
     _initProgress();
 
     _dataSubscr = Transaction.ref(widget.bookId).onChildChanged.listen((event) {
-      _updateData(widget.bookId);
+      _refreshData(widget.bookId);
     });
-    _updateData(widget.bookId);
+    _refreshData(widget.bookId);
   }
 
   void _initProgress() {
@@ -57,7 +57,7 @@ class _HomePageTransactionState extends State<HomePageTransaction>
     );
   }
 
-  Future<Null> _updateData(String bookId) async {
+  Future<Null> _refreshData(String bookId) async {
     setState(() => _isLoading = true);
 
     final dateStart = new DateTime(widget.date.year, widget.date.month);
@@ -74,7 +74,7 @@ class _HomePageTransactionState extends State<HomePageTransaction>
   Widget build(BuildContext context) {
     return new Stack(children: <Widget>[
       _buildBody(context),
-      _buildProgress(_isLoading),
+      buildListProgress(_animation, isLoading: _isLoading),
     ]);
   }
 
@@ -93,13 +93,6 @@ class _HomePageTransactionState extends State<HomePageTransaction>
         return new _ContentTransactionItem(context, item);
       },
     );
-  }
-
-  Widget _buildProgress(bool isLoading) {
-    return new AnimatedBuilder(animation: _animation, builder: (context, child) {
-      if (!isLoading) return new Container();
-      return const SizedBox(height: 2.0, child: const LinearProgressIndicator());
-    });
   }
 
   @override

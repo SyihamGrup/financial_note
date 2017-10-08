@@ -33,7 +33,7 @@ class _TransactionPageState extends State<TransactionPage> {
   final _formKey = new GlobalKey<FormState>();
 
   TransType _transType;
-  var _trans = new Transaction();
+  var _trans = new Transaction(title: null, date: null, value: 0.0);
 
   var _autoValidate = false;
 //  var _isCancelled = false;

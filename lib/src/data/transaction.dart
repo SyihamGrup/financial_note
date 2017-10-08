@@ -26,9 +26,9 @@ class Transaction {
     this.id,
     this.billId,
     this.budgetId,
-    this.title,
-    this.date,
-    this.value : 0.0,
+    @required this.title,
+    @required this.date,
+    @required this.value,
     this.balance: 0.0,
     this.note,
   });

@@ -21,6 +21,7 @@ import 'package:financial_note/strings.dart';
 import 'package:financial_note/widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -53,4 +54,11 @@ List<dynamic> getRoute(RouteSettings settings) {
     routes[0],
     routes.length > 1 ? JSON.decode(routes[1]) : null,
   ];
+}
+
+Widget buildListProgress(Listenable animation, {isLoading: false}) {
+  return new AnimatedBuilder(animation: animation, builder: (context, child) {
+    if (!isLoading) return new Container();
+    return const SizedBox(height: 2.0, child: const LinearProgressIndicator());
+  });
 }
