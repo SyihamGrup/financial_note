@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+part 'src/widget/date_form_field.dart';
 part 'src/widget/drawer.dart';
 part 'src/widget/month_picker.dart';
 

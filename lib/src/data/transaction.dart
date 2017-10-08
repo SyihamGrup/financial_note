@@ -43,7 +43,7 @@ class Transaction {
       note      = json != null && json.containsKey('note')     ? json['note']                 : null;
 
   static DatabaseReference ref(String bookId) {
-    return _db.child(kNodeName).child(bookId);
+    return db.child(kNodeName).child(bookId);
   }
 
   static Future<List<Transaction>> list(

@@ -13,14 +13,16 @@ part of page;
 class HomePageBudget extends StatelessWidget {
   static const kRouteName = '/home-budgets';
 
+  final DatabaseReference ref;
   final String bookId;
 
-  const HomePageBudget({@required this.bookId});
+  HomePageBudget({@required this.bookId})
+    : ref = db.reference().child(Budget.kNodeName).child(bookId);
 
   @override
   Widget build(BuildContext context) {
     return new FirebaseAnimatedList(
-      query: ref(Budget.kNodeName, subNode: bookId),
+      query: ref,
       sort: (a, b) => b.key.compareTo(a.key),
       padding: new EdgeInsets.all(8.0),
       defaultChild: new _EmptyBody(),

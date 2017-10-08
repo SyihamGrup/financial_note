@@ -43,6 +43,7 @@ class Lang {
 
   String titleOpeningBalance() => Intl.message('Opening Balance', locale: _localeName, name: 'titleOpeningBalance');
   String titleAddTransaction() => Intl.message('Add Transaction', locale: _localeName, name: 'titleAddTransaction');
+  String titleAddBudget()      => Intl.message('Add Budget',      locale: _localeName, name: 'titleAddBudget');
 
   String drawerHome()     => Intl.message('Home',                 locale: _localeName, name: 'drawerHome');
   String drawerBills()    => Intl.message('Bills',                locale: _localeName, name: 'drawerBills');
@@ -67,14 +68,14 @@ class Lang {
   String lblBill()         => Intl.message('Bill',                locale: _localeName, name: 'lblBill');
   String lblBillPeriod()   => Intl.message('Period',              locale: _localeName, name: 'lblBillPeriod');
   String lblTitle()        => Intl.message('Title',               locale: _localeName, name: 'lblTitle');
+  String lblDate()         => Intl.message('Date',                locale: _localeName, name: 'lblDate');
   String lblValue()        => Intl.message('Value',               locale: _localeName, name: 'lblValue');
 
   String msgSaved()         => Intl.message('Data saved',                                     locale: _localeName, name: 'msgSaved');
   String msgEmptyData()     => Intl.message('Tidak ada data',                                 locale: _localeName, name: 'msgEmptyData');
   String msgLoading()       => Intl.message('Loading…',                                       locale: _localeName, name: 'msgLoading');
   String msgFormHasError()  => Intl.message('This form has errors',                           locale: _localeName, name: 'msgFormHasError');
-  String msgConfirmLeave()  => Intl.message('Really leave this form?',                        locale: _localeName, name: 'msgConfirmLeave');
-  String msgFixFormError()  => Intl.message('Please fix the errors in red before submitting', locale: _localeName, name: 'msgFixFormError');
+  String msgFormError()     => Intl.message('Please fix the errors in red before submitting', locale: _localeName, name: 'msgFixFormError');
   String msgFieldRequired() => Intl.message('This field is required',                         locale: _localeName, name: 'msgFieldRequired');
 
 }

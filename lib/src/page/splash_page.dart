@@ -44,11 +44,12 @@ class _SplashPageState extends State<SplashPage> {
 
     var book = await Book.getDefault(user.uid);
 
-    ref(Book.kNodeName, subNode: user.uid).keepSynced(true);
-    ref(Budget.kNodeName, subNode: book.id).keepSynced(true);
-    ref(Bill.kNodeName, subNode: book.id).keepSynced(true);
-    ref(Balance.kNodeName, subNode: book.id).keepSynced(true);
-    ref(Transaction.kNodeName, subNode: book.id).keepSynced(true);
+    final ref = db.reference();
+    ref.child(Book.kNodeName).child(user.uid).keepSynced(true);
+    ref.child(Budget.kNodeName).child(book.id).keepSynced(true);
+    ref.child(Bill.kNodeName).child(book.id).keepSynced(true);
+    ref.child(Balance.kNodeName).child(book.id).keepSynced(true);
+    ref.child(Transaction.kNodeName).child(book.id).keepSynced(true);
 
     return book;
   }

@@ -163,7 +163,7 @@ class _TransactionAppBarState extends State<TransactionAppBar> {
       ),
       actions: <Widget>[
         new IconButton(
-          icon: const Icon(Icons.search),
+          icon: kIconSearch,
           tooltip: Lang.of(context).menuSearch(),
           onPressed: () => _onActionTap('search'),
         ),

@@ -37,8 +37,8 @@ class Budget {
       usedValue = snapshot.value('usedValue') ?? 0.0,
       isExpire = snapshot.value('isExpire') ?? false;
 
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
+  Map<String, dynamic> toJson({showId: false}) {
+    var json = <String, dynamic>{
       'id'        : id,
       'title'     : title,
       'date'      : date,
@@ -46,6 +46,26 @@ class Budget {
       'usedValue' : usedValue,
       'isExpire'  : isExpire,
     };
+    if (!showId) json.remove('id');
+    return json;
+  }
+
+  Budget copyWith({
+    String id,
+    String title,
+    DateTime date,
+    double value,
+    double usedValue,
+    bool isExpire,
+  }) {
+    return new Budget(
+      id        : id        ?? this.id,
+      title     : title     ?? this.title,
+      date      : date      ?? this.date,
+      value     : value     ?? this.value,
+      usedValue : usedValue ?? this.usedValue,
+      isExpire  : isExpire  ?? this.isExpire,
+    );
   }
 
 }

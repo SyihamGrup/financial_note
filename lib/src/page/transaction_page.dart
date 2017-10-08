@@ -62,7 +62,7 @@ class _TransactionPageState extends State<TransactionPage> {
     final form = _formKey.currentState;
     if (!form.validate()) {
       _autoValidate = true;  // Start validating on every change
-      showInSnackBar(Lang.of(context).msgFixFormError());
+      showInSnackBar(Lang.of(context).msgFormError());
     } else {
       form.save();
       showInSnackBar(Lang.of(context).msgSaved());
@@ -88,7 +88,7 @@ class _TransactionPageState extends State<TransactionPage> {
       context: context,
       child: new AlertDialog(
         title: new Text(lang.msgFormHasError()),
-        content: new Text(lang.msgConfirmLeave()),
+        content: new Text('confirm leaving?'),
         actions: <Widget> [
           new FlatButton(
             child: new Text(lang.btnYes().toUpperCase()),
@@ -113,9 +113,7 @@ class _TransactionPageState extends State<TransactionPage> {
     return new Scaffold(
       key: _scaffoldKey,
       appBar: new AppBar(
-        leading: new IconButton(icon: const Icon(Icons.close), onPressed: () {
-          nav.pop();
-        }),
+        leading: new IconButton(icon: kIconClose, onPressed: () => nav.pop()),
         title: new Text(lang.titleAddTransaction()),
         actions: <Widget>[
           new FlatButton(

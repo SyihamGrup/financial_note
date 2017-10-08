@@ -24,7 +24,7 @@ class Book {
       descr = json != null && json.containsKey('descr') ? json['descr'] : null;
 
   static DatabaseReference ref(String userId) {
-    return _db.child(kNodeName).child(userId);
+    return db.child(kNodeName).child(userId);
   }
 
   /// Get book saat ini dari preference, atau buat default jika belum ada.

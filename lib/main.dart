@@ -62,13 +62,17 @@ class _MainAppState extends State<MainApp> {
           case SettingsPage.kRouteName:
             return new SettingsPage(_config, _configUpdater);
 
-          // Home Page
+          // Home page
           case HomePage.kRouteName:
             return new HomePage(bookId: bookId);
 
-          // Transaction Page
+          // Transaction page
           case TransactionPage.kRouteName:
             return new TransactionPage(bookId: bookId);
+
+          // Budget page
+          case BudgetPage.kRouteName:
+            return new BudgetPage(bookId: bookId);
 
           // Splash
           case '/':

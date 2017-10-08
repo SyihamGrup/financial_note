@@ -33,15 +33,7 @@ const kFirebaseHost = 'us-central1-financialnote-d6d95.cloudfunctions.net';
 const kOpeningBalancePath = '/getOpeningBalance';
 const kCalcOpeningBalancePath = '/calcOpeningBalance';
 
-final _db = FirebaseDatabase.instance.reference();
-
-/// Database reference sesuai dengan bookId.
-DatabaseReference ref(String nodeName, {String subNode}) {
-  if (subNode == null)
-    return _db.reference().child(nodeName);
-  else
-    return _db.reference().child(subNode).child(nodeName);
-}
+final db = FirebaseDatabase.instance.reference();
 
 /// Get firebase uri
 Uri firebaseUri(String path, Map<String, dynamic> params, {

@@ -14,7 +14,7 @@ class Balance {
   static const kNodeName = 'balances';
 
   static DatabaseReference ref(String bookId) {
-    return _db.child(kNodeName).child(bookId);
+    return db.child(kNodeName).child(bookId);
   }
 
   static Future<double> get(String bookId, int year, int month) async {

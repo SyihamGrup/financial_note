@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   Widget _buildFAB(String route) {
     return new FloatingActionButton(
-      child: const Icon(Icons.add),
+      child: kIconAdd,
       tooltip: Lang.of(context).btnAdd(),
       onPressed: () {
         final params = <String, String>{'bookId': widget.bookId};
@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
             return;
           case HomePageBudget.kRouteName:
-
+            Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));
             return;
         }
       },

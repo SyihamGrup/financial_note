@@ -28,6 +28,7 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+part 'src/page/budget_page.dart';
 part 'src/page/home_page.dart';
 part 'src/page/home_page_bill.dart';
 part 'src/page/home_page_budget.dart';
@@ -37,6 +38,14 @@ part 'src/page/settings_page.dart';
 part 'src/page/sign_in_page.dart';
 part 'src/page/splash_page.dart';
 part 'src/page/transaction_page.dart';
+
+const kIconHome = const Icon(Icons.home);
+const kIconBill = const Icon(Icons.monetization_on);
+const kIconBudget = const Icon(Icons.insert_chart);
+
+const kIconClose = const Icon(Icons.close);
+const kIconAdd = const Icon(Icons.add);
+const kIconSearch = const Icon(Icons.search);
 
 /// Push named navigator dengan params.
 String routeWithParams(String routeName, Map<String, dynamic> params) {

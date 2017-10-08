@@ -41,21 +41,21 @@ class AppDrawer extends StatelessWidget {
           ),
 
           new ListTile(
-            leading: const Icon(Icons.home),
+            leading: kIconHome,
             title: new Text(Lang.of(context).drawerHome()),
             selected: selectedRoute == HomePageTransaction.kRouteName,
             onTap: () => listTapped(context, HomePageTransaction.kRouteName),
           ),
 
           new ListTile(
-            leading: const Icon(Icons.monetization_on),
+            leading: kIconBill,
             title: new Text(Lang.of(context).drawerBills()),
             selected: selectedRoute == HomePageBill.kRouteName,
             onTap: () => listTapped(context, HomePageBill.kRouteName),
           ),
 
           new ListTile(
-            leading: const Icon(Icons.insert_chart),
+            leading: kIconBudget,
             title: new Text(Lang.of(context).drawerBudgets()),
             selected: selectedRoute == HomePageBudget.kRouteName,
             onTap: () => listTapped(context, HomePageBudget.kRouteName),
