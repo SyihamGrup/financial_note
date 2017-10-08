@@ -34,7 +34,7 @@ class _SplashPageState extends State<SplashPage> {
         Navigator.pushReplacementNamed(context, routeName);
       }
     }).catchError((e) {
-      setState(() => _subtitle = e.toString());
+      setState(() => _subtitle = e.message);
     });
   }
 
@@ -44,10 +44,11 @@ class _SplashPageState extends State<SplashPage> {
 
     var book = await Book.getDefault(user.uid);
 
-    Book.ref(user.uid).keepSynced(true);
-    Balance.ref(book.id).keepSynced(true);
-    Bill.ref(book.id).keepSynced(true);
-    Transaction.ref(book.id).keepSynced(true);
+    ref(Book.kNodeName, subNode: user.uid).keepSynced(true);
+    ref(Budget.kNodeName, subNode: book.id).keepSynced(true);
+    ref(Bill.kNodeName, subNode: book.id).keepSynced(true);
+    ref(Balance.kNodeName, subNode: book.id).keepSynced(true);
+    ref(Transaction.kNodeName, subNode: book.id).keepSynced(true);
 
     return book;
   }
@@ -64,7 +65,10 @@ class _SplashPageState extends State<SplashPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             new Text(Lang.of(context).title(), style: theme.primaryTextTheme.display1),
-            new Text(_subtitle, style: theme.primaryTextTheme.body1),
+            new Text(_subtitle,
+              textAlign: TextAlign.center,
+              style: theme.primaryTextTheme.body1.copyWith(color: Colors.white70)
+            ),
           ]
         )),
       ),
