@@ -60,6 +60,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         return new HomePageTransaction(bookId: widget.bookId, date: _filterDate);
       case HomePageBill.kRouteName:
         return new HomePageBill(bookId: widget.bookId);
+      case HomePageBudget.kRouteName:
+        return new HomePageBudget(bookId: widget.bookId);
     }
     return new Container();
   }

@@ -11,7 +11,7 @@
 part of data;
 
 class BillGroup {
-  static const kNodeName = 'billGroups';
+  static const kNodeName = 'bills';
 
   final String id;
   final String title;
