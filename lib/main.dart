@@ -11,6 +11,7 @@
 import 'dart:async';
 
 import 'package:financial_note/config.dart';
+import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -72,7 +73,9 @@ class _MainAppState extends State<MainApp> {
 
           // Budget page
           case BudgetPage.kRouteName:
-            return new BudgetPage(bookId: bookId);
+            final data = params is Map && params.containsKey('data')
+                    ? new Budget.fromJson(params['data']) : null;
+            return new BudgetPage(bookId: bookId, data: data);
 
           // Splash
           case '/':

@@ -13,11 +13,13 @@ part of page;
 class BudgetPage extends StatefulWidget {
   static const kRouteName = '/budget';
 
+  final Budget data;
   final String bookId;
   final DatabaseReference ref;
 
-  BudgetPage({@required this.bookId})
-    : ref = db.reference().child(Budget.kNodeName).child(bookId);
+  BudgetPage({@required this.bookId, Budget data})
+    : this.data = data != null ? data : new Budget(title: '', date: new DateTime.now(), value: 0.0),
+      ref = db.reference().child(Budget.kNodeName).child(bookId);
 
   @override
   State<StatefulWidget> createState() {
@@ -29,17 +31,18 @@ class _BudgetPageState extends State<BudgetPage> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = new GlobalKey<FormState>();
 
-  Budget _data;
-  final TextEditingController _titleCtrl;
-  final TextEditingController _valueCtrl;
+  TextEditingController _titleCtrl;
+  TextEditingController _valueCtrl;
 
   var _autoValidate = false;
   var _saveNeeded = false;
 
-  _BudgetPageState({Budget data})
-    : _data = data ?? new Budget(title: null, date: new DateTime.now(), value: 0.0),
-      _titleCtrl = new TextEditingController(text: data?.title),
-      _valueCtrl = new TextEditingController(text: data?.value != null ? data.value.toString() : '');
+  @override
+  void initState() {
+    super.initState();
+    _titleCtrl = new TextEditingController(text: widget.data?.title);
+    _valueCtrl = new TextEditingController(text: widget.data?.value.toString());
+  }
 
   Future<Null> _handleSubmitted() async {
     final form = _formKey.currentState;
@@ -50,7 +53,8 @@ class _BudgetPageState extends State<BudgetPage> {
     }
 
     form.save();
-    widget.ref.push().set(_data.toJson());
+    final newItem = widget.data.id != null ? widget.ref.child(widget.data.id) : widget.ref.push();
+    newItem.set(widget.data.toJson());
 
     _showInSnackBar(Lang.of(context).msgSaved());
     Navigator.pop(context);
@@ -79,16 +83,16 @@ class _BudgetPageState extends State<BudgetPage> {
           new Container(margin: const EdgeInsets.only(top: 0.0), child: new TextFormField(
             controller: _titleCtrl,
             decoration: new InputDecoration(labelText: lang.lblTitle()),
-            onSaved: (String value) => _data.title = value,
+            onSaved: (String value) => widget.data.title = value,
             validator: _validateTitle,
           )),
 
           // -- date --
           new Container(margin: const EdgeInsets.only(top: 8.0), child: new DateFormField(
             label: lang.lblDate(),
-            date: _data.date,
+            date: widget.data.date,
             onChanged: (DateTime value) {
-              _data.date = value;
+              widget.data.date = value;
               _saveNeeded = true;
             }
           )),
@@ -98,7 +102,7 @@ class _BudgetPageState extends State<BudgetPage> {
             controller: _valueCtrl,
             decoration: new InputDecoration(labelText: lang.lblValue()),
             keyboardType: TextInputType.number,
-            onSaved: (String value) => _data.value = double.parse(value),
+            onSaved: (String value) => widget.data.value = double.parse(value),
             validator: _validateTitle,
           )),
         ],

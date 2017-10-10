@@ -24,42 +24,45 @@ class HomePageBudget extends StatelessWidget {
     return new FirebaseAnimatedList(
       query: ref,
       sort: (a, b) => b.key.compareTo(a.key),
-      padding: new EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       defaultChild: new _EmptyBody(),
       itemBuilder: (context, snapshot, animation) {
-        return new _ContentBudgetItem(snapshot: snapshot, animation: animation);
+        final data = new Budget.fromSnapshot(snapshot);
+        return new _ContentBudgetItem(
+          data: data,
+          animation: animation,
+          onTap: () => _onTap(context, data),
+          onLongPress: () => _onLongPress(context, data),
+        );
       }
     );
+  }
+
+  void _onTap(BuildContext context, Budget data) {
+    final params = <String, dynamic>{'bookId': bookId, 'data': data};
+    Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));
+  }
+
+  void _onLongPress(BuildContext context, Budget data) {
   }
 }
 
 class _ContentBudgetItem extends StatelessWidget {
-  final DataSnapshot snapshot;
+  final Budget data;
   final Animation animation;
+  final GestureTapCallback onTap;
+  final GestureLongPressCallback onLongPress;
 
-  _ContentBudgetItem({this.snapshot, this.animation});
+  _ContentBudgetItem({this.data, this.animation, this.onTap, this.onLongPress});
 
   @override
   Widget build(BuildContext context) {
     var currFormatter = new NumberFormat.currency();
-    var data = new Budget.fromSnapshot(snapshot);
 
-    return new SizeTransition(
-      sizeFactor: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
-      axisAlignment: 0.0,
-      child: new Container(
-        margin: const EdgeInsets.symmetric(vertical: 10.0),
-        child: new Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            new Text(data.title, style: Theme.of(context).textTheme.subhead),
-            new Container(
-              margin: const EdgeInsets.only(top: 5.0),
-              child: new Text(currFormatter.format(data.value)),
-            ),
-          ],
-        ),
-      ),
+    return new ListTile(
+      title: new Text(data.title, style: Theme.of(context).textTheme.subhead),
+      subtitle: new Text(currFormatter.format(data.value)),
+      onTap: onTap,
+      onLongPress: onLongPress,
     );
   }
 }

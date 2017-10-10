@@ -29,6 +29,14 @@ class Budget {
     this.isExpire: false,
   });
 
+  Budget.fromJson(Map<String, dynamic> json)
+    : id        = json != null && json.containsKey('id')        ? json['id']                   : null,
+      title     = json != null && json.containsKey('title')     ? json['title']                : null,
+      date      = json != null && json.containsKey('date')      ? DateTime.parse(json['date']) : null,
+      value     = json != null && json.containsKey('value')     ? json['value']                : null,
+      usedValue = json != null && json.containsKey('usedValue') ? json['usedValue']            : null,
+      isExpire  = json != null && json.containsKey('isExpire')  ? json['isExpire']             : null;
+
   Budget.fromSnapshot(DataSnapshot snapshot)
     : id = snapshot.key,
       title = mapValue(snapshot.value, 'title'),
@@ -37,7 +45,7 @@ class Budget {
       usedValue = parseDouble(mapValue(snapshot.value, 'usedValue')),
       isExpire = mapValue(snapshot.value, 'isExpire', def: false);
 
-  Map<String, dynamic> toJson({showId: false}) {
+  Map<String, dynamic> toJson({showId: true}) {
     var json = <String, dynamic>{
       'id'        : id,
       'title'     : title,
