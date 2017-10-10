@@ -39,7 +39,7 @@ class _BudgetPageState extends State<BudgetPage> {
   _BudgetPageState({Budget data})
     : _data = data ?? new Budget(title: null, date: new DateTime.now(), value: 0.0),
       _titleCtrl = new TextEditingController(text: data?.title),
-      _valueCtrl = new TextEditingController(text: data?.value ?? '0');
+      _valueCtrl = new TextEditingController(text: data?.value != null ? data.value.toString() : '');
 
   Future<Null> _handleSubmitted() async {
     final form = _formKey.currentState;
@@ -53,6 +53,7 @@ class _BudgetPageState extends State<BudgetPage> {
     widget.ref.push().set(_data.toJson());
 
     _showInSnackBar(Lang.of(context).msgSaved());
+    Navigator.pop(context);
   }
 
   void _showInSnackBar(String value) {
