@@ -23,6 +23,34 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   var _currentRoute = HomePageTransaction.kRouteName;
   var _filterDate = new DateTime.now();
+  var _isActionMode = true;
+  var _selectedCount = 0;
+
+  HomePageTransaction _homeTrans;
+  HomePageBill _homeBill;
+  HomePageBudget _homeBudget;
+
+  AppBarTransaction _appBarTrans;
+  AppBarBill _appBarBill;
+  AppBarBudget _appBarBudget;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _appBarTrans = new AppBarTransaction(initialDate: _filterDate, onDateChange: _onDateChange);
+    _appBarBill = new AppBarBill();
+    _appBarBudget = new AppBarBudget();
+
+    _homeTrans = new HomePageTransaction(bookId: widget.bookId, date: _filterDate);
+    _homeBill = new HomePageBill(bookId: widget.bookId);
+    _homeBudget = new HomePageBudget(
+      bookId: widget.bookId,
+      onItemSelect: (Budget item) {
+
+      }
+    );
+  }
 
   void _onDrawerChange(String route) {
     setState(() => _currentRoute = route);
@@ -35,44 +63,68 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: _buildAppBar(_currentRoute),
+      appBar: _buildAppBar(),
       drawer: new AppDrawer(selectedRoute: _currentRoute, onListTap: _onDrawerChange),
-      body: _buildBody(_currentRoute),
-      floatingActionButton: _buildFAB(_currentRoute),
+      body: _buildBody(),
+      floatingActionButton: _buildFAB(),
     );
   }
 
-  Widget _buildAppBar(String route) {
-    switch (route) {
+  Widget _buildAppBar() {
+    if (_isActionMode) return _buildActionMode();
+
+    switch (_currentRoute) {
       case HomePageTransaction.kRouteName:
-        return new TransactionAppBar(initialDate: _filterDate, onDateChange: _onDateChange);
+        return _appBarTrans;
       case HomePageBill.kRouteName:
-        return new AppBar(title: new Text(Lang.of(context).titleBill()));
+        return _appBarBill;
       case HomePageBudget.kRouteName:
-        return new AppBar(title: new Text(Lang.of(context).titleBudget()));
+        return _appBarBudget;
     }
     return new AppBar(title: new Text(Lang.of(context).title()));
   }
 
-  Widget _buildBody(String route) {
-    switch (route) {
+  Widget _buildActionMode() {
+    return new AppBar(
+      leading: new IconButton(icon: kIconBack, onPressed: () {
+        setState(() => _isActionMode = false);
+      }),
+      backgroundColor: Colors.black54,
+      title: new Text(_selectedCount.toString()),
+      actions: <Widget>[
+        new IconButton(
+          icon: kIconEdit,
+          tooltip: Lang.of(context).menuEdit(),
+          onPressed: () => null,
+        ),
+        new IconButton(
+          icon: kIconDelete,
+          tooltip: Lang.of(context).menuDelete(),
+          onPressed: () => null,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBody() {
+    switch (_currentRoute) {
       case HomePageTransaction.kRouteName:
-        return new HomePageTransaction(bookId: widget.bookId, date: _filterDate);
+        return _homeTrans;
       case HomePageBill.kRouteName:
-        return new HomePageBill(bookId: widget.bookId);
+        return _homeBill;
       case HomePageBudget.kRouteName:
-        return new HomePageBudget(bookId: widget.bookId);
+        return _homeBudget;
     }
     return new Container();
   }
 
-  Widget _buildFAB(String route) {
+  Widget _buildFAB() {
     return new FloatingActionButton(
       child: kIconAdd,
       tooltip: Lang.of(context).btnAdd(),
       onPressed: () {
         final params = <String, String>{'bookId': widget.bookId};
-        switch (route) {
+        switch (_currentRoute) {
           case HomePageTransaction.kRouteName:
             Navigator.pushNamed(context, routeWithParams(TransactionPage.kRouteName, params));
             return;

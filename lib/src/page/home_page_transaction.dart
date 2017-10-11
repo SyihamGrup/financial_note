@@ -117,13 +117,13 @@ class _ContentTransactionItem extends StatelessWidget {
   }
 }
 
-class TransactionAppBar extends StatefulWidget implements PreferredSizeWidget {
+class AppBarTransaction extends StatefulWidget implements PreferredSizeWidget {
   final DateTime initialDate;
   final ValueChanged<DateTime> onDateChange;
   final ValueChanged<String> onActionTap;
   final Size preferredSize;
 
-  TransactionAppBar({DateTime initialDate, this.onDateChange, this.onActionTap})
+  AppBarTransaction({DateTime initialDate, this.onDateChange, this.onActionTap})
       : this.initialDate = initialDate ?? new DateTime.now(),
         preferredSize = new Size.fromHeight(kToolbarHeight);
 
@@ -131,7 +131,7 @@ class TransactionAppBar extends StatefulWidget implements PreferredSizeWidget {
   State<StatefulWidget> createState() => new _TransactionAppBarState(initialDate);
 }
 
-class _TransactionAppBarState extends State<TransactionAppBar> {
+class _TransactionAppBarState extends State<AppBarTransaction> {
   DateTime _filterDate;
 
   _TransactionAppBarState(this._filterDate);

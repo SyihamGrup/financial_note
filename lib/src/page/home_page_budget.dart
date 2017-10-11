@@ -15,8 +15,9 @@ class HomePageBudget extends StatelessWidget {
 
   final DatabaseReference ref;
   final String bookId;
+  final ValueChanged<Budget> onItemSelect;
 
-  HomePageBudget({@required this.bookId})
+  HomePageBudget({@required this.bookId, this.onItemSelect})
     : ref = db.reference().child(Budget.kNodeName).child(bookId);
 
   @override
@@ -64,5 +65,16 @@ class _ContentBudgetItem extends StatelessWidget {
       onTap: onTap,
       onLongPress: onLongPress,
     );
+  }
+}
+
+class AppBarBudget extends StatelessWidget implements PreferredSizeWidget {
+  final Size preferredSize;
+
+  AppBarBudget() : preferredSize = new Size.fromHeight(kToolbarHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    return new AppBar(title: new Text(Lang.of(context).titleBudget()));
   }
 }

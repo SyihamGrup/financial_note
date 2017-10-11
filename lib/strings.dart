@@ -53,6 +53,8 @@ class Lang {
   String drawerAbout()    => Intl.message('About Financial Note', locale: _localeName, name: 'drawerAbout');
 
   String menuSearch()  => Intl.message('Search', locale: _localeName, name: 'menuSearch');
+  String menuEdit()    => Intl.message('Edit',   locale: _localeName, name: 'menuEdit');
+  String menuDelete()  => Intl.message('Delete', locale: _localeName, name: 'menuDelete');
 
   String btnOK()           => Intl.message('OK',                  locale: _localeName, name: 'btnOK');
   String btnCancel()       => Intl.message('Cancel',              locale: _localeName, name: 'btnCancel');

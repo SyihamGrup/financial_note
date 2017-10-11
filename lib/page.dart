@@ -43,9 +43,12 @@ const kIconHome = const Icon(Icons.home);
 const kIconBill = const Icon(Icons.monetization_on);
 const kIconBudget = const Icon(Icons.insert_chart);
 
+const kIconBack = const Icon(Icons.arrow_back);
 const kIconClose = const Icon(Icons.close);
 const kIconAdd = const Icon(Icons.add);
 const kIconSearch = const Icon(Icons.search);
+const kIconEdit = const Icon(Icons.edit);
+const kIconDelete = const Icon(Icons.delete);
 
 /// Push named navigator dengan params.
 String routeWithParams(String routeName, Map<String, dynamic> params) {

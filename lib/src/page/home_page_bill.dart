@@ -28,3 +28,14 @@ class _HomePageBillState extends State<HomePageBill> {
     return new Container();
   }
 }
+
+class AppBarBill extends StatelessWidget implements PreferredSizeWidget {
+  final Size preferredSize;
+
+  AppBarBill() : preferredSize = new Size.fromHeight(kToolbarHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    return new AppBar(title: new Text(Lang.of(context).titleBill()));
+  }
+}
