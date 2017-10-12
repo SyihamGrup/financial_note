@@ -73,11 +73,12 @@ class Lang {
   String lblDate()         => Intl.message('Date',                locale: _localeName, name: 'lblDate');
   String lblValue()        => Intl.message('Value',               locale: _localeName, name: 'lblValue');
 
-  String msgSaved()         => Intl.message('Data saved',                                     locale: _localeName, name: 'msgSaved');
-  String msgEmptyData()     => Intl.message('Tidak ada data',                                 locale: _localeName, name: 'msgEmptyData');
-  String msgLoading()       => Intl.message('Loading…',                                       locale: _localeName, name: 'msgLoading');
-  String msgFormHasError()  => Intl.message('This form has errors',                           locale: _localeName, name: 'msgFormHasError');
-  String msgFormError()     => Intl.message('Please fix the errors in red before submitting', locale: _localeName, name: 'msgFixFormError');
-  String msgFieldRequired() => Intl.message('This field is required',                         locale: _localeName, name: 'msgFieldRequired');
+  String msgSignInRequired() => Intl.message('Sign in required',                               locale: _localeName, name: 'msgSignInRequired');
+  String msgSaved()          => Intl.message('Data saved',                                     locale: _localeName, name: 'msgSaved');
+  String msgEmptyData()      => Intl.message('Tidak ada data',                                 locale: _localeName, name: 'msgEmptyData');
+  String msgLoading()        => Intl.message('Loading…',                                       locale: _localeName, name: 'msgLoading');
+  String msgFormHasError()   => Intl.message('This form has errors',                           locale: _localeName, name: 'msgFormHasError');
+  String msgFormError()      => Intl.message('Please fix the errors in red before submitting', locale: _localeName, name: 'msgFixFormError');
+  String msgFieldRequired()  => Intl.message('This field is required',                         locale: _localeName, name: 'msgFieldRequired');
 
 }

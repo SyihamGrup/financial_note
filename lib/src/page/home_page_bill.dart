@@ -15,7 +15,7 @@ class HomePageBill extends StatefulWidget {
 
   final String bookId;
 
-  const HomePageBill({@required this.bookId});
+  const HomePageBill({@required this.bookId}) : assert(bookId != null);
 
   @override
   State<StatefulWidget> createState() => new _HomePageBillState();

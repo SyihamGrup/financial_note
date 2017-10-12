@@ -18,7 +18,8 @@ class HomePageBudget extends StatelessWidget {
   final ValueChanged<Budget> onItemSelect;
 
   HomePageBudget({@required this.bookId, this.onItemSelect})
-    : ref = db.reference().child(Budget.kNodeName).child(bookId);
+    : assert(bookId != null),
+      ref = db.reference().child(Budget.kNodeName).child(bookId);
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +58,7 @@ class _ContentBudgetItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var currFormatter = new NumberFormat.currency();
+    final currFormatter = new NumberFormat.currency();
 
     return new ListTile(
       title: new Text(data.title, style: Theme.of(context).textTheme.subhead),

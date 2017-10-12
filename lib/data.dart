@@ -22,9 +22,9 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'src/data/balance.dart';
+part 'src/data/bill.dart';
 part 'src/data/book.dart';
 part 'src/data/budget.dart';
-part 'src/data/bill.dart';
 part 'src/data/transaction.dart';
 
 const kFirebaseUriScheme = 'https';

@@ -36,18 +36,18 @@ class Book {
 
     book = await _getFirstItem(userId);
     if (book != null) {
-      prefs.setString(Config.kBookId, book.id);
+      prefs.setString(kPrefBookId, book.id);
       return book;
     }
 
     book = await _createDefault(userId);
-    prefs.setString(Config.kBookId, book.id);
+    prefs.setString(kPrefBookId, book.id);
     return book;
   }
 
   static Future<Book> _getFromPrefs(String userId) async {
     final prefs = await SharedPreferences.getInstance();
-    final bookId = prefs.getString(Config.kBookId);
+    final bookId = prefs.getString(kPrefBookId);
     if (bookId == null) return null;
 
     final snap = await ref(userId).child(bookId).once();

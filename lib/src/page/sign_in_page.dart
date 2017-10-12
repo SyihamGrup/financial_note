@@ -21,7 +21,7 @@ class SignInPage extends StatelessWidget {
     analytics.logLogin();
 
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString(Config.kSignInMethod, Config.kSignInGoogle);
+    prefs.setString(kPrefSignInMethod, kPrefSignInGoogle);
     final c = await google.authentication;
     await auth.signInWithGoogle(idToken: c.idToken, accessToken: c.accessToken);
 
@@ -45,8 +45,8 @@ class SignInPage extends StatelessWidget {
                 style: theme.primaryTextTheme.display1),
             new Container(
               padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
-              child: new Text(Lang.of(context).titleSignIn(),
-                         style: theme.primaryTextTheme.subhead),
+              child: new Text(Lang.of(context).msgSignInRequired(),
+                         style: theme.primaryTextTheme.body1),
             ),
             new Row(children: <Widget>[
               new Expanded(child: new RaisedButton(

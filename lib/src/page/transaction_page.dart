@@ -20,7 +20,8 @@ class TransactionPage extends StatefulWidget {
   final TransType transType;
 
   TransactionPage({@required this.bookId, this.transType: TransType.expense})
-    : ref = FirebaseDatabase.instance.reference().child('transactions/' + bookId);
+    : assert(bookId != null),
+      ref = FirebaseDatabase.instance.reference().child('transactions/' + bookId);
 
   @override
   State<StatefulWidget> createState() {

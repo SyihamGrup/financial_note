@@ -25,33 +25,34 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-
-    getBook().then((book) {
-      if (book == null) {
-        Navigator.pushReplacementNamed(context, SignInPage.kRouteName);
-      } else {
-        var routeName = routeWithParams(HomePage.kRouteName, <String, String>{'bookId': book.id});
-        Navigator.pushReplacementNamed(context, routeName);
-      }
-    }).catchError((e) {
-      setState(() => _subtitle = e.message);
-    });
+    _init();
   }
 
-  Future<Book> getBook() async {
-    var user = await ensureLoggedIn();
-    if (user == null) return null;
+  Future<Null> _init() async {
+    try {
+      await ensureLoggedIn();
+      if (auth.currentUser == null) {
+        Navigator.pushReplacementNamed(context, SignInPage.kRouteName);
+        return;
+      }
 
-    var book = await Book.getDefault(user.uid);
+      final book = await Book.getDefault(auth.currentUser.uid);
+      assert(book != null);
+      globals.currentBook = book;
 
-    final ref = db.reference();
-    ref.child(Book.kNodeName).child(user.uid).keepSynced(true);
-    ref.child(Budget.kNodeName).child(book.id).keepSynced(true);
-    ref.child(Bill.kNodeName).child(book.id).keepSynced(true);
-    ref.child(Balance.kNodeName).child(book.id).keepSynced(true);
-    ref.child(Transaction.kNodeName).child(book.id).keepSynced(true);
+      final ref = db.reference();
+      ref.child(Book.kNodeName).child(auth.currentUser.uid).keepSynced(true);
+      ref.child(Budget.kNodeName).child(book.id).keepSynced(true);
+      ref.child(Bill.kNodeName).child(book.id).keepSynced(true);
+      ref.child(Balance.kNodeName).child(book.id).keepSynced(true);
+      ref.child(Transaction.kNodeName).child(book.id).keepSynced(true);
 
-    return book;
+      final routeName = routeWithParams(HomePage.kRouteName, <String, String>{'bookId': book.id});
+      Navigator.pushReplacementNamed(context, routeName);
+
+    } catch (e) {
+      setState(() => _subtitle = e.message);
+    }
   }
 
   @override

@@ -16,7 +16,8 @@ class HomePageTransaction extends StatefulWidget {
   final String bookId;
   final DateTime date;
 
-  const HomePageTransaction({@required this.bookId, this.date});
+  const HomePageTransaction({@required this.bookId, this.date})
+    : assert(bookId != null);
 
   @override
   State<StatefulWidget> createState() => new _HomePageTransactionState();

@@ -46,7 +46,7 @@ class Budget {
       isExpire = mapValue(snapshot.value, 'isExpire', def: false);
 
   Map<String, dynamic> toJson({showId: true}) {
-    var json = <String, dynamic>{
+    final json = <String, dynamic>{
       'id'        : id,
       'title'     : title,
       'date'      : date.toIso8601String(),

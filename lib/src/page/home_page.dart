@@ -14,7 +14,7 @@ class HomePage extends StatefulWidget {
   static const kRouteName = '/home';
   final String bookId;
 
-  const HomePage({@required this.bookId});
+  const HomePage({@required this.bookId}) : assert(bookId != null);
 
   @override
   State<StatefulWidget> createState() => new _HomePageState();
@@ -123,16 +123,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       child: kIconAdd,
       tooltip: Lang.of(context).btnAdd(),
       onPressed: () {
-        final params = <String, String>{'bookId': widget.bookId};
         switch (_currentRoute) {
           case HomePageTransaction.kRouteName:
-            Navigator.pushNamed(context, routeWithParams(TransactionPage.kRouteName, params));
+            Navigator.pushNamed(context, TransactionPage.kRouteName);
             return;
           case HomePageBill.kRouteName:
 
             return;
           case HomePageBudget.kRouteName:
-            Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));
+            Navigator.pushNamed(context, BudgetPage.kRouteName);
             return;
         }
       },

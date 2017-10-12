@@ -28,8 +28,8 @@ Future<FirebaseUser> ensureLoggedIn() async {
   if (isSignedIn()) return auth.currentUser;
 
   final prefs = await SharedPreferences.getInstance();
-  final method = Config.getSignInMethod(prefs);
-  
+  final method = prefs.getString(kPrefSignInMethod) == kPrefSignInGoogle ? SignInMethod.google : null;
+
   switch (method) {
     case SignInMethod.google:
       final user = await signInWithGoogle();
@@ -45,14 +45,13 @@ Future<FirebaseUser> ensureLoggedIn() async {
 }
 
 Future<GoogleSignInAccount> signInWithGoogle() async {
-  var user = googleSignIn.currentUser;
-  if (user == null) {
-    user = await googleSignIn.signInSilently();
+  if (googleSignIn.currentUser == null) {
+    await googleSignIn.signInSilently();
   }
-  if (user == null) {
-    user = await googleSignIn.signIn();
+  if (googleSignIn.currentUser == null) {
+    await googleSignIn.signIn();
   }
-  return user;
+  return googleSignIn.currentUser;
 }
 
 Future<Null> signOut() async {

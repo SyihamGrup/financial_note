@@ -18,7 +18,8 @@ class BudgetPage extends StatefulWidget {
   final DatabaseReference ref;
 
   BudgetPage({@required this.bookId, Budget data})
-    : this.data = data != null ? data : new Budget(title: '', date: new DateTime.now(), value: 0.0),
+    : assert(bookId != null),
+      this.data = data != null ? data : new Budget(title: '', date: new DateTime.now(), value: 0.0),
       ref = db.reference().child(Budget.kNodeName).child(bookId);
 
   @override

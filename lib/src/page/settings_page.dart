@@ -18,15 +18,6 @@ class SettingsPage extends StatelessWidget {
 
   const SettingsPage(this.config, this.updateConfig);
 
-  void _handleThemeChanged(ThemePick theme) {
-    final newConfig = config.copyWith(theme: theme);
-    SharedPreferences.getInstance().then((prefs) {
-      final themeName = theme == ThemePick.light ? Config.kThemeLight : Config.kThemeDark;
-      prefs.setString(Config.kTheme, themeName);
-    });
-    updateConfig(newConfig);
-  }
-
   Widget buildSettingsPane(BuildContext context) {
     return new ListView(
       padding: const EdgeInsets.symmetric(vertical: 20.0),
@@ -34,18 +25,27 @@ class SettingsPage extends StatelessWidget {
         new ListTile(
           title: new Text(Lang.of(context).prefUseDark()),
           onTap: () {
-            _handleThemeChanged(config.theme == ThemePick.dark
-                ? ThemePick.light : ThemePick.dark);
+            _handleThemeChanged(config.theme == ThemeName.dark
+                ? ThemeName.light : ThemeName.dark);
           },
           trailing: new Switch(
-            value: config.theme == ThemePick.dark,
+            value: config.theme == ThemeName.dark,
             onChanged: (bool value) {
-              _handleThemeChanged(value ? ThemePick.dark : ThemePick.light);
+              _handleThemeChanged(value ? ThemeName.dark : ThemeName.light);
             },
           ),
         )
       ],
     );
+  }
+
+  void _handleThemeChanged(ThemeName theme) {
+    final newConfig = config.copyWith(theme: theme);
+    SharedPreferences.getInstance().then((prefs) {
+      final themeStr = theme == ThemeName.light ? kPrefThemeLight : kPrefThemeDark;
+      prefs.setString(kPrefTheme, themeStr);
+    });
+    updateConfig(newConfig);
   }
 
   @override

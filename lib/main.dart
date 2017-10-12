@@ -11,8 +11,7 @@
 import 'dart:async';
 
 import 'package:financial_note/config.dart';
-import 'package:financial_note/data.dart';
-import 'package:financial_note/page.dart';
+import 'package:financial_note/routes.dart';
 import 'package:financial_note/strings.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +21,9 @@ const kTitle = 'Financial Note';
 
 Future<Null> main() async {
   final prefs = await SharedPreferences.getInstance();
-  final config = new Config.fromPrefs(prefs);
+  final theme = prefs.getString(kPrefTheme) == kPrefThemeDark ? ThemeName.dark : ThemeName.light;
+  final config = new Config(theme: theme);
+
   runApp(new MainApp(config));
 }
 
@@ -43,6 +44,7 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
+
     FirebaseDatabase.instance.setPersistenceEnabled(true);
     FirebaseDatabase.instance.setPersistenceCacheSizeBytes(10 * 1000 * 1000);
   }
@@ -51,50 +53,20 @@ class _MainAppState extends State<MainApp> {
     return new MaterialPageRoute<Null>(
       settings: settings,
       builder: (BuildContext context) {
-        var routes = getRoute(settings), routeName = routes[0], params = routes[1];
-        var bookId = (params is Map && params.containsKey('bookId')) ? params['bookId'] : null;
-
-        switch (routeName) {
-          // Sign In
-          case SignInPage.kRouteName:
-            return new SignInPage();
-
-          // Settings
-          case SettingsPage.kRouteName:
-            return new SettingsPage(_config, _configUpdater);
-
-          // Home page
-          case HomePage.kRouteName:
-            return new HomePage(bookId: bookId);
-
-          // Transaction page
-          case TransactionPage.kRouteName:
-            return new TransactionPage(bookId: bookId);
-
-          // Budget page
-          case BudgetPage.kRouteName:
-            final data = params is Map && params.containsKey('data')
-                    ? new Budget.fromJson(params['data']) : null;
-            return new BudgetPage(bookId: bookId, data: data);
-
-          // Splash
-          case '/':
-            return new SplashPage();
-        }
-        return null;
-      }
+        return getRoute(context, settings, _config, _configUpdater);
+      },
     );
   }
 
-  void _configUpdater(Config value) {
-    setState(() => _config = value);
+  void _configUpdater(Config config) {
+    setState(() => _config = config);
   }
 
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: kTitle,
-      theme: _config.themeData,
+      theme: getTheme(_config.theme),
       localizationsDelegates: <_LocalizationsDelegate>[
         new _LocalizationsDelegate()
       ],
