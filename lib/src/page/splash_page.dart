@@ -20,8 +20,6 @@ import 'package:flutter/widgets.dart';
 class SplashPage extends StatefulWidget {
   static const kRouteName = '/splash';
 
-  const SplashPage();
-
   @override
   State<StatefulWidget> createState() => new _SplashPageState();
 }
