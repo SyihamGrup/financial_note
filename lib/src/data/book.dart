@@ -10,6 +10,7 @@
 
 import 'dart:async';
 
+import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class Book {
@@ -22,8 +23,8 @@ class Book {
   const Book({this.id, this.title, this.descr});
 
   Book.fromJson(this.id, Map<String, dynamic> json)
-    : title = json != null && json.containsKey('title') ? json['title'] : null,
-      descr = json != null && json.containsKey('descr') ? json['descr'] : null;
+    : title = parseString(mapValue(json, 'title')),
+      descr = parseString(mapValue(json, 'descr'));
 
   static Future<Book> first(String userId) async {
     final ref = FirebaseDatabase.instance.reference().child(kNodeName).child(userId);

@@ -39,13 +39,13 @@ class Transaction {
   });
 
   Transaction.fromJson(this.id, Map<String, dynamic> json)
-    : billId    = json != null && json.containsKey('billId')   ? json['billId']               : null,
-      budgetId  = json != null && json.containsKey('budgetId') ? json['budgetId']             : null,
-      title     = json != null && json.containsKey('title')    ? json['title']                : null,
-      date      = json != null && json.containsKey('date')     ? DateTime.parse(json['date']) : null,
-      value     = json != null && json.containsKey('value')    ? parseDouble(json['value'])   : 0.0,
-      balance   = json != null && json.containsKey('balance')  ? parseDouble(json['balance']) : 0.0,
-      note      = json != null && json.containsKey('note')     ? json['note']                 : null;
+    : billId    = parseString(mapValue(json, 'billId')),
+      budgetId  = parseString(mapValue(json, 'budgetId')),
+      title     = parseString(mapValue(json, 'title')),
+      date      = parseDate(mapValue(json, 'date')),
+      value     = parseDouble(mapValue(json, 'value')),
+      balance   = parseDouble(mapValue(json, 'balance')),
+      note      = parseString(mapValue(json, 'note'));
 
   static DatabaseReference ref(String bookId) {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
@@ -75,7 +75,7 @@ class Transaction {
     var balance = openingBalance;
     Map<String, Map<String, dynamic>> items = snap.value;
     items.forEach((key, item) {
-      balance += item.containsKey('value') ? parseDouble(item['value']) : 0.0;
+      balance += parseDouble(mapValue(item, 'value'));
       item['balance'] = balance;
       ret.add(new Transaction.fromJson(key, item));
     });
@@ -88,7 +88,7 @@ class Transaction {
       'billId'   : billId,
       'budgetId' : budgetId,
       'title'    : title,
-      'date'     : new DateFormat('yyyy-MM-dd').format(date),
+      'date'     : date?.toIso8601String(),
       'value'    : value,
       'balance'  : balance,
       'note'     : note,

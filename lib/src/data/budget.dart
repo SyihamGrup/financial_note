@@ -32,20 +32,20 @@ class Budget {
   });
 
   Budget.fromJson(Map<String, dynamic> json)
-    : id        = json != null && json.containsKey('id')        ? json['id']                   : null,
-      title     = json != null && json.containsKey('title')     ? json['title']                : null,
-      date      = json != null && json.containsKey('date')      ? DateTime.parse(json['date']) : null,
-      value     = json != null && json.containsKey('value')     ? json['value']                : null,
-      usedValue = json != null && json.containsKey('usedValue') ? json['usedValue']            : null,
-      isExpire  = json != null && json.containsKey('isExpire')  ? json['isExpire']             : null;
+    : id        = parseString(mapValue(json, 'id')),
+      title     = parseString(mapValue(json, 'title')),
+      date      = parseDate(mapValue(json, 'date')),
+      value     = parseDouble(mapValue(json, 'value')),
+      usedValue = parseDouble(mapValue(json, 'usedValue')),
+      isExpire  = parseBool(mapValue(json, 'isExpire'));
 
   Budget.fromSnapshot(DataSnapshot snapshot)
-    : id = snapshot.key,
-      title = mapValue(snapshot.value, 'title'),
-      date = DateTime.parse(mapValue(snapshot.value, 'date')),
-      value = parseDouble(mapValue(snapshot.value, 'value')),
+    : id        = snapshot.key,
+      title     = parseString(mapValue(snapshot.value, 'title')),
+      date      = parseDate(mapValue(snapshot.value, 'date')),
+      value     = parseDouble(mapValue(snapshot.value, 'value')),
       usedValue = parseDouble(mapValue(snapshot.value, 'usedValue')),
-      isExpire = mapValue(snapshot.value, 'isExpire', def: false);
+      isExpire  = parseBool(mapValue(snapshot.value, 'isExpire', def: false));
 
   static DatabaseReference ref(String bookId) {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
@@ -55,7 +55,7 @@ class Budget {
     final json = <String, dynamic>{
       'id'        : id,
       'title'     : title,
-      'date'      : date.toIso8601String(),
+      'date'      : date?.toIso8601String(),
       'value'     : value,
       'usedValue' : usedValue,
       'isExpire'  : isExpire,

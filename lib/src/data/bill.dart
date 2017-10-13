@@ -35,25 +35,24 @@ class BillGroup {
   });
 
   BillGroup.fromJson(this.id, Map<String, dynamic> json)
-    : title      = json != null && json.containsKey('title')      ? json['title']                    : null,
-      dueDate    = json != null && json.containsKey('dueDate')    ? DateTime.parse(json['dueDate'])  : null,
-      totalValue = json != null && json.containsKey('totalValue') ? parseDouble(json['totalValue'])  : 0.0,
-      lastPaid   = json != null && json.containsKey('lastPaid')   ? DateTime.parse(json['lastPaid']) : null,
-      paidValue  = json != null && json.containsKey('paidValue')  ? parseDouble(json['paidValue'])   : 0.0,
-      note       = json != null && json.containsKey('note')       ? json['note']                     : null;
+    : title      = parseString(mapValue(json, 'title')),
+      dueDate    = parseDate(mapValue(json, 'dueDate')),
+      totalValue = parseDouble(mapValue(json, 'totalValue')),
+      lastPaid   = parseDate(mapValue(json, 'lastPaid')),
+      paidValue  = parseDouble(mapValue(json, 'paidValue')),
+      note       = parseString(mapValue(json, 'note'));
 
   static DatabaseReference ref(String bookId) {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
   }
 
   Map<String, dynamic> toJson() {
-    final formatter = new DateFormat('yyyy-MM-dd');
     return <String, dynamic>{
       'id'         : id,
       'title'      : title,
-      'dueDate'    : formatter.format(dueDate),
+      'dueDate'    : dueDate?.toIso8601String(),
       'totalValue' : totalValue,
-      'lastPaid'   : formatter.format(lastPaid),
+      'lastPaid'   : lastPaid?.toIso8601String(),
       'paidValue'  : paidValue,
       'note'       : note,
     };
@@ -105,13 +104,13 @@ class Bill {
   });
 
   Bill.fromJson(this.id, Map<String, dynamic> json)
-    : groupId   = json != null && json.containsKey('groupId')   ? json['groupId']                  : null,
-      title     = json != null && json.containsKey('title')     ? json['title']                    : null,
-      date      = json != null && json.containsKey('date')      ? DateTime.parse(json['date'])     : null,
-      value     = json != null && json.containsKey('value')     ? parseDouble(json['value'])       : 0.0,
-      paidDate  = json != null && json.containsKey('paidDate')  ? DateTime.parse(json['paidDate']) : null,
-      paidValue = json != null && json.containsKey('paidValue') ? parseDouble(json['paidValue'])   : 0.0,
-      note      = json != null && json.containsKey('note')      ? json['note']                     : null;
+    : groupId   = parseString(mapValue(json, 'groupId')),
+      title     = parseString(mapValue(json, 'title')),
+      date      = parseDate(mapValue(json, 'date')),
+      value     = parseDouble(mapValue(json, 'value')),
+      paidDate  = parseDate(mapValue(json, 'paidDate')),
+      paidValue = parseDouble(mapValue(json, 'paidValue')),
+      note      = parseString(mapValue(json, 'note'));
 
   static DatabaseReference ref(String bookId) {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
@@ -123,9 +122,9 @@ class Bill {
       'id'        : id,
       'groupId'   : groupId,
       'title'     : title,
-      'date'      : formatter.format(date),
+      'date'      : date?.toIso8601String(),
       'value'     : value,
-      'paidDate'  : formatter.format(paidDate),
+      'paidDate'  : paidDate?.toIso8601String(),
       'paidValue' : paidValue,
       'note'      : note,
     };

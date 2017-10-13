@@ -39,7 +39,7 @@ class Balance {
     final response = await httpClient.get(firebaseUri(kCalcOpeningBalancePath, params));
 
     Map<String, dynamic> json = JSON.decode(response.body);
-    return json.containsKey('balance') ? parseDouble(json['balance']) : 0.0;
+    return parseDouble(mapValue(json, 'balance'));
   }
 
 }
