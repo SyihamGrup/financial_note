@@ -22,6 +22,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 const kTitle = 'Financial Note';
 
 Future<Null> main() async {
+  FirebaseDatabase.instance.setPersistenceEnabled(true);
+  FirebaseDatabase.instance.setPersistenceCacheSizeBytes(10 * 1000 * 1000);
+
   final prefs = await SharedPreferences.getInstance();
   final theme = prefs.getString(kPrefTheme) == kPrefThemeDark ? ThemeName.dark : ThemeName.light;
   final config = new Config(theme: theme);
@@ -43,16 +46,8 @@ class _MainAppState extends State<MainApp> {
 
   _MainAppState(this._config);
 
-  @override
-  void initState() {
-    super.initState();
-
-    FirebaseDatabase.instance.setPersistenceEnabled(true);
-    FirebaseDatabase.instance.setPersistenceCacheSizeBytes(10 * 1000 * 1000);
-  }
-
   Widget _getRoute(BuildContext context, RouteSettings settings,
-                  Config config, ValueChanged<Config> configUpdater) {
+                   Config config, ValueChanged<Config> configUpdater) {
     final routes = getRouteParams(settings), routeName = routes[0], params = routes[1];
 
     switch (routeName) {
