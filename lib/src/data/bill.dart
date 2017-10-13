@@ -11,7 +11,6 @@
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
-import 'package:intl/intl.dart';
 
 class BillGroup {
   static const kNodeName = 'bills';
@@ -117,7 +116,6 @@ class Bill {
   }
 
   Map<String, dynamic> toJson() {
-    final formatter = new DateFormat('yyyy-MM-dd');
     return <String, dynamic>{
       'id'        : id,
       'groupId'   : groupId,
