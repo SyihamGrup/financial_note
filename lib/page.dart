@@ -11,32 +11,18 @@
 
 library page;
 
-import 'dart:async';
+import 'dart:convert';
 
-import 'package:financial_note/auth.dart';
-import 'package:financial_note/config.dart';
-import 'package:financial_note/data.dart';
-import 'package:financial_note/globals.dart' as globals;
-import 'package:financial_note/routes.dart';
-import 'package:financial_note/strings.dart';
-import 'package:financial_note/widget.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-part 'src/page/budget_page.dart';
-part 'src/page/home_page.dart';
-part 'src/page/home_page_bill.dart';
-part 'src/page/home_page_budget.dart';
-part 'src/page/home_page_transaction.dart';
-part 'src/page/settings_page.dart';
-part 'src/page/sign_in_page.dart';
-part 'src/page/splash_page.dart';
-part 'src/page/transaction_page.dart';
+export 'src/page/budget_page.dart';
+export 'src/page/home_page.dart';
+export 'src/page/settings_page.dart';
+export 'src/page/sign_in_page.dart';
+export 'src/page/splash_page.dart';
+export 'src/page/transaction_page.dart';
 
 const kIconHome = const Icon(Icons.home);
 const kIconBill = const Icon(Icons.monetization_on);
@@ -54,4 +40,22 @@ Widget buildListProgress(Listenable animation, {isLoading: false}) {
     if (!isLoading) return new Container();
     return const SizedBox(height: 2.0, child: const LinearProgressIndicator());
   });
+}
+
+/// Push named navigator dengan params.
+String routeWithParams(String routeName, Map<String, dynamic> params) {
+  if (params != null) routeName += '?' + JSON.encode(params);
+  return routeName;
+}
+
+/// Get route name dan parameter dari route RouteSettings
+/// return array Index 0 -> route name, Index 1 -> params
+List<dynamic> getRouteParams(RouteSettings settings) {
+  if (settings.name == null) return [null, null];
+
+  final routes = settings.name.split('?');
+  return [
+    routes[0],
+    routes.length > 1 ? JSON.decode(routes[1]) : null,
+  ];
 }

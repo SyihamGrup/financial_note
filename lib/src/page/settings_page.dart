@@ -8,7 +8,12 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
-part of page;
+import 'package:financial_note/config.dart';
+import 'package:financial_note/strings.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatelessWidget {
   static const kRouteName = '/settings';

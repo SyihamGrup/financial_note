@@ -8,7 +8,11 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
-part of widget;
+import 'package:financial_note/page.dart';
+import 'package:financial_note/strings.dart';
+import 'package:financial_note/widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class AppDrawer extends StatelessWidget {
   final String selectedRoute;

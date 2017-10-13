@@ -8,13 +8,19 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
-part of data;
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:financial_note/data.dart';
+import 'package:financial_note/utils.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/services.dart';
 
 class Balance {
   static const kNodeName = 'balances';
 
   static DatabaseReference ref(String bookId) {
-    return db.child(kNodeName).child(bookId);
+    return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
   }
 
   static Future<double> get(String bookId, int year, int month) async {

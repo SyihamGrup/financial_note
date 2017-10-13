@@ -8,6 +8,8 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
+library utils;
+
 /// Parse double from dynamic variable.
 double parseDouble(dynamic value) {
   if (value is num) return value.toDouble();

@@ -19,7 +19,7 @@ class HomePageBudget extends StatelessWidget {
 
   HomePageBudget({@required this.bookId, this.onItemSelect})
     : assert(bookId != null),
-      ref = db.reference().child(Budget.kNodeName).child(bookId);
+      ref = Budget.ref(bookId);
 
   @override
   Widget build(BuildContext context) {

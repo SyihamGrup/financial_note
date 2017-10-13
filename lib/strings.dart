@@ -74,6 +74,7 @@ class Lang {
   String lblValue()        => Intl.message('Value',               locale: _localeName, name: 'lblValue');
 
   String msgSignInRequired() => Intl.message('Sign in required',                               locale: _localeName, name: 'msgSignInRequired');
+  String msgWait()           => Intl.message('Please Wait',                                    locale: _localeName, name: 'msgWait');
   String msgSaved()          => Intl.message('Data saved',                                     locale: _localeName, name: 'msgSaved');
   String msgEmptyData()      => Intl.message('Tidak ada data',                                 locale: _localeName, name: 'msgEmptyData');
   String msgLoading()        => Intl.message('Loading…',                                       locale: _localeName, name: 'msgLoading');

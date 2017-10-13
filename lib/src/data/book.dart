@@ -8,7 +8,9 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
-part of data;
+import 'dart:async';
+
+import 'package:firebase_database/firebase_database.dart';
 
 class Book {
   static const kNodeName = 'books';
@@ -23,41 +25,9 @@ class Book {
     : title = json != null && json.containsKey('title') ? json['title'] : null,
       descr = json != null && json.containsKey('descr') ? json['descr'] : null;
 
-  static DatabaseReference ref(String userId) {
-    return db.child(kNodeName).child(userId);
-  }
-
-  /// Get book saat ini dari preference, atau buat default jika belum ada.
-  static Future<Book> getDefault(String userId) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    var book = await _getFromPrefs(userId);
-    if (book != null) return book;
-
-    book = await _getFirstItem(userId);
-    if (book != null) {
-      prefs.setString(kPrefBookId, book.id);
-      return book;
-    }
-
-    book = await _createDefault(userId);
-    prefs.setString(kPrefBookId, book.id);
-    return book;
-  }
-
-  static Future<Book> _getFromPrefs(String userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final bookId = prefs.getString(kPrefBookId);
-    if (bookId == null) return null;
-
-    final snap = await ref(userId).child(bookId).once();
-    if (snap.value == null) return null;
-
-    return new Book.fromJson(snap.key, snap.value);
-  }
-
-  static Future<Book> _getFirstItem(String userId) async {
-    final snap = await ref(userId).limitToFirst(1).once();
+  static Future<Book> first(String userId) async {
+    final ref = FirebaseDatabase.instance.reference().child(kNodeName).child(userId);
+    final snap = await ref.limitToFirst(1).once();
     if (snap.value == null) return null;
 
     Book book;
@@ -68,12 +38,17 @@ class Book {
     return book;
   }
 
-  static Future<Book> _createDefault(String userId) async {
+  static DatabaseReference ref(String userId) {
+    return FirebaseDatabase.instance.reference().child(kNodeName).child(userId);
+  }
+
+  static Future<Book> createDefault(String userId) async {
     final data = <String, dynamic>{
       'title' : 'Default',
       'descr' : 'Default book'
     };
-    final newItem = ref(userId).push();
+    final ref = FirebaseDatabase.instance.reference().child(kNodeName).child(userId);
+    final newItem = ref.push();
     await newItem.set(data);
 
     return new Book.fromJson(newItem.key, data);

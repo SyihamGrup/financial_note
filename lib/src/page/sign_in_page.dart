@@ -8,29 +8,56 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
-part of page;
+import 'dart:async';
 
-class SignInPage extends StatelessWidget {
+import 'package:financial_note/auth.dart';
+import 'package:financial_note/config.dart';
+import 'package:financial_note/data.dart';
+import 'package:financial_note/page.dart';
+import 'package:financial_note/strings.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class SignInPage extends StatefulWidget {
   static const kRouteName = '/sign-in';
 
-  const SignInPage();
+  @override
+  State<StatefulWidget> createState() => new _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
+  var _signingIn = false;
 
   Future<Null> signIn(BuildContext context) async {
+    setState(() => _signingIn = true);
+
     final google = await signInWithGoogle();
-    if (google == null) return;
-    analytics.logLogin();
+    if (google != null) {
+      analytics.logLogin();
 
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString(kPrefSignInMethod, kPrefSignInGoogle);
-    final c = await google.authentication;
-    await auth.signInWithGoogle(idToken: c.idToken, accessToken: c.accessToken);
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString(kPrefSignInMethod, kPrefSignInGoogle);
 
-    Navigator.pushReplacementNamed(context, HomePage.kRouteName);
+      final c = await google.authentication;
+      final user = await auth.signInWithGoogle(
+        idToken: c.idToken,
+        accessToken: c.accessToken
+      );
+      if (user != null) {
+        await initializeData();
+        Navigator.pushReplacementNamed(context, HomePage.kRouteName);
+      }
+    }
+
+    setState(() => _signingIn = false);
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final lang = Lang.of(context);
+    final msg = _signingIn ? lang.msgWait() : lang.msgSignInRequired();
 
     return new Scaffold(
       body: new Container(
@@ -41,18 +68,15 @@ class SignInPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
 
           children: <Widget>[
-            new Text(Lang.of(context).title(),
-                style: theme.primaryTextTheme.display1),
+            new Text(lang.title(), style: theme.primaryTextTheme.display1),
             new Container(
               padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
-              child: new Text(Lang.of(context).msgSignInRequired(),
-                         style: theme.primaryTextTheme.body1),
+              child: new Text(msg, style: theme.primaryTextTheme.body1),
             ),
             new Row(children: <Widget>[
               new Expanded(child: new RaisedButton(
-                onPressed: () => signIn(context),
-                child: new Text(Lang.of(context).btnSignInGoogle(),
-                           style: theme.accentTextTheme.button),
+                onPressed: !_signingIn ? () => signIn(context) : null,
+                child: new Text(lang.btnSignInGoogle(), style: theme.accentTextTheme.button),
                 color: theme.accentColor,
               )),
             ]),

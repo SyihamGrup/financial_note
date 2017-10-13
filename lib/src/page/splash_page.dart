@@ -8,7 +8,14 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
-part of page;
+import 'dart:async';
+
+import 'package:financial_note/auth.dart';
+import 'package:financial_note/data.dart';
+import 'package:financial_note/page.dart';
+import 'package:financial_note/strings.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class SplashPage extends StatefulWidget {
   static const kRouteName = '/splash';
@@ -36,19 +43,9 @@ class _SplashPageState extends State<SplashPage> {
         return;
       }
 
-      final book = await Book.getDefault(auth.currentUser.uid);
-      assert(book != null);
-      globals.currentBook = book;
+      await initializeData();
 
-      final ref = db.reference();
-      ref.child(Book.kNodeName).child(auth.currentUser.uid).keepSynced(true);
-      ref.child(Budget.kNodeName).child(book.id).keepSynced(true);
-      ref.child(Bill.kNodeName).child(book.id).keepSynced(true);
-      ref.child(Balance.kNodeName).child(book.id).keepSynced(true);
-      ref.child(Transaction.kNodeName).child(book.id).keepSynced(true);
-
-      final routeName = routeWithParams(HomePage.kRouteName, <String, String>{'bookId': book.id});
-      Navigator.pushReplacementNamed(context, routeName);
+      Navigator.pushReplacementNamed(context, HomePage.kRouteName);
 
     } catch (e) {
       setState(() => _subtitle = e.message);

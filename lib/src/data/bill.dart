@@ -8,7 +8,10 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
-part of data;
+import 'package:financial_note/utils.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
 class BillGroup {
   static const kNodeName = 'bills';
@@ -40,7 +43,7 @@ class BillGroup {
       note       = json != null && json.containsKey('note')       ? json['note']                     : null;
 
   static DatabaseReference ref(String bookId) {
-    return db.child(kNodeName).child(bookId);
+    return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
   }
 
   Map<String, dynamic> toJson() {
@@ -111,7 +114,7 @@ class Bill {
       note      = json != null && json.containsKey('note')      ? json['note']                     : null;
 
   static DatabaseReference ref(String bookId) {
-    return db.child(kNodeName).child(bookId);
+    return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
   }
 
   Map<String, dynamic> toJson() {

@@ -17,8 +17,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final auth = FirebaseAuth.instance;
-final googleSignIn = new GoogleSignIn();
 final analytics = new FirebaseAnalytics();
+
+final _googleSignIn = new GoogleSignIn();
 
 bool isSignedIn() {
   return auth.currentUser != null;
@@ -45,13 +46,13 @@ Future<FirebaseUser> ensureLoggedIn() async {
 }
 
 Future<GoogleSignInAccount> signInWithGoogle() async {
-  if (googleSignIn.currentUser == null) {
-    await googleSignIn.signInSilently();
+  if (_googleSignIn.currentUser == null) {
+    await _googleSignIn.signInSilently();
   }
-  if (googleSignIn.currentUser == null) {
-    await googleSignIn.signIn();
+  if (_googleSignIn.currentUser == null) {
+    await _googleSignIn.signIn();
   }
-  return googleSignIn.currentUser;
+  return _googleSignIn.currentUser;
 }
 
 Future<Null> signOut() async {

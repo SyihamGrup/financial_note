@@ -8,7 +8,24 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
-part of page;
+library page;
+
+import 'dart:async';
+
+import 'package:financial_note/data.dart';
+import 'package:financial_note/page.dart';
+import 'package:financial_note/strings.dart';
+import 'package:financial_note/widget.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+
+part 'home_page_bill.dart';
+part 'home_page_budget.dart';
+part 'home_page_transaction.dart';
 
 class HomePage extends StatefulWidget {
   static const kRouteName = '/home';

@@ -11,7 +11,8 @@
 import 'dart:async';
 
 import 'package:financial_note/config.dart';
-import 'package:financial_note/routes.dart';
+import 'package:financial_note/data.dart';
+import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -49,13 +50,38 @@ class _MainAppState extends State<MainApp> {
     FirebaseDatabase.instance.setPersistenceCacheSizeBytes(10 * 1000 * 1000);
   }
 
-  Route<Null> _getRoute(RouteSettings settings) {
-    return new MaterialPageRoute<Null>(
-      settings: settings,
-      builder: (BuildContext context) {
-        return getRoute(context, settings, _config, _configUpdater);
-      },
-    );
+  Widget _getRoute(BuildContext context, RouteSettings settings,
+                  Config config, ValueChanged<Config> configUpdater) {
+    final routes = getRouteParams(settings), routeName = routes[0], params = routes[1];
+
+    switch (routeName) {
+      // Sign In
+      case SignInPage.kRouteName:
+        return new SignInPage();
+
+      // Settings
+      case SettingsPage.kRouteName:
+        return new SettingsPage(config, configUpdater);
+
+      // Home page
+      case HomePage.kRouteName:
+        return new HomePage(bookId: currentBook?.id);
+
+      // Transaction page
+      case TransactionPage.kRouteName:
+        return new TransactionPage(bookId: currentBook?.id);
+
+      // Budget page
+      case BudgetPage.kRouteName:
+        final data = params is Map && params.containsKey('data')
+                ? new Budget.fromJson(params['data']) : null;
+        return new BudgetPage(bookId: currentBook?.id, data: data);
+
+      // Splash
+      case '/':
+        return new SplashPage();
+    }
+    return null;
   }
 
   void _configUpdater(Config config) {
@@ -74,7 +100,14 @@ class _MainAppState extends State<MainApp> {
         const Locale('en', 'US'),
         const Locale('id', 'ID'),
       ],
-      onGenerateRoute: _getRoute,
+      onGenerateRoute: (settings) {
+        return new MaterialPageRoute<Null>(
+          settings: settings,
+          builder: (BuildContext context) {
+            return _getRoute(context, settings, _config, _configUpdater);
+          },
+        );
+      },
     );
   }
 }

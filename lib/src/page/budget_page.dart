@@ -8,7 +8,16 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
-part of page;
+import 'dart:async';
+
+import 'package:financial_note/data.dart';
+import 'package:financial_note/page.dart';
+import 'package:financial_note/strings.dart';
+import 'package:financial_note/widget.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class BudgetPage extends StatefulWidget {
   static const kRouteName = '/budget';
@@ -20,7 +29,7 @@ class BudgetPage extends StatefulWidget {
   BudgetPage({@required this.bookId, Budget data})
     : assert(bookId != null),
       this.data = data != null ? data : new Budget(title: '', date: new DateTime.now(), value: 0.0),
-      ref = db.reference().child(Budget.kNodeName).child(bookId);
+      ref = Budget.ref(bookId);
 
   @override
   State<StatefulWidget> createState() {

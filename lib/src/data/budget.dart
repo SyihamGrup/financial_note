@@ -8,7 +8,9 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
-part of data;
+import 'package:financial_note/utils.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 
 class Budget {
   static const kNodeName = 'budgets';
@@ -44,6 +46,10 @@ class Budget {
       value = parseDouble(mapValue(snapshot.value, 'value')),
       usedValue = parseDouble(mapValue(snapshot.value, 'usedValue')),
       isExpire = mapValue(snapshot.value, 'isExpire', def: false);
+
+  static DatabaseReference ref(String bookId) {
+    return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
+  }
 
   Map<String, dynamic> toJson({showId: true}) {
     final json = <String, dynamic>{
