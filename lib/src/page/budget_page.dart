@@ -22,19 +22,19 @@ import 'package:flutter/widgets.dart';
 class BudgetPage extends StatefulWidget {
   static const kRouteName = '/budget';
 
-  final Budget _data;
+  final Budget _item;
   final String bookId;
   final DatabaseReference ref;
 
-  BudgetPage({Key key, @required this.bookId, Budget data})
+  BudgetPage({Key key, @required this.bookId, Budget item})
     : assert(bookId != null),
-      this._data = data ?? new Budget(title: '', date: new DateTime.now(), value: 0.0),
+      this._item = item ?? new Budget(title: '', date: new DateTime.now(), value: 0.0),
       ref = Budget.ref(bookId),
       super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return new _BudgetPageState(_data);
+    return new _BudgetPageState(_item);
   }
 }
 
@@ -42,12 +42,12 @@ class _BudgetPageState extends State<BudgetPage> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = new GlobalKey<FormState>();
 
-  Budget _data;
+  Budget _item;
 
   var _autoValidate = false;
   var _saveNeeded = false;
 
-  _BudgetPageState(this._data);
+  _BudgetPageState(this._item);
 
   Future<Null> _handleSubmitted() async {
     final form = _formKey.currentState;
@@ -58,8 +58,8 @@ class _BudgetPageState extends State<BudgetPage> {
     }
 
     form.save();
-    final newItem = _data.id != null ? widget.ref.child(_data.id) : widget.ref.push();
-    newItem.set(_data.toJson());
+    final newItem = _item.id != null ? widget.ref.child(_item.id) : widget.ref.push();
+    newItem.set(_item.toJson());
 
     _showInSnackBar(Lang.of(context).msgSaved());
     Navigator.pop(context);
@@ -86,9 +86,9 @@ class _BudgetPageState extends State<BudgetPage> {
         children: <Widget>[
           // -- title --
           new Container(margin: const EdgeInsets.only(top: 0.0), child: new TextFormField(
-            initialValue: _data.title ?? '',
+            initialValue: _item.title ?? '',
             decoration: new InputDecoration(labelText: lang.lblTitle()),
-            onSaved: (String value) => _data.title = value,
+            onSaved: (String value) => _item.title = value,
             validator: _validateTitle,
             autofocus: true,
           )),
@@ -96,27 +96,27 @@ class _BudgetPageState extends State<BudgetPage> {
           // -- date --
           new Container(margin: const EdgeInsets.only(top: 8.0), child: new DateFormField(
             label: lang.lblDate(),
-            date: _data.date,
+            date: _item.date,
             onChanged: (DateTime value) {
-              _data.date = value;
+              _item.date = value;
               _saveNeeded = true;
             }
           )),
 
           // -- value --
           new Container(margin: const EdgeInsets.only(top: 8.0), child: new TextFormField(
-            initialValue: _data.value?.toString() ?? '',
+            initialValue: _item.value?.toString() ?? '',
             decoration: new InputDecoration(labelText: lang.lblValue()),
             keyboardType: TextInputType.number,
-            onSaved: (String value) => _data.value = double.parse(value),
+            onSaved: (String value) => _item.value = double.parse(value),
             validator: _validateTitle,
           )),
 
           // -- descr --
           new Container(margin: const EdgeInsets.only(top: 8.0), child: new TextFormField(
-            initialValue: _data.descr ?? '',
+            initialValue: _item.descr ?? '',
             decoration: new InputDecoration(labelText: lang.lblDescr()),
-            onSaved: (String value) => _data.descr = value,
+            onSaved: (String value) => _item.descr = value,
           )),
         ],
       ),

@@ -71,15 +71,15 @@ class _MainAppState extends State<MainApp> {
 
       // Bill page
       case BillPage.kRouteName:
-        final data = params is Map && params.containsKey('data')
+        final item = params is Map && params.containsKey('data')
                    ? new Bill.fromJson(params['data']) : null;
-        return new BillPage(bookId: currentBook?.id, data: data);
+        return new BillPage(bookId: currentBook?.id, item: item);
 
       // Budget page
       case BudgetPage.kRouteName:
-        final data = params is Map && params.containsKey('data')
+        final item = params is Map && params.containsKey('data')
                    ? new Budget.fromJson(params['data']) : null;
-        return new BudgetPage(bookId: currentBook?.id, data: data);
+        return new BudgetPage(bookId: currentBook?.id, item: item);
 
       // Splash
       case '/':
