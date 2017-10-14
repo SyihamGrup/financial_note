@@ -42,18 +42,8 @@ class _BudgetPageState extends State<BudgetPage> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = new GlobalKey<FormState>();
 
-  TextEditingController _titleCtrl;
-  TextEditingController _valueCtrl;
-
   var _autoValidate = false;
   var _saveNeeded = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _titleCtrl = new TextEditingController(text: widget.data?.title);
-    _valueCtrl = new TextEditingController(text: widget.data?.value.toString());
-  }
 
   Future<Null> _handleSubmitted() async {
     final form = _formKey.currentState;
@@ -92,7 +82,7 @@ class _BudgetPageState extends State<BudgetPage> {
         children: <Widget>[
           // -- title --
           new Container(margin: const EdgeInsets.only(top: 0.0), child: new TextFormField(
-            controller: _titleCtrl,
+            initialValue: widget.data?.title ?? '',
             decoration: new InputDecoration(labelText: lang.lblTitle()),
             onSaved: (String value) => widget.data.title = value,
             validator: _validateTitle,
@@ -110,7 +100,7 @@ class _BudgetPageState extends State<BudgetPage> {
 
           // -- value --
           new Container(margin: const EdgeInsets.only(top: 8.0), child: new TextFormField(
-            controller: _valueCtrl,
+            initialValue: widget.data?.value?.toString() ?? '',
             decoration: new InputDecoration(labelText: lang.lblValue()),
             keyboardType: TextInputType.number,
             onSaved: (String value) => widget.data.value = double.parse(value),
