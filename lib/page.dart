@@ -24,6 +24,8 @@ export 'src/page/sign_in_page.dart';
 export 'src/page/splash_page.dart';
 export 'src/page/transaction_page.dart';
 
+const kBgActionMode = Colors.black54;
+
 const kIconHome = const Icon(Icons.home);
 const kIconBill = const Icon(Icons.monetization_on);
 const kIconBudget = const Icon(Icons.insert_chart);
@@ -34,6 +36,10 @@ const kIconAdd = const Icon(Icons.add);
 const kIconSearch = const Icon(Icons.search);
 const kIconEdit = const Icon(Icons.edit);
 const kIconDelete = const Icon(Icons.delete);
+
+typedef void OnItemTap<T>(T item);
+typedef void OnItemSelect<T>(List<T> items, int index);
+typedef void OnActionTap<T>(String key, T);
 
 Widget buildListProgress(Listenable animation, {isLoading: false}) {
   return new AnimatedBuilder(animation: animation, builder: (context, child) {

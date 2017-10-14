@@ -38,10 +38,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+  final _keyAppBarBudget = new GlobalKey<_AppBarBudgetState>();
+  final _keyBodyBudget = new GlobalKey<_HomePageBudgetState>();
+
   var _currentRoute = HomePageTransaction.kRouteName;
   var _filterDate = new DateTime.now();
-  var _isActionMode = true;
-  var _selectedCount = 0;
 
   HomePageTransaction _homeTrans;
   HomePageBill _homeBill;
@@ -55,16 +56,51 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
 
+    _initTrans();
+    _initBill();
+    _initBudget();
+  }
+
+  void _initTrans() {
     _appBarTrans = new AppBarTransaction(initialDate: _filterDate, onDateChange: _onDateChange);
-    _appBarBill = new AppBarBill();
-    _appBarBudget = new AppBarBudget();
 
     _homeTrans = new HomePageTransaction(bookId: widget.bookId, date: _filterDate);
-    _homeBill = new HomePageBill(bookId: widget.bookId);
-    _homeBudget = new HomePageBudget(
-      bookId: widget.bookId,
-      onItemSelect: (Budget item) {
+  }
 
+  void _initBill() {
+    _appBarBill = new AppBarBill();
+
+    _homeBill = new HomePageBill(bookId: widget.bookId);
+  }
+
+  void _initBudget() {
+    _appBarBudget = new AppBarBudget(
+      key: _keyAppBarBudget,
+      onActionModeTap: (key, items) {
+        switch (key) {
+          case 'edit':
+            final params = <String, dynamic>{'data': items[0]};
+            Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));
+            break;
+        }
+      },
+      onExitActionMode: () {
+        _keyBodyBudget.currentState.clearSelection();
+      },
+    );
+
+    _homeBudget = new HomePageBudget(
+      key: _keyBodyBudget,
+      bookId: widget.bookId,
+      onItemTap: (item) {
+        final params = <String, dynamic>{'data': item};
+        Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));
+      },
+      onItemsSelect: (items, index) {
+        if (items.length == 0)
+          _keyAppBarBudget.currentState.exitActionMode();
+        else
+          _keyAppBarBudget.currentState.showActionMode(items);
       }
     );
   }
@@ -88,8 +124,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   Widget _buildAppBar() {
-    if (_isActionMode) return _buildActionMode();
-
     switch (_currentRoute) {
       case HomePageTransaction.kRouteName:
         return _appBarTrans;
@@ -99,28 +133,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         return _appBarBudget;
     }
     return new AppBar(title: new Text(Lang.of(context).title()));
-  }
-
-  Widget _buildActionMode() {
-    return new AppBar(
-      leading: new IconButton(icon: kIconBack, onPressed: () {
-        setState(() => _isActionMode = false);
-      }),
-      backgroundColor: Colors.black54,
-      title: new Text(_selectedCount.toString()),
-      actions: <Widget>[
-        new IconButton(
-          icon: kIconEdit,
-          tooltip: Lang.of(context).menuEdit(),
-          onPressed: () => null,
-        ),
-        new IconButton(
-          icon: kIconDelete,
-          tooltip: Lang.of(context).menuDelete(),
-          onPressed: () => null,
-        ),
-      ],
-    );
   }
 
   Widget _buildBody() {
@@ -154,7 +166,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       },
     );
   }
-
 }
 
 class _EmptyBody extends StatelessWidget {
