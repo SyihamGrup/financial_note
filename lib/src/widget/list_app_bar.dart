@@ -8,6 +8,8 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
+import 'dart:async';
+
 import 'package:financial_note/page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -65,15 +67,24 @@ class ListAppBarState<T> extends State<ListAppBar> {
         },
       ));
     }
-    return new AppBar(
-      backgroundColor: _isActionMode ? kBgActionMode : null,
-      leading: _isActionMode ? new IconButton(icon: kIconBack, onPressed: () {
-        exitActionMode();
-      }) : null,
-      title: new Text(
-        _isActionMode ? _items.length.toString() : widget.title,
+    return new WillPopScope(
+      child: new AppBar(
+        backgroundColor: _isActionMode ? kBgActionMode : null,
+        leading: _isActionMode ? new IconButton(icon: kIconBack, onPressed: () {
+          exitActionMode();
+        }) : null,
+        title: new Text(
+          _isActionMode ? _items.length.toString() : widget.title,
+        ),
+        actions: actions,
       ),
-      actions: actions,
+      onWillPop: _onWillPop,
     );
+  }
+
+  Future<bool> _onWillPop() async {
+    if (!_isActionMode) return true;
+    exitActionMode();
+    return false;
   }
 }
