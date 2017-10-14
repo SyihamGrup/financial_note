@@ -82,6 +82,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             final params = <String, dynamic>{'data': items[0]};
             Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));
             break;
+          case 'delete':
+            items.forEach((val) => Budget.ref(currentBook.id).child(val.id).remove());
+            _keyAppBarBudget.currentState.exitActionMode();
         }
       },
       onExitActionMode: () {
