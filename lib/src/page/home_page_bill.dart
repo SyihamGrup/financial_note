@@ -106,12 +106,19 @@ class _ContentBillItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currFormatter = new NumberFormat.currency(symbol: currencySymbol);
+    final dateFormatter = new DateFormat.MMMd();
     final selectedBg = new BoxDecoration(color: Theme.of(context).highlightColor);
     return new Container(
       decoration: selected ? selectedBg : null,
       child: new ListTile(
         title: new Text(item.title),
         subtitle: new Text(currFormatter.format(item.value)),
+        trailing: new Container(
+          alignment: Alignment.topRight,
+          margin: const EdgeInsets.only(top: 20.0),
+          child: new Text(item.date != null ? dateFormatter.format(item.date) : '',
+                          style: Theme.of(context).textTheme.body1.copyWith(fontSize: 12.0)),
+        ),
         selected: selected,
         onTap: onTap,
         onLongPress: onLongPress,
