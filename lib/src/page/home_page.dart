@@ -77,14 +77,19 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     _appBarBudget = new AppBarBudget(
       key: _keyAppBarBudget,
       onActionModeTap: (key, items) {
+        final lang = Lang.of(context);
         switch (key) {
           case 'edit':
             final params = <String, dynamic>{'data': items[0]};
             Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));
             break;
           case 'delete':
-            items.forEach((val) => Budget.ref(currentBook.id).child(val.id).remove());
-            _keyAppBarBudget.currentState.exitActionMode();
+            showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
+              if (!ret) return;
+              items.forEach((val) => Budget.ref(currentBook.id).child(val.id).remove());
+              _keyAppBarBudget.currentState.exitActionMode();
+            });
+            break;
         }
       },
       onExitActionMode: () {

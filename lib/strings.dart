@@ -44,6 +44,7 @@ class Lang {
   String titleOpeningBalance() => Intl.message('Opening Balance', locale: _localeName, name: 'titleOpeningBalance');
   String titleAddTransaction() => Intl.message('Add Transaction', locale: _localeName, name: 'titleAddTransaction');
   String titleAddBudget()      => Intl.message('Add Budget',      locale: _localeName, name: 'titleAddBudget');
+  String titleConfirmation()   => Intl.message('Confirmation',    locale: _localeName, name: 'titleConfirmation');
 
   String drawerHome()     => Intl.message('Home',                 locale: _localeName, name: 'drawerHome');
   String drawerBills()    => Intl.message('Bills',                locale: _localeName, name: 'drawerBills');
@@ -81,5 +82,6 @@ class Lang {
   String msgFormHasError()   => Intl.message('This form has errors',                           locale: _localeName, name: 'msgFormHasError');
   String msgFormError()      => Intl.message('Please fix the errors in red before submitting', locale: _localeName, name: 'msgFixFormError');
   String msgFieldRequired()  => Intl.message('This field is required',                         locale: _localeName, name: 'msgFieldRequired');
+  String msgConfirmDelete()  => Intl.message('Are you sure to delete this item(s)?',           locale: _localeName, name: 'msgConfirmDelete');
 
 }
