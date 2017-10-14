@@ -16,10 +16,10 @@ import 'package:intl/intl.dart';
 class DateFormField extends StatelessWidget {
   final String label;
   final DateTime date;
-  final ValueChanged<DateTime> onChanged;
+  final ValueChanged<DateTime> onChange;
 
-  DateFormField({Key key, this.label, this.date, @required this.onChanged})
-    : assert(onChanged != null),
+  DateFormField({Key key, this.label, this.date, @required this.onChange})
+    : assert(onChange != null),
       super(key: key);
 
   @override
@@ -29,7 +29,7 @@ class DateFormField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         new Text(label, style: theme.textTheme.caption),
-        new DateItem(date: date, onChanged: onChanged),
+        new DateItem(date: date, onChange: onChange),
       ],
     );
   }
@@ -37,10 +37,10 @@ class DateFormField extends StatelessWidget {
 
 class DateItem extends StatelessWidget {
   final DateTime date;
-  final ValueChanged<DateTime> onChanged;
+  final ValueChanged<DateTime> onChange;
 
-  DateItem({ Key key, DateTime date, @required this.onChanged })
-    : assert(onChanged != null),
+  DateItem({ Key key, DateTime date, @required this.onChange })
+    : assert(onChange != null),
       this.date = date ?? new DateTime.now(),
       super(key: key);
 
@@ -64,7 +64,7 @@ class DateItem extends StatelessWidget {
               lastDate: date.add(const Duration(days: 30))
             )
             .then<Null>((DateTime value) {
-              onChanged(new DateTime(value.year, value.month, value.day));
+              onChange(new DateTime(value.year, value.month, value.day));
             });
           },
           child: new Row(
