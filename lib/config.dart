@@ -21,8 +21,6 @@ const kPrefBookId = 'bookId';
 
 enum ThemeName { light, dark }
 
-enum SignInMethod { google }
-
 class Config {
   final ThemeName theme;
 

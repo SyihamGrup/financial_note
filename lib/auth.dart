@@ -25,15 +25,15 @@ Future<FirebaseUser> ensureLoggedIn() async {
   if (auth.currentUser != null) return auth.currentUser;
 
   final prefs = await SharedPreferences.getInstance();
-  final method = prefs.getString(kPrefSignInMethod) == kPrefSignInGoogle ? SignInMethod.google : null;
+  final method = prefs.getString(kPrefSignInMethod) ?? kPrefSignInGoogle;
 
   switch (method) {
-    case SignInMethod.google:
-      final user = await signInWithGoogle();
-      if (user == null) return null;
+    case kPrefSignInGoogle:
+      final google = await signInWithGoogle();
+      if (google == null) return null;
       
       analytics.logLogin();
-      final c = await user.authentication;
+      final c = await google.authentication;
       await auth.signInWithGoogle(idToken: c.idToken, accessToken: c.accessToken);
       return auth.currentUser;
   }
