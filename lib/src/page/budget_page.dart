@@ -28,7 +28,7 @@ class BudgetPage extends StatefulWidget {
 
   BudgetPage({@required this.bookId, Budget data})
     : assert(bookId != null),
-      this.data = data != null ? data : new Budget(title: '', date: new DateTime.now(), value: 0.0),
+      this.data = data ?? new Budget(title: '', date: new DateTime.now(), value: 0.0),
       ref = Budget.ref(bookId);
 
   @override
