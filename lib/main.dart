@@ -57,7 +57,7 @@ class _MainAppState extends State<MainApp> {
 
       // Settings
       case SettingsPage.kRouteName:
-        return new SettingsPage(config, configUpdater);
+        return new SettingsPage(config: config, updater: configUpdater);
 
       // Home page
       case HomePage.kRouteName:

@@ -18,8 +18,9 @@ class HomePageTransaction extends StatefulWidget {
   final String bookId;
   final DateTime date;
 
-  const HomePageTransaction({@required this.bookId, this.date})
-    : assert(bookId != null);
+  const HomePageTransaction({Key key, @required this.bookId, this.date})
+    : assert(bookId != null),
+      super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _HomePageTransactionState();
@@ -126,9 +127,10 @@ class AppBarTransaction extends StatefulWidget implements PreferredSizeWidget {
   final ValueChanged<String> onActionTap;
   final Size preferredSize;
 
-  AppBarTransaction({DateTime initialDate, this.onDateChange, this.onActionTap})
-      : this.initialDate = initialDate ?? new DateTime.now(),
-        preferredSize = new Size.fromHeight(kToolbarHeight);
+  AppBarTransaction({Key key, DateTime initialDate, this.onDateChange, this.onActionTap})
+    : this.initialDate = initialDate ?? new DateTime.now(),
+      preferredSize = new Size.fromHeight(kToolbarHeight),
+      super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _TransactionAppBarState(initialDate);

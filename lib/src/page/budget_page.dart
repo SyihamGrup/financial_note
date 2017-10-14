@@ -26,10 +26,11 @@ class BudgetPage extends StatefulWidget {
   final String bookId;
   final DatabaseReference ref;
 
-  BudgetPage({@required this.bookId, Budget data})
+  BudgetPage({Key key, @required this.bookId, Budget data})
     : assert(bookId != null),
       this.data = data ?? new Budget(title: '', date: new DateTime.now(), value: 0.0),
-      ref = Budget.ref(bookId);
+      ref = Budget.ref(bookId),
+      super(key: key);
 
   @override
   State<StatefulWidget> createState() {

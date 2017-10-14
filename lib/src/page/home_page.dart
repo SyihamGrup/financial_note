@@ -31,7 +31,9 @@ class HomePage extends StatefulWidget {
   static const kRouteName = '/home';
   final String bookId;
 
-  const HomePage({@required this.bookId}) : assert(bookId != null);
+  const HomePage({Key key, @required this.bookId})
+    : assert(bookId != null),
+      super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _HomePageState();

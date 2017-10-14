@@ -22,6 +22,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SignInPage extends StatefulWidget {
   static const kRouteName = '/sign-in';
 
+  const SignInPage({Key key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => new _SignInPageState();
 }

@@ -19,9 +19,12 @@ class SettingsPage extends StatelessWidget {
   static const kRouteName = '/settings';
 
   final Config config;
-  final ValueChanged<Config> updateConfig;
+  final ValueChanged<Config> updater;
 
-  const SettingsPage(this.config, this.updateConfig);
+  const SettingsPage({Key key, @required this.config, @required this.updater})
+    : assert(config != null),
+      assert(updater != null),
+      super(key: key);
 
   Widget buildSettingsPane(BuildContext context) {
     return new ListView(
@@ -50,7 +53,7 @@ class SettingsPage extends StatelessWidget {
       final themeStr = theme == ThemeName.light ? kPrefThemeLight : kPrefThemeDark;
       prefs.setString(kPrefTheme, themeStr);
     });
-    updateConfig(newConfig);
+    updater(newConfig);
   }
 
   @override
