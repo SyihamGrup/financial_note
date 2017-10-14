@@ -70,6 +70,11 @@ class _MainAppState extends State<MainApp> {
       case TransactionPage.kRouteName:
         return new TransactionPage(bookId: currentBook?.id);
 
+      // Bill page
+      case BillPage.kRouteName:
+        final data = new Bill.fromJson(mapValue(params, 'data'));
+        return new BillPage(bookId: currentBook?.id, data: data);
+
       // Budget page
       case BudgetPage.kRouteName:
         final data = new Budget.fromJson(mapValue(params, 'data'));

@@ -15,15 +15,15 @@ import 'package:flutter/foundation.dart';
 class BillGroup {
   static const kNodeName = 'bills';
 
-  final String id;
-  final String title;
-  final DateTime dueDate;
-  final double totalValue;
-  final DateTime lastPaid;
-  final double paidValue;
-  final String note;
+  String id;
+  String title;
+  DateTime dueDate;
+  double totalValue;
+  DateTime lastPaid;
+  double paidValue;
+  String note;
 
-  const BillGroup({
+  BillGroup({
     this.id,
     @required this.title,
     @required this.dueDate,
@@ -33,13 +33,23 @@ class BillGroup {
     this.note,
   });
 
-  BillGroup.fromJson(this.id, Map<String, dynamic> json)
-    : title      = parseString(mapValue(json, 'title')),
+  BillGroup.fromJson(Map<String, dynamic> json)
+    : id         = parseString(mapValue(json, 'id')),
+      title      = parseString(mapValue(json, 'title')),
       dueDate    = parseDate(mapValue(json, 'dueDate')),
       totalValue = parseDouble(mapValue(json, 'totalValue')),
       lastPaid   = parseDate(mapValue(json, 'lastPaid')),
       paidValue  = parseDouble(mapValue(json, 'paidValue')),
       note       = parseString(mapValue(json, 'note'));
+
+  BillGroup.fromSnapshot(DataSnapshot snapshot)
+    : id         = snapshot.key,
+      title      = parseString(mapValue(snapshot.value, 'title')),
+      dueDate    = parseDate(mapValue(snapshot.value, 'dueDate')),
+      totalValue = parseDouble(mapValue(snapshot.value, 'totalValue')),
+      lastPaid   = parseDate(mapValue(snapshot.value, 'lastPaid')),
+      paidValue  = parseDouble(mapValue(snapshot.value, 'paidValue')),
+      note       = parseString(mapValue(snapshot.value, 'note'));
 
   static DatabaseReference ref(String bookId) {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
@@ -76,22 +86,21 @@ class BillGroup {
       note       : note       ?? this.note,
     );
   }
-
 }
 
 class Bill {
   static const kNodeName = 'bills';
 
-  final String id;
-  final String groupId;
-  final String title;
-  final DateTime date;
-  final double value;
-  final DateTime paidDate;
-  final double paidValue;
-  final String note;
+  String id;
+  String groupId;
+  String title;
+  DateTime date;
+  double value;
+  DateTime paidDate;
+  double paidValue;
+  String note;
 
-  const Bill({
+  Bill({
     this.id,
     this.groupId,
     @required this.title,
@@ -102,14 +111,25 @@ class Bill {
     this.note,
   });
 
-  Bill.fromJson(this.id, Map<String, dynamic> json)
-    : groupId   = parseString(mapValue(json, 'groupId')),
+  Bill.fromJson(Map<String, dynamic> json)
+    : id        = parseString(mapValue(json, 'id')),
+      groupId   = parseString(mapValue(json, 'groupId')),
       title     = parseString(mapValue(json, 'title')),
       date      = parseDate(mapValue(json, 'date')),
       value     = parseDouble(mapValue(json, 'value')),
       paidDate  = parseDate(mapValue(json, 'paidDate')),
       paidValue = parseDouble(mapValue(json, 'paidValue')),
       note      = parseString(mapValue(json, 'note'));
+
+  Bill.fromSnapshot(DataSnapshot snapshot)
+    : id        = snapshot.key,
+      groupId   = parseString(mapValue(snapshot.value, 'groupId')),
+      title     = parseString(mapValue(snapshot.value, 'title')),
+      date      = parseDate(mapValue(snapshot.value, 'date')),
+      value     = parseDouble(mapValue(snapshot.value, 'value')),
+      paidDate  = parseDate(mapValue(snapshot.value, 'paidDate')),
+      paidValue = parseDouble(mapValue(snapshot.value, 'paidValue')),
+      note      = parseString(mapValue(snapshot.value, 'note'));
 
   static DatabaseReference ref(String bookId) {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);

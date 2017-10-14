@@ -43,6 +43,7 @@ class Lang {
 
   String titleOpeningBalance() => Intl.message('Opening Balance', locale: _localeName, name: 'titleOpeningBalance');
   String titleAddTransaction() => Intl.message('Add Transaction', locale: _localeName, name: 'titleAddTransaction');
+  String titleAddBill()        => Intl.message('Add Bill',        locale: _localeName, name: 'titleAddBill');
   String titleAddBudget()      => Intl.message('Add Budget',      locale: _localeName, name: 'titleAddBudget');
   String titleConfirmation()   => Intl.message('Confirmation',    locale: _localeName, name: 'titleConfirmation');
 

@@ -9,16 +9,16 @@
  */
 
 import 'package:financial_note/page.dart';
-import 'package:financial_note/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class ListAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final Size preferredSize;
+  final String title;
   final OnActionTap<List<T>> onActionModeTap;
   final VoidCallback onExitActionMode;
 
-  ListAppBar({Key key, this.onActionModeTap, this.onExitActionMode})
+  ListAppBar({Key key, this.title, this.onActionModeTap, this.onExitActionMode})
     : preferredSize = new Size.fromHeight(kToolbarHeight),
       super(key: key);
 
@@ -71,7 +71,7 @@ class ListAppBarState<T> extends State<ListAppBar> {
         exitActionMode();
       }) : null,
       title: new Text(
-        _isActionMode ? _items.length.toString() : Lang.of(context).titleBudget()
+        _isActionMode ? _items.length.toString() : widget.title,
       ),
       actions: actions,
     );

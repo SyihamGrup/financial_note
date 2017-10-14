@@ -15,6 +15,7 @@ import 'dart:async';
 import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
+import 'package:financial_note/src/page/bill_page.dart';
 import 'package:financial_note/strings.dart';
 import 'package:financial_note/widget.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -42,8 +43,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
-  final _budgetAppBarKey = new GlobalKey<ListAppBarState<Budget>>();
+  final _budgetBarKey = new GlobalKey<ListAppBarState<Budget>>();
   final _budgetKey = new GlobalKey<_HomePageBudgetState>();
+  final _billBarKey = new GlobalKey<ListAppBarState<Bill>>();
+  final _billKey = new GlobalKey<_HomePageBillState>();
 
   var _currentRoute = HomePageTransaction.kRouteName;
   var _filterDate = new DateTime.now();
@@ -53,12 +56,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   HomePageBudget _homeBudget;
 
   AppBarTransaction _appBarTrans;
-  AppBarBill _appBarBill;
+  ListAppBar<Bill> _appBarBill;
   ListAppBar<Budget> _appBarBudget;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
     _initTrans();
     _initBill();
@@ -72,26 +75,64 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   void _initBill() {
-    _appBarBill = new AppBarBill();
+    final lang = Lang.of(context);
+    _appBarBill = new ListAppBar<Bill>(
+      key: _billBarKey,
+      title: lang.titleBill(),
+      onActionModeTap: (key, items) {
+        switch (key) {
+          case 'edit':
+            final params = <String, dynamic>{'data': items[0]};
+            Navigator.pushNamed(context, routeWithParams(BillPage.kRouteName, params));
+            _billBarKey.currentState.exitActionMode();
+            break;
+          case 'delete':
+            showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
+              if (!ret) return;
+              items.forEach((val) => Bill.ref(currentBook.id).child(val.id).remove());
+              _billBarKey.currentState.exitActionMode();
+            });
+            break;
+        }
+      },
+      onExitActionMode: () {
+        _billKey.currentState.clearSelection();
+      },
+    );
 
-    _homeBill = new HomePageBill(bookId: widget.bookId);
+    _homeBill = new HomePageBill(
+      key: _billKey,
+      bookId: widget.bookId,
+      config: widget.config,
+      onItemTap: (item) {
+        final params = <String, dynamic>{'data': item};
+        Navigator.pushNamed(context, routeWithParams(BillPage.kRouteName, params));
+      },
+      onItemsSelect: (items, index) {
+        if (items.length == 0)
+          _billBarKey.currentState.exitActionMode();
+        else
+          _billBarKey.currentState.showActionMode(items);
+      });
   }
 
   void _initBudget() {
+    final lang = Lang.of(context);
     _appBarBudget = new ListAppBar<Budget>(
-      key: _budgetAppBarKey,
+      key: _budgetBarKey,
+      title: lang.titleBudget(),
       onActionModeTap: (key, items) {
-        final lang = Lang.of(context);
         switch (key) {
           case 'edit':
             final params = <String, dynamic>{'data': items[0]};
             Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));
+            _budgetBarKey.currentState.exitActionMode();
             break;
           case 'delete':
             showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
               if (!ret) return;
               items.forEach((val) => Budget.ref(currentBook.id).child(val.id).remove());
-              _budgetAppBarKey.currentState.exitActionMode();
+              _budgetBarKey.currentState.exitActionMode();
             });
             break;
         }
@@ -111,9 +152,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       },
       onItemsSelect: (items, index) {
         if (items.length == 0)
-          _budgetAppBarKey.currentState.exitActionMode();
+          _budgetBarKey.currentState.exitActionMode();
         else
-          _budgetAppBarKey.currentState.showActionMode(items);
+          _budgetBarKey.currentState.showActionMode(items);
       }
     );
   }
@@ -170,7 +211,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             Navigator.pushNamed(context, TransactionPage.kRouteName);
             return;
           case HomePageBill.kRouteName:
-
+            Navigator.pushNamed(context, BillPage.kRouteName);
             return;
           case HomePageBudget.kRouteName:
             Navigator.pushNamed(context, BudgetPage.kRouteName);

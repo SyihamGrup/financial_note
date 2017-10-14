@@ -17,6 +17,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+export 'src/page/bill_page.dart';
 export 'src/page/budget_page.dart';
 export 'src/page/home_page.dart';
 export 'src/page/settings_page.dart';
