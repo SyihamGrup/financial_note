@@ -21,12 +21,8 @@ final analytics = new FirebaseAnalytics();
 
 final _googleSignIn = new GoogleSignIn();
 
-bool isSignedIn() {
-  return auth.currentUser != null;
-}
-
 Future<FirebaseUser> ensureLoggedIn() async {
-  if (isSignedIn()) return auth.currentUser;
+  if (auth.currentUser != null) return auth.currentUser;
 
   final prefs = await SharedPreferences.getInstance();
   final method = prefs.getString(kPrefSignInMethod) == kPrefSignInGoogle ? SignInMethod.google : null;
