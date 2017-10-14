@@ -42,8 +42,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
-  final _keyAppBarBudget = new GlobalKey<_AppBarBudgetState>();
-  final _keyBodyBudget = new GlobalKey<_HomePageBudgetState>();
+  final _budgetAppBarKey = new GlobalKey<ListAppBarState<Budget>>();
+  final _budgetKey = new GlobalKey<_HomePageBudgetState>();
 
   var _currentRoute = HomePageTransaction.kRouteName;
   var _filterDate = new DateTime.now();
@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   AppBarTransaction _appBarTrans;
   AppBarBill _appBarBill;
-  AppBarBudget _appBarBudget;
+  ListAppBar<Budget> _appBarBudget;
 
   @override
   void initState() {
@@ -78,8 +78,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   void _initBudget() {
-    _appBarBudget = new AppBarBudget(
-      key: _keyAppBarBudget,
+    _appBarBudget = new ListAppBar<Budget>(
+      key: _budgetAppBarKey,
       onActionModeTap: (key, items) {
         final lang = Lang.of(context);
         switch (key) {
@@ -91,18 +91,18 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
               if (!ret) return;
               items.forEach((val) => Budget.ref(currentBook.id).child(val.id).remove());
-              _keyAppBarBudget.currentState.exitActionMode();
+              _budgetAppBarKey.currentState.exitActionMode();
             });
             break;
         }
       },
       onExitActionMode: () {
-        _keyBodyBudget.currentState.clearSelection();
+        _budgetKey.currentState.clearSelection();
       },
     );
 
     _homeBudget = new HomePageBudget(
-      key: _keyBodyBudget,
+      key: _budgetKey,
       bookId: widget.bookId,
       config: widget.config,
       onItemTap: (item) {
@@ -111,9 +111,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       },
       onItemsSelect: (items, index) {
         if (items.length == 0)
-          _keyAppBarBudget.currentState.exitActionMode();
+          _budgetAppBarKey.currentState.exitActionMode();
         else
-          _keyAppBarBudget.currentState.showActionMode(items);
+          _budgetAppBarKey.currentState.showActionMode(items);
       }
     );
   }
