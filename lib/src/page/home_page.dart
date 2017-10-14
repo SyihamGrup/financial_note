@@ -12,6 +12,7 @@ library page;
 
 import 'dart:async';
 
+import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
@@ -29,9 +30,10 @@ part 'home_page_transaction.dart';
 
 class HomePage extends StatefulWidget {
   static const kRouteName = '/home';
+  final Config config;
   final String bookId;
 
-  const HomePage({Key key, @required this.bookId})
+  const HomePage({Key key, @required this.bookId, this.config})
     : assert(bookId != null),
       super(key: key);
 
@@ -102,6 +104,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     _homeBudget = new HomePageBudget(
       key: _keyBodyBudget,
       bookId: widget.bookId,
+      config: widget.config,
       onItemTap: (item) {
         final params = <String, dynamic>{'data': item};
         Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));

@@ -16,19 +16,22 @@ const kPrefSignInGoogle = 'signInGoogle';
 const kPrefTheme = 'theme';
 const kPrefThemeLight = 'light';
 const kPrefThemeDark = 'dark';
+const kPrefCurrencySymbol = 'currencySymbol';
 
 const kPrefBookId = 'bookId';
 
 enum ThemeName { light, dark }
 
 class Config {
-  final ThemeName theme;
+  final ThemeName themeName;
+  final String currencySymbol;
 
-  const Config({this.theme});
+  const Config({this.themeName, this.currencySymbol});
 
-  Config copyWith({ThemeName theme}) {
+  Config copyWith({ThemeName themeName, String currencySymbol}) {
     return new Config(
-      theme: theme ?? this.theme,
+      themeName: themeName ?? this.themeName,
+      currencySymbol: currencySymbol ?? this.currencySymbol,
     );
   }
 }

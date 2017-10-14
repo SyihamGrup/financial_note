@@ -25,11 +25,14 @@ Future<Null> main() async {
   FirebaseDatabase.instance.setPersistenceEnabled(true);
   FirebaseDatabase.instance.setPersistenceCacheSizeBytes(10 * 1000 * 1000);
 
+  runApp(new MainApp(await _initConfig()));
+}
+
+Future<Config> _initConfig() async {
   final prefs = await SharedPreferences.getInstance();
   final theme = prefs.getString(kPrefTheme) == kPrefThemeDark ? ThemeName.dark : ThemeName.light;
-  final config = new Config(theme: theme);
-
-  runApp(new MainApp(config));
+  final currencySymbol = prefs.getString(kPrefCurrencySymbol) ?? 'Rp';
+  return new Config(themeName: theme, currencySymbol: currencySymbol);
 }
 
 class MainApp extends StatefulWidget {
@@ -61,7 +64,7 @@ class _MainAppState extends State<MainApp> {
 
       // Home page
       case HomePage.kRouteName:
-        return new HomePage(bookId: currentBook?.id);
+        return new HomePage(bookId: currentBook?.id, config: config);
 
       // Transaction page
       case TransactionPage.kRouteName:
@@ -87,7 +90,7 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: kTitle,
-      theme: getTheme(_config.theme),
+      theme: getTheme(_config.themeName),
       localizationsDelegates: <_LocalizationsDelegate>[
         new _LocalizationsDelegate()
       ],

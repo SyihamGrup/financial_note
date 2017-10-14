@@ -13,12 +13,14 @@ part of page;
 class HomePageBudget extends StatefulWidget {
   static const kRouteName = '/home-budgets';
 
+  final Config config;
   final DatabaseReference ref;
   final String bookId;
   final OnItemTap<Budget> onItemTap;
   final OnItemSelect<Budget> onItemsSelect;
 
-  HomePageBudget({Key key, @required this.bookId, this.onItemTap, this.onItemsSelect})
+  HomePageBudget({Key key, @required this.bookId,
+                  this.onItemTap, this.onItemsSelect, this.config})
     : assert(bookId != null),
       ref = Budget.ref(bookId),
       super(key: key);
@@ -42,6 +44,7 @@ class _HomePageBudgetState extends State<HomePageBudget> {
           item: item,
           animation: animation,
           selected: _getSelectedIndex(_selectedItems, item) != -1,
+          currencySymbol: widget.config?.currencySymbol,
           onTap: () => _onTap(item),
           onLongPress: () => _onLongPress(item),
         );
@@ -90,17 +93,19 @@ class _HomePageBudgetState extends State<HomePageBudget> {
 }
 
 class _ContentBudgetItem extends StatelessWidget {
+  final String currencySymbol;
   final Budget item;
   final Animation animation;
   final GestureTapCallback onTap;
   final GestureLongPressCallback onLongPress;
   final bool selected;
 
-  _ContentBudgetItem({this.item, this.animation, this.selected, this.onTap, this.onLongPress});
+  _ContentBudgetItem({this.item, this.animation, this.selected,
+                      this.onTap, this.onLongPress, this.currencySymbol});
 
   @override
   Widget build(BuildContext context) {
-    final currFormatter = new NumberFormat.currency();
+    final currFormatter = new NumberFormat.currency(symbol: currencySymbol);
     final selectedBg = new BoxDecoration(color: Theme.of(context).highlightColor);
     return new Container(
       decoration: selected ? selectedBg : null,
