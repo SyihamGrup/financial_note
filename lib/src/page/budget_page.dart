@@ -22,19 +22,19 @@ import 'package:flutter/widgets.dart';
 class BudgetPage extends StatefulWidget {
   static const kRouteName = '/budget';
 
-  final Budget data;
+  final Budget _data;
   final String bookId;
   final DatabaseReference ref;
 
   BudgetPage({Key key, @required this.bookId, Budget data})
     : assert(bookId != null),
-      this.data = data ?? new Budget(title: '', date: new DateTime.now(), value: 0.0),
+      this._data = data ?? new Budget(title: '', date: new DateTime.now(), value: 0.0),
       ref = Budget.ref(bookId),
       super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return new _BudgetPageState();
+    return new _BudgetPageState(_data);
   }
 }
 
@@ -42,8 +42,12 @@ class _BudgetPageState extends State<BudgetPage> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = new GlobalKey<FormState>();
 
+  Budget _data;
+
   var _autoValidate = false;
   var _saveNeeded = false;
+
+  _BudgetPageState(this._data);
 
   Future<Null> _handleSubmitted() async {
     final form = _formKey.currentState;
@@ -54,8 +58,8 @@ class _BudgetPageState extends State<BudgetPage> {
     }
 
     form.save();
-    final newItem = widget.data.id != null ? widget.ref.child(widget.data.id) : widget.ref.push();
-    newItem.set(widget.data.toJson());
+    final newItem = _data.id != null ? widget.ref.child(_data.id) : widget.ref.push();
+    newItem.set(_data.toJson());
 
     _showInSnackBar(Lang.of(context).msgSaved());
     Navigator.pop(context);
@@ -82,28 +86,28 @@ class _BudgetPageState extends State<BudgetPage> {
         children: <Widget>[
           // -- title --
           new Container(margin: const EdgeInsets.only(top: 0.0), child: new TextFormField(
-            initialValue: widget.data?.title ?? '',
+            initialValue: _data.title ?? '',
             decoration: new InputDecoration(labelText: lang.lblTitle()),
-            onSaved: (String value) => widget.data.title = value,
+            onSaved: (String value) => _data.title = value,
             validator: _validateTitle,
           )),
 
           // -- date --
           new Container(margin: const EdgeInsets.only(top: 8.0), child: new DateFormField(
             label: lang.lblDate(),
-            date: widget.data.date,
+            date: _data.date,
             onChanged: (DateTime value) {
-              widget.data.date = value;
+              _data.date = value;
               _saveNeeded = true;
             }
           )),
 
           // -- value --
           new Container(margin: const EdgeInsets.only(top: 8.0), child: new TextFormField(
-            initialValue: widget.data?.value?.toString() ?? '',
+            initialValue: _data.value?.toString() ?? '',
             decoration: new InputDecoration(labelText: lang.lblValue()),
             keyboardType: TextInputType.number,
-            onSaved: (String value) => widget.data.value = double.parse(value),
+            onSaved: (String value) => _data.value = double.parse(value),
             validator: _validateTitle,
           )),
         ],
