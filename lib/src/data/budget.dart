@@ -21,6 +21,7 @@ class Budget {
   double value;
   double usedValue;
   bool isExpire;
+  String descr;
 
   Budget({
     this.id,
@@ -29,6 +30,7 @@ class Budget {
     @required this.value,
     this.usedValue: 0.0,
     this.isExpire: false,
+    this.descr,
   });
 
   Budget.fromJson(Map<String, dynamic> json)
@@ -37,7 +39,8 @@ class Budget {
       date      = parseDate(mapValue(json, 'date')),
       value     = parseDouble(mapValue(json, 'value')),
       usedValue = parseDouble(mapValue(json, 'usedValue')),
-      isExpire  = parseBool(mapValue(json, 'isExpire'));
+      isExpire  = parseBool(mapValue(json, 'isExpire')),
+      descr     = parseString(mapValue(json, 'descr'));
 
   Budget.fromSnapshot(DataSnapshot snapshot)
     : id        = snapshot.key,
@@ -45,7 +48,8 @@ class Budget {
       date      = parseDate(mapValue(snapshot.value, 'date')),
       value     = parseDouble(mapValue(snapshot.value, 'value')),
       usedValue = parseDouble(mapValue(snapshot.value, 'usedValue')),
-      isExpire  = parseBool(mapValue(snapshot.value, 'isExpire', def: false));
+      isExpire  = parseBool(mapValue(snapshot.value, 'isExpire', def: false)),
+      descr     = parseString(mapValue(snapshot.value, 'descr'));
 
   static DatabaseReference ref(String bookId) {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
@@ -59,6 +63,7 @@ class Budget {
       'value'     : value,
       'usedValue' : usedValue,
       'isExpire'  : isExpire,
+      'descr'     : descr,
     };
     if (!showId) json.remove('id');
     return json;
@@ -71,6 +76,7 @@ class Budget {
     double value,
     double usedValue,
     bool isExpire,
+    String descr,
   }) {
     return new Budget(
       id        : id        ?? this.id,
@@ -79,6 +85,7 @@ class Budget {
       value     : value     ?? this.value,
       usedValue : usedValue ?? this.usedValue,
       isExpire  : isExpire  ?? this.isExpire,
+      descr     : descr     ?? this.descr,
     );
   }
 

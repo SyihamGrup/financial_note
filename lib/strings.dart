@@ -74,6 +74,7 @@ class Lang {
   String lblTitle()        => Intl.message('Title',               locale: _localeName, name: 'lblTitle');
   String lblDate()         => Intl.message('Date',                locale: _localeName, name: 'lblDate');
   String lblValue()        => Intl.message('Value',               locale: _localeName, name: 'lblValue');
+  String lblDescr()        => Intl.message('Description',         locale: _localeName, name: 'lblDescr');
 
   String msgSignInRequired() => Intl.message('Sign in required',                               locale: _localeName, name: 'msgSignInRequired');
   String msgWait()           => Intl.message('Please Wait',                                    locale: _localeName, name: 'msgWait');

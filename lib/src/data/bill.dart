@@ -99,6 +99,7 @@ class Bill {
   DateTime paidDate;
   double paidValue;
   String note;
+  String descr;
 
   Bill({
     this.id,
@@ -109,6 +110,7 @@ class Bill {
     this.paidDate,
     this.paidValue,
     this.note,
+    this.descr,
   });
 
   Bill.fromJson(Map<String, dynamic> json)
@@ -119,7 +121,8 @@ class Bill {
       value     = parseDouble(mapValue(json, 'value')),
       paidDate  = parseDate(mapValue(json, 'paidDate')),
       paidValue = parseDouble(mapValue(json, 'paidValue')),
-      note      = parseString(mapValue(json, 'note'));
+      note      = parseString(mapValue(json, 'note')),
+      descr     = parseString(mapValue(json, 'descr'));
 
   Bill.fromSnapshot(DataSnapshot snapshot)
     : id        = snapshot.key,
@@ -129,7 +132,8 @@ class Bill {
       value     = parseDouble(mapValue(snapshot.value, 'value')),
       paidDate  = parseDate(mapValue(snapshot.value, 'paidDate')),
       paidValue = parseDouble(mapValue(snapshot.value, 'paidValue')),
-      note      = parseString(mapValue(snapshot.value, 'note'));
+      note      = parseString(mapValue(snapshot.value, 'note')),
+      descr     = parseString(mapValue(snapshot.value, 'descr'));
 
   static DatabaseReference ref(String bookId) {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
@@ -145,6 +149,7 @@ class Bill {
       'paidDate'  : paidDate?.toIso8601String(),
       'paidValue' : paidValue,
       'note'      : note,
+      'descr'     : descr,
     };
   }
 
@@ -157,6 +162,7 @@ class Bill {
     DateTime paidDate,
     double paidValue,
     String note,
+    String descr,
   }) {
     return new Bill(
       id        : id        ?? this.id,
@@ -167,6 +173,7 @@ class Bill {
       paidDate  : paidDate  ?? this.paidDate,
       paidValue : paidValue ?? this.paidValue,
       note      : note      ?? this.note,
+      descr     : descr     ?? this.descr,
     );
   }
 

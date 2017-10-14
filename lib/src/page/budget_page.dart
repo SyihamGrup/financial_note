@@ -90,6 +90,7 @@ class _BudgetPageState extends State<BudgetPage> {
             decoration: new InputDecoration(labelText: lang.lblTitle()),
             onSaved: (String value) => _data.title = value,
             validator: _validateTitle,
+            autofocus: true,
           )),
 
           // -- date --
@@ -109,6 +110,13 @@ class _BudgetPageState extends State<BudgetPage> {
             keyboardType: TextInputType.number,
             onSaved: (String value) => _data.value = double.parse(value),
             validator: _validateTitle,
+          )),
+
+          // -- descr --
+          new Container(margin: const EdgeInsets.only(top: 8.0), child: new TextFormField(
+            initialValue: _data.descr ?? '',
+            decoration: new InputDecoration(labelText: lang.lblDescr()),
+            onSaved: (String value) => _data.descr = value,
           )),
         ],
       ),
