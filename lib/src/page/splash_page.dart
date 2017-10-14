@@ -40,11 +40,8 @@ class _SplashPageState extends State<SplashPage> {
         Navigator.pushReplacementNamed(context, SignInPage.kRouteName);
         return;
       }
-
       await initializeData();
-
       Navigator.pushReplacementNamed(context, HomePage.kRouteName);
-
     } catch (e) {
       setState(() => _subtitle = e.message);
     }
