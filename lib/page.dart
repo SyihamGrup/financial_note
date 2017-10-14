@@ -39,7 +39,7 @@ const kIconDelete = const Icon(Icons.delete);
 
 typedef void OnItemTap<T>(T item);
 typedef void OnItemSelect<T>(List<T> items, int index);
-typedef void OnActionTap<T>(String key, T);
+typedef void OnActionTap<T>(String key, T items);
 
 Widget buildListProgress(Listenable animation, {isLoading: false}) {
   return new AnimatedBuilder(animation: animation, builder: (context, child) {
