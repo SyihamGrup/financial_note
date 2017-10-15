@@ -45,7 +45,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   final _budgetBarKey = new GlobalKey<ListAppBarState<Budget>>();
   final _budgetKey = new GlobalKey<_HomePageBudgetState>();
-  final _billBarKey = new GlobalKey<ListAppBarState<Bill>>();
+  final _billBarKey = new GlobalKey<ListAppBarState<BillGroup>>();
   final _billKey = new GlobalKey<_HomePageBillState>();
 
   var _currentRoute = HomePageTransaction.kRouteName;
@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   HomePageBudget _homeBudget;
 
   AppBarTransaction _appBarTrans;
-  ListAppBar<Bill> _appBarBill;
+  ListAppBar<BillGroup> _appBarBill;
   ListAppBar<Budget> _appBarBudget;
 
   @override
@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   void _initBill() {
     final lang = Lang.of(context);
-    _appBarBill = new ListAppBar<Bill>(
+    _appBarBill = new ListAppBar<BillGroup>(
       key: _billBarKey,
       title: lang.titleBill(),
       onActionModeTap: (key, items) {

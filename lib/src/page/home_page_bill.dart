@@ -16,13 +16,13 @@ class HomePageBill extends StatefulWidget {
   final Config config;
   final DatabaseReference ref;
   final String bookId;
-  final OnItemTap<Bill> onItemTap;
-  final OnItemSelect<Bill> onItemsSelect;
+  final OnItemTap<BillGroup> onItemTap;
+  final OnItemSelect<BillGroup> onItemsSelect;
 
   HomePageBill({Key key, @required this.bookId,
                   this.onItemTap, this.onItemsSelect, this.config})
     : assert(bookId != null),
-      ref = Bill.ref(bookId),
+      ref = BillGroup.ref(bookId),
       super(key: key);
 
   @override
@@ -30,7 +30,7 @@ class HomePageBill extends StatefulWidget {
 }
 
 class _HomePageBillState extends State<HomePageBill> {
-  final List<Bill> _selectedItems = [];
+  final List<BillGroup> _selectedItems = [];
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +41,9 @@ class _HomePageBillState extends State<HomePageBill> {
         final bDate = b.value is Map && b.value.containsKey('date') ? b.value['date'] : '';
         return bDate.compareTo(aDate);
       },
-      defaultChild: new _EmptyBody(),
+      defaultChild: new Center(child: new Text(Lang.of(context).msgLoading())),
       itemBuilder: (context, snapshot, animation) {
-        final item = new Bill.fromSnapshot(snapshot);
+        final item = new BillGroup.fromSnapshot(snapshot);
         return new _ContentBillItem(
           item: item,
           animation: animation,
@@ -56,7 +56,7 @@ class _HomePageBillState extends State<HomePageBill> {
     );
   }
 
-  void _onTap(Bill item) {
+  void _onTap(BillGroup item) {
     if (_selectedItems.length > 0) {
       final idx = _getSelectedIndex(_selectedItems, item);
       if (idx >= 0) {
@@ -74,7 +74,7 @@ class _HomePageBillState extends State<HomePageBill> {
     }
   }
 
-  void _onLongPress(Bill data) {
+  void _onLongPress(BillGroup data) {
     if (_selectedItems.length > 0) return;
 
     setState(() => _selectedItems.add(data));
@@ -83,7 +83,7 @@ class _HomePageBillState extends State<HomePageBill> {
     }
   }
 
-  int _getSelectedIndex(List<Bill> items, Bill item) {
+  int _getSelectedIndex(List<BillGroup> items, BillGroup item) {
     if (items == null) return -1;
     for (int i = 0; i < items.length; i++) {
       if (items[i].id == item.id) return i;
@@ -98,7 +98,7 @@ class _HomePageBillState extends State<HomePageBill> {
 
 class _ContentBillItem extends StatelessWidget {
   final String currencySymbol;
-  final Bill item;
+  final BillGroup item;
   final Animation animation;
   final GestureTapCallback onTap;
   final GestureLongPressCallback onLongPress;
@@ -116,11 +116,11 @@ class _ContentBillItem extends StatelessWidget {
       decoration: selected ? selectedBg : null,
       child: new ListTile(
         title: new Text(item.title),
-        subtitle: new Text(currFormatter.format(item.value)),
+        subtitle: new Text(currFormatter.format(item.totalValue)),
         trailing: new Container(
           alignment: Alignment.topRight,
           margin: const EdgeInsets.only(top: 20.0),
-          child: new Text(item.date != null ? dateFormatter.format(item.date) : '',
+          child: new Text(item.dueDate != null ? dateFormatter.format(item.dueDate) : '',
                           style: Theme.of(context).textTheme.body1.copyWith(fontSize: 12.0)),
         ),
         selected: selected,

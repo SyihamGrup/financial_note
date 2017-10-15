@@ -12,7 +12,7 @@ import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class BillGroup {
-  static const kNodeName = 'bills';
+  static const kNodeName = 'billsGroup';
 
   String id;
   String title;
