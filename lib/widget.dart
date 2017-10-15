@@ -50,3 +50,11 @@ Future<bool> showConfirmDialog(BuildContext context, Widget content, {Widget tit
     ),
   );
 }
+
+Future<bool> showLeaveConfirmDialog(BuildContext context) async {
+  return await showConfirmDialog(
+    context,
+    new Text(Lang.of(context).msgConfirmLeave()),
+    title: new Text(Lang.of(context).titleLeave()),
+  );
+}

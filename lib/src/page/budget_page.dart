@@ -17,6 +17,7 @@ import 'package:financial_note/widget.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 class BudgetPage extends StatefulWidget {
@@ -28,7 +29,7 @@ class BudgetPage extends StatefulWidget {
 
   BudgetPage({Key key, @required this.bookId, Budget item})
     : assert(bookId != null),
-      this._item = item ?? new Budget(title: '', date: new DateTime.now(), value: 0.0),
+      this._item = item ?? new Budget(date: new DateTime.now()),
       ref = Budget.ref(bookId),
       super(key: key);
 
@@ -45,25 +46,9 @@ class _BudgetPageState extends State<BudgetPage> {
   Budget _item;
 
   var _autoValidate = false;
-  var _saveNeeded = false;
+  var _saveNeeded = true;
 
   _BudgetPageState(this._item);
-
-  Future<Null> _handleSubmitted() async {
-    final form = _formKey.currentState;
-    if (!form.validate()) {
-      _autoValidate = true;  // Start validating on every change
-      _showInSnackBar(Lang.of(context).msgFormError());
-      return;
-    }
-
-    form.save();
-    final newItem = _item.id != null ? widget.ref.child(_item.id) : widget.ref.push();
-    newItem.set(_item.toJson());
-
-    _showInSnackBar(Lang.of(context).msgSaved());
-    Navigator.pop(context);
-  }
 
   void _showInSnackBar(String value) {
     _scaffoldKey.currentState.showSnackBar(new SnackBar(
@@ -71,64 +56,34 @@ class _BudgetPageState extends State<BudgetPage> {
     ));
   }
 
-  Widget _buildForm(BuildContext context) {
-    final lang = Lang.of(context);
+  Future<bool> _handleSubmitted() async {
+    final form = _formKey.currentState;
+    if (!form.validate()) {
+      _autoValidate = true;  // Start validating on every change
+      _showInSnackBar(Lang.of(context).msgFormError());
+      return false;
+    }
 
-    return new Form(
-      key: _formKey,
-      autovalidate: _autoValidate,
-      onWillPop: () async {
-        if (_saveNeeded) _handleSubmitted();
-        return true;
-      },
-      child: new ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        children: <Widget>[
-          // -- title --
-          new Container(margin: const EdgeInsets.only(top: 0.0), child: new TextFormField(
-            initialValue: _item.title ?? '',
-            decoration: new InputDecoration(labelText: lang.lblTitle()),
-            onSaved: (String value) => _item.title = value,
-            validator: _validateTitle,
-            autofocus: true,
-          )),
+    form.save();
+    final newItem = _item.id != null ? widget.ref.child(_item.id) : widget.ref.push();
+    newItem.set(_item.toJson());
 
-          // -- date --
-          new Container(margin: const EdgeInsets.only(top: 8.0), child: new DateFormField(
-            label: lang.lblDate(),
-            date: _item.date,
-            onChanged: (DateTime value) {
-              _item.date = value;
-              _saveNeeded = true;
-            }
-          )),
-
-          // -- value --
-          new Container(margin: const EdgeInsets.only(top: 8.0), child: new TextFormField(
-            initialValue: _item.value?.toString() ?? '',
-            decoration: new InputDecoration(labelText: lang.lblValue()),
-            keyboardType: TextInputType.number,
-            onSaved: (String value) => _item.value = double.parse(value),
-            validator: _validateTitle,
-          )),
-
-          // -- descr --
-          new Container(margin: const EdgeInsets.only(top: 8.0), child: new TextFormField(
-            initialValue: _item.descr ?? '',
-            decoration: new InputDecoration(labelText: lang.lblDescr()),
-            onSaved: (String value) => _item.descr = value,
-          )),
-        ],
-      ),
-    );
+    _showInSnackBar(Lang.of(context).msgSaved());
+    return true;
   }
 
   String _validateTitle(String value) {
-    _saveNeeded = true;
     if (value.isEmpty) {
       return Lang.of(context).msgFieldRequired();
     }
     return null;
+  }
+
+  Future<bool> _onWillPop() async {
+    if (!_saveNeeded) return true;
+    final saved = await _handleSubmitted();
+    if (!saved) return await showLeaveConfirmDialog(context);
+    return true;
   }
 
   @override
@@ -147,12 +102,61 @@ class _BudgetPageState extends State<BudgetPage> {
         title: new Text(lang.titleAddBudget()),
         actions: <Widget>[
           new FlatButton(
-            onPressed: _handleSubmitted,
+            onPressed: () => _handleSubmitted().then((saved) {
+              if (saved) Navigator.pop(context);
+            }),
             child: new Text(lang.btnSave().toUpperCase(), style: theme.primaryTextTheme.button),
           ),
         ],
       ),
       body: _buildForm(context),
+    );
+  }
+
+  Widget _buildForm(BuildContext context) {
+    final lang = Lang.of(context);
+
+    return new Form(
+      key: _formKey,
+      autovalidate: _autoValidate,
+      onWillPop: _onWillPop,
+      child: new ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        children: <Widget>[
+          // -- title --
+          new Container(margin: const EdgeInsets.only(top: 0.0), child: new TextFormField(
+            initialValue: _item.title ?? '',
+            decoration: new InputDecoration(labelText: lang.lblTitle()),
+            onSaved: (String value) => _item.title = value,
+            validator: _validateTitle,
+            autofocus: true,
+          )),
+
+          // -- date --
+          new Container(margin: const EdgeInsets.only(top: 8.0), child: new DateFormField(
+            label: lang.lblDate(),
+            date: _item.date,
+            onChange: (DateTime value) => _item.date = value,
+          )),
+
+          // -- value --
+          new Container(margin: const EdgeInsets.only(top: 8.0), child: new TextFormField(
+            initialValue: _item.value?.toString() ?? '',
+            decoration: new InputDecoration(labelText: lang.lblValue()),
+            keyboardType: TextInputType.number,
+            onSaved: (String value) => _item.value = double.parse(value),
+            validator: _validateTitle,
+          )),
+
+          // -- descr --
+          new Container(margin: const EdgeInsets.only(top: 8.0), child: new TextFormField(
+            initialValue: _item.descr ?? '',
+            maxLines: 3,
+            decoration: new InputDecoration(labelText: lang.lblDescr()),
+            onSaved: (String value) => _item.descr = value,
+          )),
+        ],
+      ),
     );
   }
 }

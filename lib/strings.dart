@@ -33,57 +33,66 @@ class Lang {
     return Localizations.of<Lang>(context, Lang);
   }
 
-  String prefUseDark() => Intl.message('Use Dark Theme', locale: _localeName, name: 'prefUseDark');
+  String _(String name, String message) {
+    return Intl.message(message, name: name, locale: _localeName);
+  }
 
-  String title()          => Intl.message('Financial Note', locale: _localeName, name: 'title');
-  String titleBill()      => Intl.message('Bills',          locale: _localeName, name: 'titleBill');
-  String titleBudget()    => Intl.message('Budgets',        locale: _localeName, name: 'titleBudget');
-  String titleSettings()  => Intl.message('Settings',       locale: _localeName, name: 'titleSettings');
-  String titleSignIn()    => Intl.message('Sign In',        locale: _localeName, name: 'titleSignIn');
+  String prefUseDark() => _('prefUseDark', 'Use Dark Theme');
 
-  String titleOpeningBalance() => Intl.message('Opening Balance', locale: _localeName, name: 'titleOpeningBalance');
-  String titleAddTransaction() => Intl.message('Add Transaction', locale: _localeName, name: 'titleAddTransaction');
-  String titleAddBill()        => Intl.message('Add Bill',        locale: _localeName, name: 'titleAddBill');
-  String titleAddBudget()      => Intl.message('Add Budget',      locale: _localeName, name: 'titleAddBudget');
-  String titleConfirmation()   => Intl.message('Confirmation',    locale: _localeName, name: 'titleConfirmation');
+  String title()          => _('title',         'Financial Note');
+  String titleBill()      => _('titleBill',     'Bills');
+  String titleBudget()    => _('titleBudget',   'Budgets');
+  String titleSettings()  => _('titleSettings', 'Settings');
+  String titleSignIn()    => _('titleSignIn',   'Sign In');
 
-  String drawerHome()     => Intl.message('Home',                 locale: _localeName, name: 'drawerHome');
-  String drawerBills()    => Intl.message('Bills',                locale: _localeName, name: 'drawerBills');
-  String drawerBudgets()  => Intl.message('Budgets',              locale: _localeName, name: 'drawerBudgets');
-  String drawerSettings() => Intl.message('Settings',             locale: _localeName, name: 'drawerSettings');
-  String drawerHelp()     => Intl.message('Help & Feedback',      locale: _localeName, name: 'drawerHelp');
-  String drawerAbout()    => Intl.message('About Financial Note', locale: _localeName, name: 'drawerAbout');
+  String titleOpeningBalance()  => _('titleOpeningBalance',  'Opening Balance');
+  String titleAddTransaction()  => _('titleAddTransaction',  'Add Transaction');
+  String titleEditTransaction() => _('titleEditTransaction', 'Edit Transaction');
+  String titleAddBill()         => _('titleAddBill',         'Add Bill');
+  String titleEditBill()        => _('titleEditBill',        'Edit Bill');
+  String titleAddBudget()       => _('titleAddBudget',       'Add Budget');
+  String titleEditBudget()      => _('titleEditBudget',      'Edit Budget');
+  String titleConfirmation()    => _('titleConfirmation',    'Confirmation');
+  String titleValidate()        => _('titleValidate',        'Validate');
+  String titleLeave()           => _('titleLeave',           'Leave?');
 
-  String menuSearch()  => Intl.message('Search', locale: _localeName, name: 'menuSearch');
-  String menuEdit()    => Intl.message('Edit',   locale: _localeName, name: 'menuEdit');
-  String menuDelete()  => Intl.message('Delete', locale: _localeName, name: 'menuDelete');
+  String drawerHome()     => _('drawerHome',     'Home');
+  String drawerBills()    => _('drawerBills',    'Bills');
+  String drawerBudgets()  => _('drawerBudgets',  'Budgets');
+  String drawerSettings() => _('drawerSettings', 'Settings');
+  String drawerHelp()     => _('drawerHelp',     'Help & Feedback');
+  String drawerAbout()    => _('drawerAbout',    'About Financial Note');
 
-  String btnOK()           => Intl.message('OK',                  locale: _localeName, name: 'btnOK');
-  String btnCancel()       => Intl.message('Cancel',              locale: _localeName, name: 'btnCancel');
-  String btnYes()          => Intl.message('Yes',                 locale: _localeName, name: 'btnYes');
-  String btnNo()           => Intl.message('No',                  locale: _localeName, name: 'btnNo');
-  String btnSignInGoogle() => Intl.message('Sign In With Google', locale: _localeName, name: 'btnSignInGoogle');
-  String btnAdd()          => Intl.message('Add',                 locale: _localeName, name: 'btnAdd');
-  String btnSave()         => Intl.message('Save',                locale: _localeName, name: 'btnSave');
+  String menuSearch()  => _('menuSearch', 'Search');
+  String menuEdit()    => _('menuEdit',   'Edit');
+  String menuDelete()  => _('menuDelete', 'Delete');
 
-  String lblIncome()       => Intl.message('Income',              locale: _localeName, name: 'lblIncome');
-  String lblExpense()      => Intl.message('Expense',             locale: _localeName, name: 'lblExpense');
-  String lblBudget()       => Intl.message('Budget',              locale: _localeName, name: 'lblBudget');
-  String lblBill()         => Intl.message('Bill',                locale: _localeName, name: 'lblBill');
-  String lblBillPeriod()   => Intl.message('Period',              locale: _localeName, name: 'lblBillPeriod');
-  String lblTitle()        => Intl.message('Title',               locale: _localeName, name: 'lblTitle');
-  String lblDate()         => Intl.message('Date',                locale: _localeName, name: 'lblDate');
-  String lblValue()        => Intl.message('Value',               locale: _localeName, name: 'lblValue');
-  String lblDescr()        => Intl.message('Description',         locale: _localeName, name: 'lblDescr');
+  String btnOK()           => _('btnOK',           'OK');
+  String btnCancel()       => _('btnCancel',       'Cancel');
+  String btnYes()          => _('btnYes',          'Yes');
+  String btnNo()           => _('btnNo',           'No');
+  String btnSignInGoogle() => _('btnSignInGoogle', 'Sign In With Google');
+  String btnAdd()          => _('btnAdd',          'Add');
+  String btnSave()         => _('btnSave',         'Save');
 
-  String msgSignInRequired() => Intl.message('Sign in required',                               locale: _localeName, name: 'msgSignInRequired');
-  String msgWait()           => Intl.message('Please Wait',                                    locale: _localeName, name: 'msgWait');
-  String msgSaved()          => Intl.message('Data saved',                                     locale: _localeName, name: 'msgSaved');
-  String msgEmptyData()      => Intl.message('Tidak ada data',                                 locale: _localeName, name: 'msgEmptyData');
-  String msgLoading()        => Intl.message('Loading…',                                       locale: _localeName, name: 'msgLoading');
-  String msgFormHasError()   => Intl.message('This form has errors',                           locale: _localeName, name: 'msgFormHasError');
-  String msgFormError()      => Intl.message('Please fix the errors in red before submitting', locale: _localeName, name: 'msgFixFormError');
-  String msgFieldRequired()  => Intl.message('This field is required',                         locale: _localeName, name: 'msgFieldRequired');
-  String msgConfirmDelete()  => Intl.message('Are you sure to delete this item(s)?',           locale: _localeName, name: 'msgConfirmDelete');
+  String lblIncome()       => _('lblIncome',     'Income');
+  String lblExpense()      => _('lblExpense',    'Expense');
+  String lblBudget()       => _('lblBudget',     'Budget');
+  String lblBill()         => _('lblBill',       'Bill');
+  String lblBillPeriod()   => _('lblBillPeriod', 'Period');
+  String lblTitle()        => _('lblTitle',      'Title');
+  String lblDate()         => _('lblDate',       'Date');
+  String lblValue()        => _('lblValue',      'Value');
+  String lblDescr()        => _('lblDescr',      'Description');
 
+  String msgSignInRequired() => _('msgSignInRequired', 'Sign in required');
+  String msgWait()           => _('msgWait',           'Please Wait');
+  String msgSaved()          => _('msgSaved',          'Data saved');
+  String msgEmptyData()      => _('msgEmptyData',      'Tidak ada data');
+  String msgLoading()        => _('msgLoading',        'Loading…');
+  String msgFormHasError()   => _('msgFormHasError',   'This form has errors');
+  String msgFormError()      => _('msgFixFormError',   'Please fix the errors in red before submitting');
+  String msgFieldRequired()  => _('msgFieldRequired',  'This field is required');
+  String msgConfirmLeave()   => _('msgConfirmLeave',   'Your data will be lost. Are you sure to leave this form?');
+  String msgConfirmDelete()  => _('msgConfirmDelete',  'Are you sure to delete this item(s)?');
 }

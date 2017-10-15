@@ -10,7 +10,6 @@
 
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
 
 class BillGroup {
   static const kNodeName = 'bills';
@@ -25,8 +24,8 @@ class BillGroup {
 
   BillGroup({
     this.id,
-    @required this.title,
-    @required this.dueDate,
+    this.title,
+    this.dueDate,
     this.totalValue: 0.0,
     this.lastPaid,
     this.paidValue: 0.0,
@@ -104,9 +103,9 @@ class Bill {
   Bill({
     this.id,
     this.groupId,
-    @required this.title,
-    @required this.date,
-    @required this.value,
+    this.title,
+    this.date,
+    this.value,
     this.paidDate,
     this.paidValue,
     this.note,

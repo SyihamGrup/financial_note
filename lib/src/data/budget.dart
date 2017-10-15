@@ -10,7 +10,6 @@
 
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
 
 class Budget {
   static const kNodeName = 'budgets';
@@ -25,9 +24,9 @@ class Budget {
 
   Budget({
     this.id,
-    @required this.title,
-    @required this.date,
-    @required this.value,
+    this.title,
+    this.date,
+    this.value,
     this.usedValue: 0.0,
     this.isExpire: false,
     this.descr,
