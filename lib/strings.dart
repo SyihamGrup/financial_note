@@ -73,6 +73,7 @@ class Lang {
   String btnNo()           => _('btnNo',           'No');
   String btnSignInGoogle() => _('btnSignInGoogle', 'Sign In With Google');
   String btnAdd()          => _('btnAdd',          'Add');
+  String btnAddItem()      => _('btnAddItem',      'Add Item');
   String btnSave()         => _('btnSave',         'Save');
 
   String lblIncome()       => _('lblIncome',     'Income');
@@ -84,6 +85,8 @@ class Lang {
   String lblDate()         => _('lblDate',       'Date');
   String lblValue()        => _('lblValue',      'Value');
   String lblDescr()        => _('lblDescr',      'Description');
+  String lblNote()         => _('lblNote',       'Note');
+  String lblItem()         => _('lblItem',       'Item');
 
   String msgSignInRequired() => _('msgSignInRequired', 'Sign in required');
   String msgWait()           => _('msgWait',           'Please Wait');

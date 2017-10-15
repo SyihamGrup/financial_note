@@ -14,6 +14,7 @@ import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
+import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -71,9 +72,16 @@ class _MainAppState extends State<MainApp> {
 
       // Bill page
       case BillPage.kRouteName:
-        final item = params is Map && params.containsKey('data')
-                   ? new Bill.fromJson(params['data']) : null;
-        return new BillPage(bookId: currentBook?.id, item: item);
+        final data = mapValue(params, 'data');
+        final group = data != null ? new BillGroup.fromJson(data) : null;
+        final dataItems = mapValue(data, 'items');
+        final items = <Bill>[];
+        if (dataItems is List) {
+          for (final item in dataItems) {
+            items.add(new Bill.fromJson(item));
+          }
+        }
+        return new BillPage(bookId: currentBook?.id, group: group, items: items);
 
       // Budget page
       case BudgetPage.kRouteName:

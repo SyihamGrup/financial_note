@@ -13,40 +13,60 @@ import 'dart:async';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
+import 'package:financial_note/utils.dart';
 import 'package:financial_note/widget.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class BillPage extends StatefulWidget {
   static const kRouteName = '/bill';
 
-  final Bill _item;
+  final BillGroup _group;
+  final List<Bill> _items;
   final String bookId;
+  final DatabaseReference groupRef;
   final DatabaseReference ref;
 
-  BillPage({Key key, @required this.bookId, Bill item})
+  BillPage({Key key, @required this.bookId, BillGroup group, List<Bill> items})
     : assert(bookId != null),
-      this._item = item ?? new Bill(date: new DateTime.now()),
+      this._group = group ?? new BillGroup(dueDate: new DateTime.now()),
+      this._items = items ?? <Bill>[],
+      groupRef = BillGroup.ref(bookId),
       ref = Bill.ref(bookId),
-      super(key: key);
+      super(key: key) {
+    while (_items.length < 1) {
+      _items.add(new Bill(title: _items.length.toString(), date: new DateTime.now()));
+    }
+  }
 
   @override
   State<StatefulWidget> createState() {
-    return new _BillPageState(_item);
+    return new _BillPageState(_group, _items);
   }
 }
 
 class _BillPageState extends State<BillPage> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = new GlobalKey<FormState>();
+  final _titleCtrls = new List<TextEditingController>();
+  final _valueCtrls = new List<TextEditingController>();
 
-  Bill _item;
+  final BillGroup _group;
+  final List<Bill> _items;
 
   var _autoValidate = false;
   var _saveNeeded = true;
 
-  _BillPageState(this._item) : assert(_item != null);
+  _BillPageState(this._group, this._items)
+    : assert(_group != null),
+      assert(_items != null && _items.length > 0) {
+    _items.forEach((item) {
+      _titleCtrls.add(new TextEditingController(text: item.title ?? ''));
+      _valueCtrls.add(new TextEditingController(text: item.value?.toString() ?? ''));
+    });
+  }
 
   void _showInSnackBar(String value) {
     _scaffoldKey.currentState.showSnackBar(new SnackBar(
@@ -63,14 +83,21 @@ class _BillPageState extends State<BillPage> {
     }
 
     form.save();
-    final newItem = _item.id != null ? widget.ref.child(_item.id) : widget.ref.push();
-    newItem.set(_item.toJson());
+//    final newItem = _items.id != null ? widget.ref.child(_items.id) : widget.ref.push();
+//    newItem.set(_items.toJson());
 
     _showInSnackBar(Lang.of(context).msgSaved());
     return true;
   }
 
   String _validateTitle(String value) {
+    if (value.isEmpty) {
+      return Lang.of(context).msgFieldRequired();
+    }
+    return null;
+  }
+
+  String _validateValue(String value) {
     if (value.isEmpty) {
       return Lang.of(context).msgFieldRequired();
     }
@@ -97,7 +124,7 @@ class _BillPageState extends State<BillPage> {
           setState(() => _saveNeeded = false);
           nav.pop();
         }),
-        title: new Text(_item.id == null ? lang.titleAddBill() : lang.titleEditBill()),
+        title: new Text(_group.id == null ? lang.titleAddBill() : lang.titleEditBill()),
         actions: <Widget>[
           new FlatButton(
             onPressed: () => _handleSubmitted().then((saved) {
@@ -118,35 +145,130 @@ class _BillPageState extends State<BillPage> {
       key: _formKey,
       autovalidate: _autoValidate,
       onWillPop: _onWillPop,
-      child: new ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        children: <Widget>[
-          // -- title --
-          new Container(margin: const EdgeInsets.only(top: 0.0), child: new TextFormField(
-            initialValue: _item.title ?? '',
+      child: new ListView(children: <Widget>[
+        // -- title --
+        new Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: new TextFormField(
+            initialValue: _group.title ?? '',
             decoration: new InputDecoration(labelText: lang.lblTitle()),
-            onSaved: (String value) => _item.title = value,
+            onSaved: (String value) => _group.title = value,
             validator: _validateTitle,
             autofocus: true,
-          )),
+          )
+        ),
 
-          // -- date --
-          new Container(margin: const EdgeInsets.only(top: 8.0), child: new DateFormField(
-            label: lang.lblDate(),
-            date: _item.date,
-            onChange: (DateTime value) =>_item.date = value,
-          )),
+        const Divider(),
 
-          // -- value --
-          new Container(margin: const EdgeInsets.only(top: 8.0), child: new TextFormField(
-            initialValue: _item.value?.toString() ?? '',
-            decoration: new InputDecoration(labelText: lang.lblValue()),
-            keyboardType: TextInputType.number,
-            onSaved: (String value) => _item.value = double.parse(value),
-            validator: _validateTitle,
-          )),
-        ],
-      ),
+        // -- bill items --
+        _buildFormItems(context),
+
+        const Divider(),
+
+        // -- note --
+        new Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: new TextFormField(
+            initialValue: _group.note ?? '',
+            maxLines: 3,
+            decoration: new InputDecoration(labelText: lang.lblNote()),
+            onSaved: (String value) => _group.note = value,
+          ),
+        ),
+      ]),
     );
   }
+
+  Widget _buildFormItems(BuildContext context) {
+    final lang = Lang.of(context);
+
+    final widgets = <Widget>[];
+    _items.forEach((item) {
+      final index = _items.indexOf(item);
+
+      widgets.add(new Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // -- date --
+          new Container(
+            margin: const EdgeInsets.only(left: 16.0),
+            width: 110.0,
+            child: new DateFormField(
+              label: lang.lblDate(),
+              date: item.date,
+              dateFormat: new DateFormat.yMd(),
+              onChange: (DateTime value) => item.date = value,
+            )
+          ),
+
+          new Expanded(
+            child: new Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: new Column(children: <Widget>[
+                // -- title --
+                new TextFormField(
+                  controller: _titleCtrls[index],
+                  decoration: new InputDecoration(labelText: lang.lblItem() + ' ${index + 1}'),
+                  onSaved: (String value) => setState(() => item.title = value),
+                  validator: _validateTitle,
+                ),
+
+                new TextFormField(
+                  controller: _valueCtrls[index],
+                  decoration: new InputDecoration(labelText: lang.lblValue()),
+                  keyboardType: TextInputType.number,
+                  onSaved: (String value) => setState(() => item.value = parseDouble(value)),
+                  validator: _validateValue,
+                ),
+              ]
+            ),
+          )
+        ),
+
+        // -- action --
+        new Padding(
+          padding: const EdgeInsets.only(top: 24.0),
+          child: new Column(
+            children: <Widget>[
+              new IconButton(
+                icon: kIconClose,
+                iconSize: 20.0,
+                onPressed: _items.length > 1 ? () {
+                  _titleCtrls.removeAt(index);
+                  _valueCtrls.removeAt(index);
+                  setState(() => _items.remove(item));
+                } : null
+              ),
+            ],
+          ),
+        ),
+      ]));
+    });
+
+    // -- add item --
+    widgets.add(new Padding(
+      padding: const EdgeInsets.fromLTRB(136.0, 8.0, 46.0, 16.0),
+      child: new FlatButton(
+        color: Theme.of(context).buttonColor,
+        child: new Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            kIconAdd,
+            new Text(lang.btnAddItem().toUpperCase()),
+          ],
+        ),
+        onPressed: () {
+          _titleCtrls.add(new TextEditingController());
+          _valueCtrls.add(new TextEditingController());
+          setState(() => _items.add(new Bill(date: new DateTime.now())));
+        },
+      ),
+    ));
+
+    return new Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: widgets,
+    );
+  }
+
 }

@@ -14,7 +14,7 @@ library utils;
 double parseDouble(dynamic value) {
   if (value == null) return 0.0;
   if (value is num) return value.toDouble();
-  if (value is String) return double.parse(value);
+  if (value is String && value.trim() != '') return double.parse(value);
   return 0.0;
 }
 
