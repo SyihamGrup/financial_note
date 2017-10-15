@@ -112,20 +112,25 @@ class _ContentBillItem extends StatelessWidget {
     final currFormatter = new NumberFormat.currency(symbol: currencySymbol);
     final dateFormatter = new DateFormat.MMMd();
     final selectedBg = new BoxDecoration(color: Theme.of(context).highlightColor);
-    return new Container(
-      decoration: selected ? selectedBg : null,
-      child: new ListTile(
-        title: new Text(item.title),
-        subtitle: new Text(currFormatter.format(item.totalValue)),
-        trailing: new Container(
-          alignment: Alignment.topRight,
-          margin: const EdgeInsets.only(top: 20.0),
-          child: new Text(item.dueDate != null ? dateFormatter.format(item.dueDate) : '',
-                          style: Theme.of(context).textTheme.body1.copyWith(fontSize: 12.0)),
+
+    return new SizeTransition(
+      sizeFactor: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
+      axisAlignment: 0.0,
+      child: new Container(
+        decoration: selected ? selectedBg : null,
+        child: new ListTile(
+          title: new Text(item.title),
+          subtitle: new Text(currFormatter.format(item.totalValue)),
+          trailing: new Container(
+            alignment: Alignment.topRight,
+            margin: const EdgeInsets.only(top: 20.0),
+            child: new Text(item.dueDate != null ? dateFormatter.format(item.dueDate) : '',
+                            style: Theme.of(context).textTheme.body1.copyWith(fontSize: 12.0)),
+          ),
+          selected: selected,
+          onTap: onTap,
+          onLongPress: onLongPress,
         ),
-        selected: selected,
-        onTap: onTap,
-        onLongPress: onLongPress,
       ),
     );
   }
