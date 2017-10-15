@@ -79,6 +79,13 @@ class _BudgetPageState extends State<BudgetPage> {
     return null;
   }
 
+  String _validateValue(String value) {
+    if (value.isEmpty) {
+      return Lang.of(context).msgFieldRequired();
+    }
+    return null;
+  }
+
   Future<bool> _onWillPop() async {
     if (!_saveNeeded) return true;
     final saved = await _handleSubmitted();
@@ -124,37 +131,37 @@ class _BudgetPageState extends State<BudgetPage> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         children: <Widget>[
           // -- title --
-          new Container(margin: const EdgeInsets.only(top: 0.0), child: new TextFormField(
+          new TextFormField(
             initialValue: _item.title ?? '',
             decoration: new InputDecoration(labelText: lang.lblTitle()),
             onSaved: (String value) => _item.title = value,
             validator: _validateTitle,
             autofocus: true,
-          )),
+          ),
 
           // -- date --
-          new Container(margin: const EdgeInsets.only(top: 8.0), child: new DateFormField(
+          new DateFormField(
             label: lang.lblDate(),
             date: _item.date,
             onChange: (DateTime value) => _item.date = value,
-          )),
+          ),
 
           // -- value --
-          new Container(margin: const EdgeInsets.only(top: 8.0), child: new TextFormField(
+          new TextFormField(
             initialValue: _item.value?.toString() ?? '',
             decoration: new InputDecoration(labelText: lang.lblValue()),
             keyboardType: TextInputType.number,
             onSaved: (String value) => _item.value = double.parse(value),
-            validator: _validateTitle,
-          )),
+            validator: _validateValue,
+          ),
 
           // -- descr --
-          new Container(margin: const EdgeInsets.only(top: 8.0), child: new TextFormField(
+          new TextFormField(
             initialValue: _item.descr ?? '',
             maxLines: 3,
             decoration: new InputDecoration(labelText: lang.lblDescr()),
             onSaved: (String value) => _item.descr = value,
-          )),
+          ),
         ],
       ),
     );

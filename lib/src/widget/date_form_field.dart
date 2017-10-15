@@ -18,10 +18,11 @@ class DateFormField extends StatelessWidget {
   final DateTime date;
   final DateTime firstDate;
   final DateTime lastDate;
+  final DateFormat dateFormat;
   final ValueChanged<DateTime> onChange;
 
   DateFormField({Key key, this.label, this.date, this.firstDate, this.lastDate,
-                 @required this.onChange})
+                 this.dateFormat, @required this.onChange})
     : assert(onChange != null),
       super(key: key);
 
@@ -31,9 +32,16 @@ class DateFormField extends StatelessWidget {
     return new Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        new Text(label, style: theme.textTheme.caption),
-        new DateItem(date: date, firstDate: firstDate, lastDate: lastDate,
-                     onChange: onChange),
+        new Padding(
+          padding: const EdgeInsets.only(top: 16.0),
+          child: new Text(label,
+            style: theme.textTheme.caption.copyWith(color: theme.hintColor)),
+        ),
+        new Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: new DateItem(date: date, firstDate: firstDate, lastDate: lastDate,
+                              dateFormat: dateFormat, onChange: onChange),
+        ),
       ],
     );
   }
@@ -43,12 +51,14 @@ class DateItem extends StatelessWidget {
   final DateTime date;
   final DateTime firstDate;
   final DateTime lastDate;
+  final DateFormat dateFormat;
   final ValueChanged<DateTime> onChange;
 
   DateItem({ Key key, DateTime date, this.firstDate, this.lastDate,
-             @required this.onChange })
+             DateFormat dateFormat, @required this.onChange })
     : assert(onChange != null),
       this.date = date ?? new DateTime.now(),
+      this.dateFormat = dateFormat ?? new DateFormat('EEE, MMM d yyyy'),
       super(key: key);
 
   @override
@@ -58,10 +68,14 @@ class DateItem extends StatelessWidget {
     return new DefaultTextStyle(
       style: theme.textTheme.subhead,
       child: new Container(
-        padding: const EdgeInsets.only(top: 4.0),
-        decoration: new BoxDecoration(
-          border: new Border(bottom: new BorderSide(color: theme.dividerColor))
-        ),
+        padding: const EdgeInsets.only(top: 6.0),
+        // Sementara hilangkan border bottom
+        /*decoration: new BoxDecoration(
+          border: new Border(bottom: new BorderSide(
+            color: theme.disabledColor,
+            width: 1.0,
+          )),
+        ),*/
         child: new InkWell(
           onTap: () {
             showDatePicker(
@@ -77,8 +91,8 @@ class DateItem extends StatelessWidget {
           child: new Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              new Text(new DateFormat('EEE, MMM d yyyy').format(date)),
-              const Icon(Icons.arrow_drop_down, color: Colors.black54),
+              new Text(dateFormat.format(date)),
+              const Icon(Icons.arrow_drop_down, color: Colors.black54, size: 22.0),
             ],
           ),
         ),
