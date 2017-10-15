@@ -16,9 +16,12 @@ import 'package:intl/intl.dart';
 class DateFormField extends StatelessWidget {
   final String label;
   final DateTime date;
+  final DateTime firstDate;
+  final DateTime lastDate;
   final ValueChanged<DateTime> onChange;
 
-  DateFormField({Key key, this.label, this.date, @required this.onChange})
+  DateFormField({Key key, this.label, this.date, this.firstDate, this.lastDate,
+                 @required this.onChange})
     : assert(onChange != null),
       super(key: key);
 
@@ -29,7 +32,8 @@ class DateFormField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         new Text(label, style: theme.textTheme.caption),
-        new DateItem(date: date, onChange: onChange),
+        new DateItem(date: date, firstDate: firstDate, lastDate: lastDate,
+                     onChange: onChange),
       ],
     );
   }
@@ -37,9 +41,12 @@ class DateFormField extends StatelessWidget {
 
 class DateItem extends StatelessWidget {
   final DateTime date;
+  final DateTime firstDate;
+  final DateTime lastDate;
   final ValueChanged<DateTime> onChange;
 
-  DateItem({ Key key, DateTime date, @required this.onChange })
+  DateItem({ Key key, DateTime date, this.firstDate, this.lastDate,
+             @required this.onChange })
     : assert(onChange != null),
       this.date = date ?? new DateTime.now(),
       super(key: key);
@@ -60,8 +67,8 @@ class DateItem extends StatelessWidget {
             showDatePicker(
               context: context,
               initialDate: date,
-              firstDate: date.subtract(const Duration(days: 30)),
-              lastDate: date.add(const Duration(days: 30))
+              firstDate: firstDate ?? date.subtract(const Duration(days: 365 * 5)),
+              lastDate: lastDate ?? date.add(const Duration(days: 365 * 5))
             )
             .then<Null>((DateTime value) {
               onChange(new DateTime(value.year, value.month, value.day));
