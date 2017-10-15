@@ -36,7 +36,11 @@ class _HomePageBillState extends State<HomePageBill> {
   Widget build(BuildContext context) {
     return new FirebaseAnimatedList(
       query: widget.ref,
-      sort: (a, b) => b.key.compareTo(a.key),
+      sort: (a, b) {
+        final aDate = a.value is Map && a.value.containsKey('date') ? a.value['date'] : '';
+        final bDate = b.value is Map && b.value.containsKey('date') ? b.value['date'] : '';
+        return bDate.compareTo(aDate);
+      },
       defaultChild: new _EmptyBody(),
       itemBuilder: (context, snapshot, animation) {
         final item = new Bill.fromSnapshot(snapshot);
