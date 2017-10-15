@@ -97,7 +97,6 @@ class Bill {
   double value;
   DateTime paidDate;
   double paidValue;
-  String note;
   String descr;
 
   Bill({
@@ -108,7 +107,6 @@ class Bill {
     this.value,
     this.paidDate,
     this.paidValue,
-    this.note,
     this.descr,
   });
 
@@ -120,7 +118,6 @@ class Bill {
       value     = parseDouble(mapValue(json, 'value')),
       paidDate  = parseDate(mapValue(json, 'paidDate')),
       paidValue = parseDouble(mapValue(json, 'paidValue')),
-      note      = parseString(mapValue(json, 'note')),
       descr     = parseString(mapValue(json, 'descr'));
 
   Bill.fromSnapshot(DataSnapshot snapshot)
@@ -131,7 +128,6 @@ class Bill {
       value     = parseDouble(mapValue(snapshot.value, 'value')),
       paidDate  = parseDate(mapValue(snapshot.value, 'paidDate')),
       paidValue = parseDouble(mapValue(snapshot.value, 'paidValue')),
-      note      = parseString(mapValue(snapshot.value, 'note')),
       descr     = parseString(mapValue(snapshot.value, 'descr'));
 
   static DatabaseReference ref(String bookId) {
@@ -147,7 +143,6 @@ class Bill {
       'value'     : value,
       'paidDate'  : paidDate?.toIso8601String(),
       'paidValue' : paidValue,
-      'note'      : note,
       'descr'     : descr,
     };
   }
@@ -160,7 +155,6 @@ class Bill {
     double value,
     DateTime paidDate,
     double paidValue,
-    String note,
     String descr,
   }) {
     return new Bill(
@@ -171,7 +165,6 @@ class Bill {
       value     : value     ?? this.value,
       paidDate  : paidDate  ?? this.paidDate,
       paidValue : paidValue ?? this.paidValue,
-      note      : note      ?? this.note,
       descr     : descr     ?? this.descr,
     );
   }
