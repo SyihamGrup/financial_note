@@ -48,7 +48,7 @@ class _BudgetPageState extends State<BudgetPage> {
   var _autoValidate = false;
   var _saveNeeded = true;
 
-  _BudgetPageState(this._item);
+  _BudgetPageState(this._item) : assert(_item != null);
 
   void _showInSnackBar(String value) {
     _scaffoldKey.currentState.showSnackBar(new SnackBar(
@@ -99,7 +99,7 @@ class _BudgetPageState extends State<BudgetPage> {
           setState(() => _saveNeeded = false);
           nav.pop();
         }),
-        title: new Text(lang.titleAddBudget()),
+        title: new Text(_item.id == null ? lang.titleAddBudget() : lang.titleEditBudget()),
         actions: <Widget>[
           new FlatButton(
             onPressed: () => _handleSubmitted().then((saved) {

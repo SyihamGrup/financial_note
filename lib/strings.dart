@@ -46,11 +46,11 @@ class Lang {
   String titleSignIn()    => _('titleSignIn',   'Sign In');
 
   String titleOpeningBalance()  => _('titleOpeningBalance',  'Opening Balance');
-  String titleAddTransaction()  => _('titleAddTransaction',  'Add Transaction');
+  String titleAddTransaction()  => _('titleAddTransaction',  'New Transaction');
   String titleEditTransaction() => _('titleEditTransaction', 'Edit Transaction');
-  String titleAddBill()         => _('titleAddBill',         'Add Bill');
+  String titleAddBill()         => _('titleAddBill',         'New Bill');
   String titleEditBill()        => _('titleEditBill',        'Edit Bill');
-  String titleAddBudget()       => _('titleAddBudget',       'Add Budget');
+  String titleAddBudget()       => _('titleAddBudget',       'New Budget');
   String titleEditBudget()      => _('titleEditBudget',      'Edit Budget');
   String titleConfirmation()    => _('titleConfirmation',    'Confirmation');
   String titleValidate()        => _('titleValidate',        'Validate');

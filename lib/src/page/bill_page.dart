@@ -46,7 +46,7 @@ class _BillPageState extends State<BillPage> {
   var _autoValidate = false;
   var _saveNeeded = true;
 
-  _BillPageState(this._item);
+  _BillPageState(this._item) : assert(_item != null);
 
   void _showInSnackBar(String value) {
     _scaffoldKey.currentState.showSnackBar(new SnackBar(
@@ -97,7 +97,7 @@ class _BillPageState extends State<BillPage> {
           setState(() => _saveNeeded = false);
           nav.pop();
         }),
-        title: new Text(lang.titleAddBill()),
+        title: new Text(_item.id == null ? lang.titleAddBill() : lang.titleEditBill()),
         actions: <Widget>[
           new FlatButton(
             onPressed: () => _handleSubmitted().then((saved) {
