@@ -124,7 +124,7 @@ class _ContentBillItem extends StatelessWidget {
           trailing: new Container(
             alignment: Alignment.topRight,
             margin: const EdgeInsets.only(top: 20.0),
-            child: new Text(item.dueDate != null ? dateFormatter.format(item.dueDate) : '',
+            child: new Text(item.startDate != null ? dateFormatter.format(item.startDate) : '',
                             style: Theme.of(context).textTheme.body1.copyWith(fontSize: 12.0)),
           ),
           selected: selected,

@@ -16,8 +16,10 @@ class BillGroup {
 
   String id;
   String title;
-  DateTime dueDate;
+  DateTime startDate;
+  DateTime endDate;
   double totalValue;
+  int itemsCount;
   DateTime lastPaid;
   double paidValue;
   String note;
@@ -25,7 +27,9 @@ class BillGroup {
   BillGroup({
     this.id,
     this.title,
-    this.dueDate,
+    this.startDate,
+    this.endDate,
+    this.itemsCount,
     this.totalValue: 0.0,
     this.lastPaid,
     this.paidValue: 0.0,
@@ -35,7 +39,8 @@ class BillGroup {
   BillGroup.fromJson(Map<String, dynamic> json)
     : id         = parseString(mapValue(json, 'id')),
       title      = parseString(mapValue(json, 'title')),
-      dueDate    = parseDate(mapValue(json, 'dueDate')),
+      startDate  = parseDate(mapValue(json, 'startDate')),
+      endDate    = parseDate(mapValue(json, 'endDate')),
       totalValue = parseDouble(mapValue(json, 'totalValue')),
       lastPaid   = parseDate(mapValue(json, 'lastPaid')),
       paidValue  = parseDouble(mapValue(json, 'paidValue')),
@@ -44,7 +49,8 @@ class BillGroup {
   BillGroup.fromSnapshot(DataSnapshot snapshot)
     : id         = snapshot.key,
       title      = parseString(mapValue(snapshot.value, 'title')),
-      dueDate    = parseDate(mapValue(snapshot.value, 'dueDate')),
+      startDate  = parseDate(mapValue(snapshot.value, 'startDate')),
+      endDate    = parseDate(mapValue(snapshot.value, 'endDate')),
       totalValue = parseDouble(mapValue(snapshot.value, 'totalValue')),
       lastPaid   = parseDate(mapValue(snapshot.value, 'lastPaid')),
       paidValue  = parseDouble(mapValue(snapshot.value, 'paidValue')),
@@ -58,7 +64,8 @@ class BillGroup {
     return <String, dynamic>{
       'id'         : id,
       'title'      : title,
-      'dueDate'    : dueDate?.toIso8601String(),
+      'startDate'  : startDate?.toIso8601String(),
+      'endDate'    : endDate?.toIso8601String(),
       'totalValue' : totalValue,
       'lastPaid'   : lastPaid?.toIso8601String(),
       'paidValue'  : paidValue,
@@ -69,7 +76,8 @@ class BillGroup {
   BillGroup copyWith({
     String id,
     String title,
-    DateTime dueDate,
+    DateTime startDate,
+    DateTime endDate,
     double totalValue,
     DateTime lastPaid,
     double paidValue,
@@ -78,7 +86,8 @@ class BillGroup {
     return new BillGroup(
       id         : id         ?? this.id,
       title      : title      ?? this.title,
-      dueDate    : dueDate    ?? this.dueDate,
+      startDate  : startDate  ?? this.startDate,
+      endDate    : endDate    ?? this.endDate,
       totalValue : totalValue ?? this.totalValue,
       lastPaid   : lastPaid   ?? this.lastPaid,
       paidValue  : paidValue  ?? this.paidValue,
