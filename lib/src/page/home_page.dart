@@ -60,6 +60,18 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   ListAppBar<Budget> _appBarBudget;
 
   @override
+  void initState() {
+    super.initState();
+
+    final ref = FirebaseDatabase.instance.reference();
+    ref.child(Book.kNodeName).child(currentUser.uid).keepSynced(true);
+    ref.child(Budget.kNodeName).child(currentBook.id).keepSynced(true);
+    ref.child(Bill.kNodeName).child(currentBook.id).keepSynced(true);
+    ref.child(Balance.kNodeName).child(currentBook.id).keepSynced(true);
+    ref.child(Transaction.kNodeName).child(currentBook.id).keepSynced(true);
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 

@@ -15,8 +15,6 @@ import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,27 +47,14 @@ class _SignInPageState extends State<SignInPage> {
         accessToken: c.accessToken
       );
       if (user != null) {
-        await _init(user);
+        currentUser = user;
+        currentBook = await _getBook();
+        assert(currentBook != null);
         Navigator.pushReplacementNamed(context, HomePage.kRouteName);
       }
     }
 
     setState(() => _signingIn = false);
-  }
-
-  Future<Null> _init(FirebaseUser user) async {
-    currentUser = user;
-    currentBook = await _getBook();
-    assert(currentBook != null);
-
-    final ref = FirebaseDatabase.instance.reference();
-    ref.child(Book.kNodeName).child(currentUser.uid).keepSynced(true);
-    ref.child(Budget.kNodeName).child(currentBook.id).keepSynced(true);
-    ref.child(Bill.kNodeName).child(currentBook.id).keepSynced(true);
-    ref.child(Balance.kNodeName).child(currentBook.id).keepSynced(true);
-    ref.child(Transaction.kNodeName).child(currentBook.id).keepSynced(true);
-
-    Navigator.pushReplacementNamed(context, HomePage.kRouteName);
   }
 
   Future<Book> _getBook() async {
