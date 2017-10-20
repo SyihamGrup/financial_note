@@ -84,6 +84,8 @@ class Lang {
   String lblTitle()        => _('lblTitle',      'Title');
   String lblDate()         => _('lblDate',       'Date');
   String lblValue()        => _('lblValue',      'Value');
+  String lblTotal()        => _('lblTotal',      'Total');
+  String lblSpent()        => _('lblSpent',      'Spent');
   String lblDescr()        => _('lblDescr',      'Description');
   String lblNote()         => _('lblNote',       'Note');
   String lblItem()         => _('lblItem',       'Item');

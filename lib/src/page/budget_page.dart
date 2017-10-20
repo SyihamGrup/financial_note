@@ -13,6 +13,7 @@ import 'dart:async';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
+import 'package:financial_note/utils.dart';
 import 'package:financial_note/widget.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
@@ -146,13 +147,28 @@ class _BudgetPageState extends State<BudgetPage> {
             onChange: (DateTime value) => _item.date = value,
           ),
 
-          // -- value --
-          new TextFormField(
-            initialValue: _item.value?.toString() ?? '',
-            decoration: new InputDecoration(labelText: lang.lblValue()),
-            keyboardType: TextInputType.number,
-            onSaved: (String value) => _item.value = double.parse(value),
-            validator: _validateValue,
+          new Row(
+            children: <Widget>[
+              // -- value --
+              new Expanded(child: new TextFormField(
+                initialValue: _item.value?.toString() ?? '',
+                decoration: new InputDecoration(labelText: lang.lblValue()),
+                keyboardType: TextInputType.number,
+                onSaved: (String value) => _item.value = parseDouble(value),
+                validator: _validateValue,
+              )),
+
+              new Container(width: 16.0),
+
+              // -- spent --
+              new Expanded(child: new TextFormField(
+                initialValue: _item.spent?.toString() ?? '',
+                decoration: new InputDecoration(labelText: lang.lblSpent()),
+                keyboardType: TextInputType.number,
+                onSaved: (String value) => _item.spent = parseDouble(value),
+                validator: _validateValue,
+              )),
+            ],
           ),
 
           // -- descr --

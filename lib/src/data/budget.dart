@@ -18,7 +18,7 @@ class Budget {
   String title;
   DateTime date;
   double value;
-  double usedValue;
+  double spent;
   bool isExpire;
   String descr;
 
@@ -27,7 +27,7 @@ class Budget {
     this.title,
     this.date,
     this.value,
-    this.usedValue: 0.0,
+    this.spent: 0.0,
     this.isExpire: false,
     this.descr,
   });
@@ -37,7 +37,7 @@ class Budget {
       title     = parseString(mapValue(json, 'title')),
       date      = parseDate(mapValue(json, 'date')),
       value     = parseDouble(mapValue(json, 'value')),
-      usedValue = parseDouble(mapValue(json, 'usedValue')),
+      spent     = parseDouble(mapValue(json, 'spent')),
       isExpire  = parseBool(mapValue(json, 'isExpire')),
       descr     = parseString(mapValue(json, 'descr'));
 
@@ -46,7 +46,7 @@ class Budget {
       title     = parseString(mapValue(snapshot.value, 'title')),
       date      = parseDate(mapValue(snapshot.value, 'date')),
       value     = parseDouble(mapValue(snapshot.value, 'value')),
-      usedValue = parseDouble(mapValue(snapshot.value, 'usedValue')),
+      spent     = parseDouble(mapValue(snapshot.value, 'spent')),
       isExpire  = parseBool(mapValue(snapshot.value, 'isExpire', def: false)),
       descr     = parseString(mapValue(snapshot.value, 'descr'));
 
@@ -60,7 +60,7 @@ class Budget {
       'title'     : title,
       'date'      : date?.toIso8601String(),
       'value'     : value,
-      'usedValue' : usedValue,
+      'spent'     : spent,
       'isExpire'  : isExpire,
       'descr'     : descr,
     };
@@ -73,7 +73,7 @@ class Budget {
     String title,
     DateTime date,
     double value,
-    double usedValue,
+    double spent,
     bool isExpire,
     String descr,
   }) {
@@ -82,7 +82,7 @@ class Budget {
       title     : title     ?? this.title,
       date      : date      ?? this.date,
       value     : value     ?? this.value,
-      usedValue : usedValue ?? this.usedValue,
+      spent     : spent     ?? this.spent,
       isExpire  : isExpire  ?? this.isExpire,
       descr     : descr     ?? this.descr,
     );

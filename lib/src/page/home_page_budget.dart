@@ -109,9 +109,21 @@ class _ContentBudgetItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currFormatter = new NumberFormat.currency(symbol: currencySymbol);
+    final theme = Theme.of(context);
+    final lang = Lang.of(context);
+    final selectedBg = new BoxDecoration(color: theme.highlightColor);
+
+    final value = item.value ?? 0;
+    final spent = item.spent ?? 0;
+    final currFormatter = new NumberFormat.currency(symbol: currencySymbol,decimalDigits: 0);
+
+    final percentColor = theme.primaryColor;
+    final percentBg = theme.highlightColor;
+
     final dateFormatter = new DateFormat.MMMd();
-    final selectedBg = new BoxDecoration(color: Theme.of(context).highlightColor);
+    final date = item.date != null ? dateFormatter.format(item.date) : '';
+    final dateStyle = theme.textTheme.body1.copyWith(fontSize: 12.0);
+    final percent = value == 0 ? 0 : (spent / value > 1 ? 1 : spent / value);
 
     return new SizeTransition(
       sizeFactor: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
@@ -119,13 +131,29 @@ class _ContentBudgetItem extends StatelessWidget {
       child: new Container(
         decoration: selected ? selectedBg : null,
         child: new ListTile(
+          leading: new Stack(
+            alignment: AlignmentDirectional.bottomCenter,
+            children: <Widget>[
+              new Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                height: 40.0,
+                width: 26.0,
+                decoration: new BoxDecoration(color: percentBg, border: new Border.all(color: percentColor)),
+              ),
+              new Container(
+                margin: const EdgeInsets.fromLTRB(10.0, 2.0, 10.0, 2.0),
+                width: 20.0,
+                height: value > 0 ? 36.0 * percent : 0.0,
+                decoration: new BoxDecoration(color: percentColor),
+              ),
+            ]
+          ),
           title: new Text(item.title),
-          subtitle: new Text(currFormatter.format(item.value)),
+          subtitle: new Text(lang.lblTotal() + ': ' + currFormatter.format(value)),
           trailing: new Container(
             alignment: Alignment.topRight,
             margin: const EdgeInsets.only(top: 20.0),
-            child: new Text(item.date != null ? dateFormatter.format(item.date) : '',
-                            style: Theme.of(context).textTheme.body1.copyWith(fontSize: 12.0)),
+            child: new Text(date, style: dateStyle),
           ),
           selected: selected,
           onTap: onTap,
