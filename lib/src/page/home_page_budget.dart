@@ -42,7 +42,7 @@ class _HomePageBudgetState extends State<HomePageBudget> {
         return bDate.compareTo(aDate);
       },
       defaultChild: new Center(child: new Text(Lang.of(context).msgLoading())),
-      itemBuilder: (context, snapshot, animation) {
+      itemBuilder: (context, snapshot, animation, index) {
         final item = new Budget.fromSnapshot(snapshot);
         return new _ContentBudgetItem(
           item: item,

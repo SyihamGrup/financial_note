@@ -22,7 +22,8 @@ final analytics = new FirebaseAnalytics();
 final _googleSignIn = new GoogleSignIn();
 
 Future<FirebaseUser> ensureLoggedIn() async {
-  if (auth.currentUser != null) return auth.currentUser;
+  var user = await auth.currentUser();
+  if (user != null) return user;
 
   final prefs = await SharedPreferences.getInstance();
   final method = prefs.getString(kPrefSignInMethod) ?? kPrefSignInGoogle;
@@ -34,8 +35,8 @@ Future<FirebaseUser> ensureLoggedIn() async {
       
       analytics.logLogin();
       final c = await google.authentication;
-      await auth.signInWithGoogle(idToken: c.idToken, accessToken: c.accessToken);
-      return auth.currentUser;
+      user = await auth.signInWithGoogle(idToken: c.idToken, accessToken: c.accessToken);
+      return user;
   }
 
   return null;

@@ -12,10 +12,9 @@ library data;
 
 import 'dart:async';
 
-import 'package:financial_note/auth.dart';
 import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 export 'src/data/balance.dart';
@@ -31,6 +30,7 @@ const kOpeningBalancePath = '/getOpeningBalance';
 const kCalcOpeningBalancePath = '/calcOpeningBalance';
 
 // Global variable current book
+FirebaseUser currentUser;
 Book currentBook;
 
 /// Get firebase uri
@@ -67,21 +67,4 @@ Future<Book> _getBookFromPrefs(String userId) async {
   if (snap.value == null) return null;
 
   return new Book.fromJson(snap.key, snap.value);
-}
-
-/// Initialize current book dan synced dari firebase database.
-Future<Null> initializeData() async {
-  final book = await getDefaultBook(auth.currentUser.uid);
-  assert(book != null);
-
-  final prefs = await SharedPreferences.getInstance();
-  prefs.setString(kPrefBookId, book.id);
-  currentBook = book;
-
-  final ref = FirebaseDatabase.instance.reference();
-  ref.child(Book.kNodeName).child(auth.currentUser.uid).keepSynced(true);
-  ref.child(Budget.kNodeName).child(book.id).keepSynced(true);
-  ref.child(Bill.kNodeName).child(book.id).keepSynced(true);
-  ref.child(Balance.kNodeName).child(book.id).keepSynced(true);
-  ref.child(Transaction.kNodeName).child(book.id).keepSynced(true);
 }

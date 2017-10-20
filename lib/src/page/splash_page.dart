@@ -11,11 +11,14 @@
 import 'dart:async';
 
 import 'package:financial_note/auth.dart';
+import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashPage extends StatefulWidget {
   static const kRouteName = '/splash';
@@ -37,16 +40,33 @@ class _SplashPageState extends State<SplashPage> {
 
   Future<Null> _init() async {
     try {
-      await ensureLoggedIn();
-      if (auth.currentUser == null) {
+      currentUser = await ensureLoggedIn();
+
+      if (currentUser == null) {
         Navigator.pushReplacementNamed(context, SignInPage.kRouteName);
         return;
       }
-      await initializeData();
+      currentBook = await _getBook();
+      assert(currentBook != null);
+
+      final ref = FirebaseDatabase.instance.reference();
+      ref.child(Book.kNodeName).child(currentUser.uid).keepSynced(true);
+      ref.child(Budget.kNodeName).child(currentBook.id).keepSynced(true);
+      ref.child(Bill.kNodeName).child(currentBook.id).keepSynced(true);
+      ref.child(Balance.kNodeName).child(currentBook.id).keepSynced(true);
+      ref.child(Transaction.kNodeName).child(currentBook.id).keepSynced(true);
+
       Navigator.pushReplacementNamed(context, HomePage.kRouteName);
     } catch (e) {
       setState(() => _subtitle = e.message);
     }
+  }
+
+  Future<Book> _getBook() async {
+    final book = await getDefaultBook(currentUser.uid);
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(kPrefBookId, book?.id);
+    return book;
   }
 
   @override

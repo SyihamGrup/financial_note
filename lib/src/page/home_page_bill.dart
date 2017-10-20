@@ -42,7 +42,7 @@ class _HomePageBillState extends State<HomePageBill> {
         return bDate.compareTo(aDate);
       },
       defaultChild: new Center(child: new Text(Lang.of(context).msgLoading())),
-      itemBuilder: (context, snapshot, animation) {
+      itemBuilder: (context, snapshot, animation, index) {
         final item = new BillGroup.fromSnapshot(snapshot);
         return new _ContentBillItem(
           item: item,
