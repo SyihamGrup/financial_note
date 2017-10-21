@@ -24,19 +24,18 @@ import 'package:flutter/widgets.dart';
 class BudgetPage extends StatefulWidget {
   static const kRouteName = '/budget';
 
-  final Budget _item;
   final String bookId;
+  final String id;
   final DatabaseReference ref;
 
-  BudgetPage({Key key, @required this.bookId, Budget item})
+  BudgetPage({Key key, @required this.bookId, this.id})
     : assert(bookId != null),
-      this._item = item ?? new Budget(date: new DateTime.now()),
       ref = Budget.ref(bookId),
       super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return new _BudgetPageState(_item);
+    return new _BudgetPageState(id: id);
   }
 }
 
@@ -44,12 +43,40 @@ class _BudgetPageState extends State<BudgetPage> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = new GlobalKey<FormState>();
 
-  Budget _item;
+  var _item = new Budget(date: new DateTime.now());
+  var _ctrl = <String, TextEditingController>{
+    'title': new TextEditingController(),
+    'value': new TextEditingController(),
+    'spent': new TextEditingController(),
+    'descr': new TextEditingController(),
+  };
 
   var _autoValidate = false;
   var _saveNeeded = true;
 
-  _BudgetPageState(this._item) : assert(_item != null);
+  _BudgetPageState({String id}) {
+    _item.id = id;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initData();
+  }
+
+  Future<Null> _initData() async {
+    if (_item.id == null) return;
+
+    final snap = await widget.ref.child(_item.id).once();
+    if (snap.value == null) return;
+    _item = new Budget.fromSnapshot(snap);
+    _ctrl = <String, TextEditingController>{
+      'title': new TextEditingController(text: _item.title ?? ''),
+      'value': new TextEditingController(text: _item.value.toString()),
+      'spent': new TextEditingController(text: _item.spent.toString()),
+      'descr': new TextEditingController(text: _item.descr ?? ''),
+    };
+  }
 
   void _showInSnackBar(String value) {
     _scaffoldKey.currentState.showSnackBar(new SnackBar(
@@ -65,6 +92,7 @@ class _BudgetPageState extends State<BudgetPage> {
       return false;
     }
 
+    _showInSnackBar(Lang.of(context).msgSaving());
     form.save();
     final newItem = _item.id != null ? widget.ref.child(_item.id) : widget.ref.push();
     newItem.set(_item.toJson());
@@ -133,11 +161,12 @@ class _BudgetPageState extends State<BudgetPage> {
         children: <Widget>[
           // -- title --
           new TextFormField(
-            initialValue: _item.title ?? '',
+            initialValue: _ctrl['title'].text,
+            controller: _ctrl['title'],
             decoration: new InputDecoration(labelText: lang.lblTitle()),
             onSaved: (String value) => _item.title = value,
             validator: _validateTitle,
-            autofocus: true,
+            autofocus: _item.id == null,
           ),
 
           // -- date --
@@ -151,7 +180,8 @@ class _BudgetPageState extends State<BudgetPage> {
             children: <Widget>[
               // -- value --
               new Expanded(child: new TextFormField(
-                initialValue: _item.value?.toString() ?? '',
+                initialValue: _ctrl['value'].text,
+                controller: _ctrl['value'],
                 decoration: new InputDecoration(labelText: lang.lblValue()),
                 keyboardType: TextInputType.number,
                 onSaved: (String value) => _item.value = parseDouble(value),
@@ -162,7 +192,8 @@ class _BudgetPageState extends State<BudgetPage> {
 
               // -- spent --
               new Expanded(child: new TextFormField(
-                initialValue: _item.spent?.toString() ?? '',
+                initialValue: _ctrl['spent'].text,
+                controller: _ctrl['spent'],
                 decoration: new InputDecoration(labelText: lang.lblSpent()),
                 keyboardType: TextInputType.number,
                 onSaved: (String value) => _item.spent = parseDouble(value),
@@ -173,7 +204,8 @@ class _BudgetPageState extends State<BudgetPage> {
 
           // -- descr --
           new TextFormField(
-            initialValue: _item.descr ?? '',
+            initialValue: _ctrl['descr'].text,
+            controller: _ctrl['descr'],
             maxLines: 3,
             decoration: new InputDecoration(labelText: lang.lblDescr()),
             onSaved: (String value) => _item.descr = value,

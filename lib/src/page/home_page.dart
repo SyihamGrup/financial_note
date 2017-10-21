@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       onActionModeTap: (key, items) {
         switch (key) {
           case 'edit':
-            final params = <String, dynamic>{'data': items[0]};
+            final params = <String, dynamic>{'id': items[0].id};
             Navigator.pushNamed(context, routeWithParams(BillPage.kRouteName, params));
             _billBarKey.currentState.exitActionMode();
             break;
@@ -137,7 +137,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       onActionModeTap: (key, items) {
         switch (key) {
           case 'edit':
-            final params = <String, dynamic>{'data': items[0]};
+            final params = <String, dynamic>{'id': items[0].id};
             Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));
             _budgetBarKey.currentState.exitActionMode();
             break;
@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       bookId: widget.bookId,
       config: widget.config,
       onItemTap: (item) {
-        final params = <String, dynamic>{'data': item};
+        final params = <String, dynamic>{'id': item.id};
         Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));
       },
       onItemsSelect: (items, index) {
