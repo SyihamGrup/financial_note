@@ -148,7 +148,7 @@ class _ContentBudgetItem extends StatelessWidget {
               ),
             ]
           ),
-          title: new Text(item.title),
+          title: new Text(item.title, overflow: TextOverflow.ellipsis),
           subtitle: new Text(lang.lblTotal() + ': ' + currFormatter.format(value)),
           trailing: new Container(
             alignment: Alignment.topRight,

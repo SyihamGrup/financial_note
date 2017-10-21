@@ -119,7 +119,7 @@ class _ContentBillItem extends StatelessWidget {
       child: new Container(
         decoration: selected ? selectedBg : null,
         child: new ListTile(
-          title: new Text(item.title),
+          title: new Text(item.title, overflow: TextOverflow.ellipsis),
           subtitle: new Text(currFormatter.format(item.totalValue)),
           trailing: new Container(
             alignment: Alignment.topRight,
