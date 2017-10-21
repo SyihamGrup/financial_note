@@ -42,6 +42,7 @@ class Lang {
   String title()          => _('title',         'Financial Note');
   String titleBill()      => _('titleBill',     'Bills');
   String titleBudget()    => _('titleBudget',   'Budgets');
+  String titleNote()      => _('titleNote',     'Notes');
   String titleSettings()  => _('titleSettings', 'Settings');
   String titleSignIn()    => _('titleSignIn',   'Sign In');
 
@@ -52,6 +53,8 @@ class Lang {
   String titleEditBill()        => _('titleEditBill',        'Edit Bill');
   String titleAddBudget()       => _('titleAddBudget',       'New Budget');
   String titleEditBudget()      => _('titleEditBudget',      'Edit Budget');
+  String titleAddNote()         => _('titleAddNote',         'New Note');
+  String titleEditNote()        => _('titleEditNote',        'Edit Note');
   String titleConfirmation()    => _('titleConfirmation',    'Confirmation');
   String titleValidate()        => _('titleValidate',        'Validate');
   String titleLeave()           => _('titleLeave',           'Leave?');
@@ -59,6 +62,7 @@ class Lang {
   String drawerHome()     => _('drawerHome',     'Home');
   String drawerBills()    => _('drawerBills',    'Bills');
   String drawerBudgets()  => _('drawerBudgets',  'Budgets');
+  String drawerNotes()    => _('drawerNotes',    'Notes');
   String drawerSettings() => _('drawerSettings', 'Settings');
   String drawerHelp()     => _('drawerHelp',     'Help & Feedback');
   String drawerAbout()    => _('drawerAbout',    'About Financial Note');
@@ -94,7 +98,7 @@ class Lang {
   String msgWait()           => _('msgWait',           'Please Wait');
   String msgSaving()         => _('msgSaving',         'Saving…');
   String msgSaved()          => _('msgSaved',          'Data saved');
-  String msgEmptyData()      => _('msgEmptyData',      'Tidak ada data');
+  String msgEmptyData()      => _('msgEmptyData',      'No data');
   String msgLoading()        => _('msgLoading',        'Loading…');
   String msgFormHasError()   => _('msgFormHasError',   'This form has errors');
   String msgFormError()      => _('msgFixFormError',   'Please fix the errors in red before submitting');

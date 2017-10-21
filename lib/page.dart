@@ -20,6 +20,7 @@ import 'package:flutter/widgets.dart';
 export 'src/page/bill_page.dart';
 export 'src/page/budget_page.dart';
 export 'src/page/home_page.dart';
+export 'src/page/note_page.dart';
 export 'src/page/settings_page.dart';
 export 'src/page/sign_in_page.dart';
 export 'src/page/splash_page.dart';
@@ -30,6 +31,7 @@ const kBgActionMode = Colors.black54;
 const kIconHome = const Icon(Icons.home);
 const kIconBill = const Icon(Icons.monetization_on);
 const kIconBudget = const Icon(Icons.insert_chart);
+const kIconNote = const Icon(Icons.note);
 
 const kIconBack = const Icon(Icons.arrow_back);
 const kIconClose = const Icon(Icons.close);

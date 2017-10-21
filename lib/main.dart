@@ -80,6 +80,11 @@ class _MainAppState extends State<MainApp> {
         final id = mapValue(params, 'id');
         return new BudgetPage(bookId: currentBook?.id, id: id);
 
+      // Note page
+      case NotePage.kRouteName:
+        final id = mapValue(params, 'id');
+        return new NotePage(bookId: currentBook?.id, id: id);
+
       // Splash
       case '/':
         return new SplashPage();

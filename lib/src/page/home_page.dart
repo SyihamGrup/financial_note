@@ -27,6 +27,7 @@ import 'package:intl/intl.dart';
 
 part 'home_page_bill.dart';
 part 'home_page_budget.dart';
+part 'home_page_note.dart';
 part 'home_page_transaction.dart';
 
 class HomePage extends StatefulWidget {
@@ -47,6 +48,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   final _budgetKey = new GlobalKey<_HomePageBudgetState>();
   final _billBarKey = new GlobalKey<ListAppBarState<BillGroup>>();
   final _billKey = new GlobalKey<_HomePageBillState>();
+  final _noteBarKey = new GlobalKey<ListAppBarState<Note>>();
+  final _noteKey = new GlobalKey<_HomePageNoteState>();
 
   var _currentRoute = HomePageTransaction.kRouteName;
   var _filterDate = new DateTime.now();
@@ -54,10 +57,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   HomePageTransaction _homeTrans;
   HomePageBill _homeBill;
   HomePageBudget _homeBudget;
+  HomePageNote _homeNote;
 
   AppBarTransaction _appBarTrans;
   ListAppBar<BillGroup> _appBarBill;
   ListAppBar<Budget> _appBarBudget;
+  ListAppBar<Note> _appBarNote;
 
   @override
   void initState() {
@@ -70,6 +75,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     ref.child(Bill.kNodeName).child(currentBook.id).keepSynced(true);
     ref.child(Balance.kNodeName).child(currentBook.id).keepSynced(true);
     ref.child(Transaction.kNodeName).child(currentBook.id).keepSynced(true);
+    ref.child(Note.kNodeName).child(currentBook.id).keepSynced(true);
   }
 
   @override
@@ -79,6 +85,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     _initTrans();
     _initBill();
     _initBudget();
+    _initNote();
   }
 
   void _initTrans() {
@@ -172,6 +179,49 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
+  void _initNote() {
+    final lang = Lang.of(context);
+    _appBarNote = new ListAppBar<Note>(
+      key: _noteBarKey,
+      title: lang.titleNote(),
+      onActionModeTap: (key, items) {
+        switch (key) {
+          case 'edit':
+            final params = <String, dynamic>{'id': items[0].id};
+            Navigator.pushNamed(context, routeWithParams(NotePage.kRouteName, params));
+            _noteBarKey.currentState.exitActionMode();
+            break;
+          case 'delete':
+            showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
+              if (!ret) return;
+              items.forEach((val) => Note.ref(currentBook.id).child(val.id).remove());
+              _noteBarKey.currentState.exitActionMode();
+            });
+            break;
+        }
+      },
+      onExitActionMode: () {
+        _noteKey.currentState.clearSelection();
+      },
+    );
+
+    _homeNote = new HomePageNote(
+      key: _noteKey,
+      bookId: widget.bookId,
+      config: widget.config,
+      onItemTap: (item) {
+        final params = <String, dynamic>{'id': item.id};
+        Navigator.pushNamed(context, routeWithParams(NotePage.kRouteName, params));
+      },
+      onItemsSelect: (items, index) {
+        if (items.length == 0)
+          _noteBarKey.currentState.exitActionMode();
+        else
+          _noteBarKey.currentState.showActionMode(items);
+      }
+    );
+  }
+
   void _onDrawerChange(String route) {
     setState(() => _currentRoute = route);
   }
@@ -198,6 +248,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         return _appBarBill;
       case HomePageBudget.kRouteName:
         return _appBarBudget;
+      case HomePageNote.kRouteName:
+        return _appBarNote;
     }
     return new AppBar(title: new Text(Lang.of(context).title()));
   }
@@ -210,6 +262,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         return _homeBill;
       case HomePageBudget.kRouteName:
         return _homeBudget;
+      case HomePageNote.kRouteName:
+        return _homeNote;
     }
     return new Container();
   }
@@ -228,6 +282,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             return;
           case HomePageBudget.kRouteName:
             Navigator.pushNamed(context, BudgetPage.kRouteName);
+            return;
+          case HomePageNote.kRouteName:
+            Navigator.pushNamed(context, NotePage.kRouteName);
             return;
         }
       },

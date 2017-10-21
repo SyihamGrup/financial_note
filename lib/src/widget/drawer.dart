@@ -65,6 +65,13 @@ class AppDrawer extends StatelessWidget {
             onTap: () => listTapped(context, HomePageBudget.kRouteName),
           ),
 
+          new ListTile(
+            leading: kIconNote,
+            title: new Text(Lang.of(context).drawerNotes()),
+            selected: selectedRoute == HomePageNote.kRouteName,
+            onTap: () => listTapped(context, HomePageNote.kRouteName),
+          ),
+
           const Divider(),
 
           new ListTile(
