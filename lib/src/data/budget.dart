@@ -46,7 +46,7 @@ class Budget {
       date      = parseDate(mapValue(snapshot.value, 'date')),
       value     = parseDouble(mapValue(snapshot.value, 'value')),
       spent     = parseDouble(mapValue(snapshot.value, 'spent')),
-      isExpire  = parseBool(mapValue(snapshot.value, 'isExpire', def: false)),
+      isExpire  = parseBool(mapValue(snapshot.value, 'isExpire', false)),
       descr     = parseString(mapValue(snapshot.value, 'descr'));
 
   static DatabaseReference ref(String bookId) {

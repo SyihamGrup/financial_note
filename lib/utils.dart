@@ -49,7 +49,7 @@ bool parseBool(dynamic value) {
 }
 
 /// Get value dari Map, return def jika key missing pada map.
-dynamic mapValue(Map map, String key, {dynamic def}) {
+dynamic mapValue(Map map, String key, [dynamic def]) {
   if (map == null || !map.containsKey(key)) return def;
   return map[key];
 }
