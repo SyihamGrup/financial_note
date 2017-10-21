@@ -218,7 +218,7 @@ class _BillPageState extends State<BillPage> {
       key: _formKey,
       autovalidate: _autoValidate,
       onWillPop: _onWillPop,
-      child: new SingleChildScrollView(child: new ListBody(children: [
+      child: new ListView(children: [
         // -- title --
         new Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -247,7 +247,7 @@ class _BillPageState extends State<BillPage> {
           ),
         )]),
       ]),
-    ));
+    );
   }
 
   Widget _buildFormItems(BuildContext context) {
