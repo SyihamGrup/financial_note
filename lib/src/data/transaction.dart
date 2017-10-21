@@ -72,7 +72,7 @@ class Transaction {
     if (snap.value == null) return ret;
 
     var balance = openingBalance;
-    Map<String, Map<String, dynamic>> items = snap.value;
+    final Map<String, Map<String, dynamic>> items = snap.value;
     items.forEach((key, item) {
       balance += parseDouble(mapValue(item, 'value'));
       item['balance'] = balance;

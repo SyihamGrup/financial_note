@@ -72,16 +72,8 @@ class _MainAppState extends State<MainApp> {
 
       // Bill page
       case BillPage.kRouteName:
-        final data = mapValue(params, 'data');
-        final group = data != null ? new BillGroup.fromJson(data) : null;
-        final dataItems = mapValue(data, 'items');
-        final items = <Bill>[];
-        if (dataItems is List) {
-          for (final item in dataItems) {
-            items.add(new Bill.fromJson(item));
-          }
-        }
-        return new BillPage(bookId: currentBook?.id, group: group, items: items);
+        final id = mapValue(params, 'id');
+        return new BillPage(bookId: currentBook?.id, groupId: id);
 
       // Budget page
       case BudgetPage.kRouteName:

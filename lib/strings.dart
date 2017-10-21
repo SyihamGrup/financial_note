@@ -92,6 +92,7 @@ class Lang {
 
   String msgSignInRequired() => _('msgSignInRequired', 'Sign in required');
   String msgWait()           => _('msgWait',           'Please Wait');
+  String msgSaving()         => _('msgSaving',         'Saving…');
   String msgSaved()          => _('msgSaved',          'Data saved');
   String msgEmptyData()      => _('msgEmptyData',      'Tidak ada data');
   String msgLoading()        => _('msgLoading',        'Loading…');

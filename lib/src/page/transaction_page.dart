@@ -168,29 +168,33 @@ class _TransactionPageState extends State<TransactionPage> {
       child: new ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         children: <Widget>[
-          new Row(children: <Widget>[
-            new Radio(
-              value: TransType.income,
-              groupValue: _transType,
-              onChanged: (TransType value) => _onTransTypeChange(value),
-            ),
-            new Container(
-              child: new GestureDetector(
-                child: new Text(lang.lblIncome()),
-                onTap: () => _onTransTypeChange(TransType.income),
+          new Container(
+            padding: const EdgeInsets.all(8.0),
+            decoration: new BoxDecoration(color: Theme.of(context).highlightColor),
+            child: new Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+              new Radio(
+                value: TransType.income,
+                groupValue: _transType,
+                onChanged: (TransType value) => _onTransTypeChange(value),
               ),
-              margin: const EdgeInsets.only(right: 8.0),
-            ),
-            new Radio(
-              value: TransType.expense,
-              groupValue: _transType,
-              onChanged: (TransType value) => _onTransTypeChange(value),
-            ),
-            new GestureDetector(
-              child: new Text(lang.lblExpense()),
-              onTap: () => _onTransTypeChange(TransType.expense),
-            ),
-          ]),
+              new Container(
+                child: new GestureDetector(
+                  child: new Text(lang.lblIncome()),
+                  onTap: () => _onTransTypeChange(TransType.income),
+                ),
+                margin: const EdgeInsets.only(right: 8.0),
+              ),
+              new Radio(
+                value: TransType.expense,
+                groupValue: _transType,
+                onChanged: (TransType value) => _onTransTypeChange(value),
+              ),
+              new GestureDetector(
+                child: new Text(lang.lblExpense()),
+                onTap: () => _onTransTypeChange(TransType.expense),
+              ),
+            ]),
+          ),
 
           new InputDecorator(
             decoration: new InputDecoration(labelText: lang.lblBudget()),
@@ -231,7 +235,7 @@ class _TransactionPageState extends State<TransactionPage> {
               )),
             )),
 
-            new Container(width: 8.0),
+            new Container(width: 16.0),
 
             new Expanded(child: new InputDecorator(
               decoration: new InputDecoration(labelText: lang.lblBillPeriod()),

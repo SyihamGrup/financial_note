@@ -66,6 +66,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     final ref = FirebaseDatabase.instance.reference();
     ref.child(Book.kNodeName).child(currentUser.uid).keepSynced(true);
     ref.child(Budget.kNodeName).child(currentBook.id).keepSynced(true);
+    ref.child(BillGroup.kNodeName).child(currentBook.id).keepSynced(true);
     ref.child(Bill.kNodeName).child(currentBook.id).keepSynced(true);
     ref.child(Balance.kNodeName).child(currentBook.id).keepSynced(true);
     ref.child(Transaction.kNodeName).child(currentBook.id).keepSynced(true);
@@ -117,7 +118,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       bookId: widget.bookId,
       config: widget.config,
       onItemTap: (item) {
-        final params = <String, dynamic>{'data': item};
+        final params = <String, dynamic>{'id': item.id};
         Navigator.pushNamed(context, routeWithParams(BillPage.kRouteName, params));
       },
       onItemsSelect: (items, index) {
