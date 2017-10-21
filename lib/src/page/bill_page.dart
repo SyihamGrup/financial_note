@@ -74,7 +74,7 @@ class _BillPageState extends State<BillPage> {
 
     final groupSnap = await widget.groupRef.child(_group.id).once();
     if (groupSnap.value == null) return;
-    setState(() => _group = new BillGroup.fromSnapshot(groupSnap));
+    _group = new BillGroup.fromSnapshot(groupSnap);
 
     _groupCtrl = <String, TextEditingController>{
       'title': new TextEditingController(text: _group.title ?? ''),
@@ -91,7 +91,7 @@ class _BillPageState extends State<BillPage> {
       if (dateComparison != 0) return dateComparison;
       return a.title.compareTo(b.title);
     });
-    setState(() => _items = items);
+    _items = items;
 
     final ctrls = <Map<String, TextEditingController>>[];
     _items.forEach((item) {
@@ -223,7 +223,7 @@ class _BillPageState extends State<BillPage> {
         new Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: new TextFormField(
-            initialValue: _group.title ?? '', // required menghindari bug
+            initialValue: _groupCtrl['title'].text,
             controller: _groupCtrl['title'],
             decoration: new InputDecoration(labelText: lang.lblTitle()),
             onSaved: (String value) => _group.title = value,
@@ -239,7 +239,7 @@ class _BillPageState extends State<BillPage> {
         new Column(children: <Widget>[new Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: new TextFormField(
-            initialValue: _group.note ?? '', // required menghindari bug
+            initialValue: _groupCtrl['note'].text,
             controller: _groupCtrl['note'],
             maxLines: 3,
             decoration: new InputDecoration(labelText: lang.lblNote()),
@@ -278,7 +278,7 @@ class _BillPageState extends State<BillPage> {
               child: new Column(children: <Widget>[
                 // -- title --
                 new TextFormField(
-                  initialValue: _items[index].title ?? '', // required menghindari bug
+                  initialValue: _ctrls[index]['title'].text,
                   controller: _ctrls[index]['title'],
                   decoration: new InputDecoration(labelText: lang.lblItem() + ' ${index + 1}'),
                   onSaved: (String value) => setState(() => item.title = value),
@@ -286,7 +286,7 @@ class _BillPageState extends State<BillPage> {
                 ),
 
                 new TextFormField(
-                  initialValue: _items[index].value.toString(), // required menghindari bug
+                  initialValue: _ctrls[index]['value'].text,
                   controller: _ctrls[index]['value'],
                   decoration: new InputDecoration(labelText: lang.lblValue()),
                   keyboardType: TextInputType.number,
