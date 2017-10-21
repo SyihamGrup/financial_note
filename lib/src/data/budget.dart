@@ -54,7 +54,7 @@ class Budget {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
   }
 
-  Map<String, dynamic> toJson({showId: true}) {
+  Map<String, dynamic> toJson({showId: false}) {
     final json = <String, dynamic>{
       'id'        : id,
       'title'     : title,

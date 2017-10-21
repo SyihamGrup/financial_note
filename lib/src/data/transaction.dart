@@ -82,8 +82,9 @@ class Transaction {
     return ret;
   }
 
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
+  Map<String, dynamic> toJson({showId: false}) {
+    final json = <String, dynamic>{
+      'id'       : id,
       'billId'   : billId,
       'budgetId' : budgetId,
       'title'    : title,
@@ -92,6 +93,8 @@ class Transaction {
       'balance'  : balance,
       'note'     : note,
     };
+    if (!showId) json.remove('id');
+    return json;
   }
 
   Transaction copyWith({

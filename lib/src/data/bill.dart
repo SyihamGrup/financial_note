@@ -60,8 +60,8 @@ class BillGroup {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
   }
 
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
+  Map<String, dynamic> toJson({showId: false}) {
+    final json = <String, dynamic>{
       'id'         : id,
       'title'      : title,
       'startDate'  : startDate?.toIso8601String(),
@@ -71,6 +71,8 @@ class BillGroup {
       'paidValue'  : paidValue,
       'note'       : note,
     };
+    if (!showId) json.remove('id');
+    return json;
   }
 
   BillGroup copyWith({
@@ -143,8 +145,8 @@ class Bill {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
   }
 
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
+  Map<String, dynamic> toJson({showId: false}) {
+    final json = <String, dynamic>{
       'id'        : id,
       'groupId'   : groupId,
       'title'     : title,
@@ -154,6 +156,8 @@ class Bill {
       'paidValue' : paidValue,
       'descr'     : descr,
     };
+    if (!showId) json.remove('id');
+    return json;
   }
 
   Bill copyWith({

@@ -55,11 +55,14 @@ class Book {
     return new Book.fromJson(newItem.key, data);
   }
 
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
+  Map<String, dynamic> toJson({showId: false}) {
+    final json = <String, dynamic>{
+      'id'    : id,
       'title' : title,
       'descr' : descr,
     };
+    if (!showId) json.remove('id');
+    return json;
   }
 
   Book copyWith({
