@@ -18,6 +18,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 class NotePage extends StatefulWidget {
   static const kRouteName = '/note';
@@ -49,6 +50,7 @@ class _NotePageState extends State<NotePage> {
 
   var _autoValidate = false;
   var _saveNeeded = true;
+  var _hasReminder = false;
 
   _NotePageState({String id}) {
     _item.id = id;
@@ -67,6 +69,7 @@ class _NotePageState extends State<NotePage> {
     if (snap.value == null) return;
     _item = new Note.fromSnapshot(snap);
     if (_item.createdAt == null) _item.createdAt = new DateTime.now();
+    _hasReminder = _item.reminder != null;
     _ctrl = <String, TextEditingController>{
       'title': new TextEditingController(text: _item.title ?? ''),
       'note': new TextEditingController(text: _item.note ?? ''),
@@ -118,6 +121,17 @@ class _NotePageState extends State<NotePage> {
     return true;
   }
 
+  void _onReminderChange(bool value) {
+    setState(() {
+      _hasReminder = value;
+      if (!_hasReminder) {
+        _item.reminder = null;
+      } else if (_item.reminder == null) {
+        _item.reminder = new DateTime.now().add(new Duration(days: 1));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -153,29 +167,60 @@ class _NotePageState extends State<NotePage> {
       autovalidate: _autoValidate,
       onWillPop: _onWillPop,
       child: new ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         children: <Widget>[
           // -- title --
-          new TextFormField(
-            initialValue: _ctrl['title'].text,
-            controller: _ctrl['title'],
-            decoration: new InputDecoration(labelText: lang.lblTitle()),
-            onSaved: (String value) => _item.title = value,
-            validator: _validateTitle,
-            autofocus: _item.id == null,
+          new Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: new TextFormField(
+              initialValue: _ctrl['title'].text,
+              controller: _ctrl['title'],
+              decoration: new InputDecoration(labelText: lang.lblTitle()),
+              onSaved: (String value) => _item.title = value,
+              validator: _validateTitle,
+              autofocus: _item.id == null,
+            ),
           ),
 
+          // -- reminder
+          _buildReminder(),
+
           // -- note --
-          new TextFormField(
-            initialValue: _ctrl['note'].text,
-            controller: _ctrl['note'],
-            maxLines: 15,
-            decoration: new InputDecoration(labelText: lang.lblDescr()),
-            onSaved: (String value) => _item.note = value,
-            validator: _validateNote,
+          new Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: new TextFormField(
+              initialValue: _ctrl['note'].text,
+              controller: _ctrl['note'],
+              maxLines: 15,
+              decoration: new InputDecoration(labelText: lang.lblDescr()),
+              onSaved: (String value) => _item.note = value,
+              validator: _validateNote,
+            ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildReminder() {
+    final lang = Lang.of(context);
+
+    final widgets = <Widget>[
+      new Checkbox(value: _hasReminder, onChanged: _onReminderChange),
+      new GestureDetector(
+        child: new Text(lang.lblReminder()),
+        onTap: () => _onReminderChange(!_hasReminder),
+      ),
+    ];
+    if (_hasReminder) {
+      widgets.add(new Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: new DateTimeItem(
+          dateTime: _item.reminder,
+          dateFormat: new DateFormat.yMMMd(),
+          onChange: (DateTime value) => _item.reminder = value,
+        )
+      ));
+    }
+    return new Row(children: widgets);
   }
 }

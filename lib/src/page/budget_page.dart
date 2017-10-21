@@ -172,7 +172,7 @@ class _BudgetPageState extends State<BudgetPage> {
           // -- date --
           new DateFormField(
             label: lang.lblDate(),
-            date: _item.date,
+            date: _item.date ?? new DateTime.now(),
             onChange: (DateTime value) => _item.date = value,
           ),
 

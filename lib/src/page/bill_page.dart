@@ -275,7 +275,7 @@ class _BillPageState extends State<BillPage> {
             width: 110.0,
             child: new DateFormField(
               label: lang.lblDate(),
-              date: item.date,
+              date: item.date ?? new DateTime.now(),
               dateFormat: new DateFormat.yMd(),
               onChange: (DateTime value) => item.date = value,
             )

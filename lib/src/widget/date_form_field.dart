@@ -24,6 +24,7 @@ class DateFormField extends StatelessWidget {
   DateFormField({Key key, this.label, this.date, this.firstDate, this.lastDate,
                  this.dateFormat, @required this.onChange})
     : assert(onChange != null),
+      assert(date != null),
       super(key: key);
 
   @override
@@ -59,8 +60,9 @@ class DateItem extends StatelessWidget {
   DateItem({ Key key, DateTime date, this.firstDate, this.lastDate,
              DateFormat dateFormat, @required this.onChange, this.padding: 0.0 })
     : assert(onChange != null),
-      this.date = date ?? new DateTime.now(),
-      this.dateFormat = dateFormat ?? new DateFormat('EEE, MMM d yyyy'),
+      assert(date != null),
+      this.date = new DateTime(date.year, date.month, date.day),
+      dateFormat = dateFormat ?? new DateFormat.yMMMEd(),
       super(key: key);
 
   @override
@@ -99,6 +101,95 @@ class DateItem extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class DateTimeItem extends StatelessWidget {
+  final DateTime date;
+  final DateTime firstDate;
+  final DateTime lastDate;
+  final TimeOfDay time;
+  final DateFormat dateFormat;
+  final ValueChanged<DateTime> onChange;
+  final double padding;
+
+  DateTimeItem({ Key key, DateTime dateTime, this.firstDate, this.lastDate,
+             DateFormat dateFormat, DateFormat timeFormat, @required this.onChange,
+             this.padding: 0.0 })
+    : assert(onChange != null),
+      assert(dateTime != null),
+      date = new DateTime(dateTime.year, dateTime.month, dateTime.day),
+      time = new TimeOfDay(hour: dateTime.hour, minute: dateTime.minute),
+      dateFormat = dateFormat ?? new DateFormat.yMMMEd(),
+      super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return new DefaultTextStyle(
+      style: theme.textTheme.subhead,
+      child: new Row(children: <Widget>[
+        new Container(
+          padding: new EdgeInsets.only(top: padding),
+          // Sementara hilangkan border bottom
+          /*decoration: new BoxDecoration(
+            border: new Border(bottom: new BorderSide(
+              color: theme.disabledColor,
+              width: 1.0,
+            )),
+          ),*/
+          child: new InkWell(
+            onTap: () {
+              showDatePicker(
+                context: context,
+                initialDate: date,
+                firstDate: firstDate ?? date.subtract(const Duration(days: 365 * 5)),
+                lastDate: lastDate ?? date.add(const Duration(days: 365 * 5))
+              )
+              .then<Null>((DateTime value) {
+                onChange(new DateTime(value.year, value.month, value.day, time.hour, time.minute));
+              });
+            },
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                new Text(dateFormat.format(date)),
+                const Icon(Icons.arrow_drop_down, color: Colors.black54, size: 22.0),
+              ],
+            ),
+          ),
+        ),
+        new Container(
+          padding: new EdgeInsets.only(top: padding),
+          // Sementara hilangkan border bottom
+          /*decoration: new BoxDecoration(
+            border: new Border(bottom: new BorderSide(
+              color: theme.disabledColor,
+              width: 1.0,
+            )),
+          ),*/
+          child: new InkWell(
+            onTap: () {
+              showTimePicker(
+                context: context,
+                initialTime: time,
+              )
+              .then<Null>((TimeOfDay value) {
+                onChange(new DateTime(date.year, date.month, date.day, value.hour, value.minute));
+              });
+            },
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                new Text(time.format(context)),
+                const Icon(Icons.arrow_drop_down, color: Colors.black54, size: 22.0),
+              ],
+            ),
+          ),
+        ),
+      ]),
     );
   }
 }
