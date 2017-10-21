@@ -21,6 +21,7 @@ export 'src/data/balance.dart';
 export 'src/data/bill.dart';
 export 'src/data/book.dart';
 export 'src/data/budget.dart';
+export 'src/data/note.dart';
 export 'src/data/transaction.dart';
 
 const kFirebaseUriScheme = 'https';
