@@ -85,7 +85,7 @@ class _BillPageState extends State<BillPage> {
     if (snap.value == null) return;
     final Map<String, Map<String, dynamic>> data = snap.value;
     var items = <Bill>[];
-    data.forEach((key, value) => items.add(new Bill.fromJson(value)));
+    data.forEach((key, value) => items.add(new Bill.fromJson(key, value)));
     items.sort((a, b) {
       final dateComparison = a.date.compareTo(b.date);
       if (dateComparison != 0) return dateComparison;
@@ -126,10 +126,12 @@ class _BillPageState extends State<BillPage> {
 
     final existing = await widget.ref.orderByChild('group_id').equalTo(groupSnap.key).once();
     if (existing.value is Map) {
-      existing.value.forEach((key, value) => widget.ref.child(key).remove());
+      existing.value.forEach((key, value) {
+        if (!_inItems(key)) widget.ref.child(key).remove();
+      });
     }
     _items.forEach((item) {
-      final snap = widget.ref.push();
+      final snap = item.id != null ? widget.ref.child(item.id) : widget.ref.push();
       final data = item.toJson();
       data['group_id'] = groupSnap.key;
       snap.set(data);
@@ -137,6 +139,13 @@ class _BillPageState extends State<BillPage> {
 
     _showInSnackBar(Lang.of(context).msgSaved());
     return true;
+  }
+
+  bool _inItems(String key) {
+    for (final item in _items) {
+      if (item.id == key) return true;
+    }
+    return false;
   }
 
   void _fillData() {

@@ -32,9 +32,8 @@ class Budget {
     this.descr,
   });
 
-  Budget.fromJson(Map<String, dynamic> json)
-    : id        = parseString(mapValue(json, 'id')),
-      title     = parseString(mapValue(json, 'title')),
+  Budget.fromJson(this.id, Map<String, dynamic> json)
+    : title     = parseString(mapValue(json, 'title')),
       date      = parseDate(mapValue(json, 'date')),
       value     = parseDouble(mapValue(json, 'value')),
       spent     = parseDouble(mapValue(json, 'spent')),

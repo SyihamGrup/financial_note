@@ -36,9 +36,8 @@ class BillGroup {
     this.note,
   });
 
-  BillGroup.fromJson(Map<String, dynamic> json)
-    : id         = parseString(mapValue(json, 'id')),
-      title      = parseString(mapValue(json, 'title')),
+  BillGroup.fromJson(this.id, Map<String, dynamic> json)
+    : title      = parseString(mapValue(json, 'title')),
       startDate  = parseDate(mapValue(json, 'startDate')),
       endDate    = parseDate(mapValue(json, 'endDate')),
       totalValue = parseDouble(mapValue(json, 'totalValue')),
@@ -121,9 +120,8 @@ class Bill {
     this.descr,
   });
 
-  Bill.fromJson(Map<String, dynamic> json)
-    : id        = parseString(mapValue(json, 'id')),
-      groupId   = parseString(mapValue(json, 'groupId')),
+  Bill.fromJson(this.id, Map<String, dynamic> json)
+    : groupId   = parseString(mapValue(json, 'groupId')),
       title     = parseString(mapValue(json, 'title')),
       date      = parseDate(mapValue(json, 'date')),
       value     = parseDouble(mapValue(json, 'value')),
