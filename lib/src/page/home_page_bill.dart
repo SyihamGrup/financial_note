@@ -41,7 +41,7 @@ class _HomePageBillState extends State<HomePageBill> {
         final bDate = b.value is Map && b.value.containsKey('date') ? b.value['date'] : '';
         return bDate.compareTo(aDate);
       },
-      defaultChild: new Center(child: new Text(Lang.of(context).msgLoading())),
+      defaultChild: new Center(child: new Text(Lang.of(context).msgEmptyData())),
       itemBuilder: (context, snapshot, animation, index) {
         final item = new BillGroup.fromSnapshot(snapshot);
         return new _ContentBillItem(
