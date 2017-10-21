@@ -12,7 +12,6 @@ import 'dart:async';
 
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
 class Transaction {
@@ -31,9 +30,9 @@ class Transaction {
     this.id,
     this.billId,
     this.budgetId,
-    @required this.title,
-    @required this.date,
-    @required this.value,
+    this.title,
+    this.date,
+    this.value: 0.0,
     this.balance: 0.0,
     this.note,
   });

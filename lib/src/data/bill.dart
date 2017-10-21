@@ -29,7 +29,7 @@ class BillGroup {
     this.title,
     this.startDate,
     this.endDate,
-    this.itemsCount,
+    this.itemsCount: 0,
     this.totalValue: 0.0,
     this.lastPaid,
     this.paidValue: 0.0,
@@ -113,9 +113,9 @@ class Bill {
     this.groupId,
     this.title,
     this.date,
-    this.value,
+    this.value: 0.0,
     this.paidDate,
-    this.paidValue,
+    this.paidValue: 0.0,
     this.descr,
   });
 

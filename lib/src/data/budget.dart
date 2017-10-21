@@ -26,7 +26,7 @@ class Budget {
     this.id,
     this.title,
     this.date,
-    this.value,
+    this.value: 0.0,
     this.spent: 0.0,
     this.isExpire: false,
     this.descr,
