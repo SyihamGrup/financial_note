@@ -40,7 +40,8 @@ class DateFormField extends StatelessWidget {
         new Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: new DateItem(date: date, firstDate: firstDate, lastDate: lastDate,
-                              dateFormat: dateFormat, onChange: onChange),
+                              dateFormat: dateFormat, onChange: onChange,
+                              padding: 6.0),
         ),
       ],
     );
@@ -53,9 +54,10 @@ class DateItem extends StatelessWidget {
   final DateTime lastDate;
   final DateFormat dateFormat;
   final ValueChanged<DateTime> onChange;
+  final double padding;
 
   DateItem({ Key key, DateTime date, this.firstDate, this.lastDate,
-             DateFormat dateFormat, @required this.onChange })
+             DateFormat dateFormat, @required this.onChange, this.padding: 0.0 })
     : assert(onChange != null),
       this.date = date ?? new DateTime.now(),
       this.dateFormat = dateFormat ?? new DateFormat('EEE, MMM d yyyy'),
@@ -68,7 +70,7 @@ class DateItem extends StatelessWidget {
     return new DefaultTextStyle(
       style: theme.textTheme.subhead,
       child: new Container(
-        padding: const EdgeInsets.only(top: 6.0),
+        padding: new EdgeInsets.only(top: padding),
         // Sementara hilangkan border bottom
         /*decoration: new BoxDecoration(
           border: new Border(bottom: new BorderSide(
