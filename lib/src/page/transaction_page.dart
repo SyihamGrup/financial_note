@@ -75,6 +75,8 @@ class _TransactionPageState extends State<TransactionPage> {
     final snap = await widget.ref.child(_item.id).once();
     if (snap.value == null) return;
     _item = new Transaction.fromSnapshot(snap);
+    _transType = _item.value > 0 ? kIncome : kExpense;
+
     _ctrl = <String, TextEditingController>{
       'title': new TextEditingController(text: _item.title ?? ''),
       'value': new TextEditingController(text: _item.value.toString()),
@@ -268,6 +270,15 @@ class _TransactionPageState extends State<TransactionPage> {
           new Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: new Column(children: <Widget>[
+              // -- title --
+              new TextFormField(
+                initialValue: _ctrl['title'].text,
+                controller: _ctrl['title'],
+                decoration: new InputDecoration(labelText: lang.lblTitle()),
+                onSaved: (String value) => _item.title = value,
+                validator: _validateTitle,
+              ),
+
               // -- date --
               new DateFormField(
                 label: lang.lblDate(),
@@ -323,15 +334,6 @@ class _TransactionPageState extends State<TransactionPage> {
                     },
                   )),
                 ]),
-
-                // -- title --
-                new TextFormField(
-                  initialValue: _ctrl['title'].text,
-                  controller: _ctrl['title'],
-                  decoration: new InputDecoration(labelText: lang.lblTitle()),
-                  onSaved: (String value) => _item.title = value,
-                  validator: _validateTitle,
-                ),
 
                 // -- value --
                 new TextFormField(
