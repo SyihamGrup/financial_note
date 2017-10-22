@@ -54,7 +54,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   final _noteKey = new GlobalKey<_HomePageNoteState>();
 
   var _currentRoute = HomePageTransaction.kRouteName;
-  var _filterDate = new DateTime.now();
 
   HomePageTransaction _homeTrans;
   HomePageBill _homeBill;
@@ -91,13 +90,48 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   void _initTrans() {
-    _appBarTrans = new TransactionAppBar(initialDate: _filterDate, onDateChange: _onDateChange);
+    final lang = Lang.of(context);
+    final initialDate = new DateTime.now();
+    _appBarTrans = new TransactionAppBar(
+      key: _transBarKey,
+      initialDate: initialDate,
+      onDateChange: (date) => _transKey.currentState.setDate(date),
+      onActionModeTap: (key, items) {
+        switch (key) {
+          case 'edit':
+            final params = <String, dynamic>{'id': items[0].id};
+            Navigator.pushNamed(context, routeWithParams(TransactionPage.kRouteName, params));
+            _transBarKey.currentState.exitActionMode();
+            break;
+          case 'delete':
+            showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
+              if (!ret) return;
+              items.forEach((val) => Bill.ref(currentBook.id).child(val.id).remove());
+              _transBarKey.currentState.exitActionMode();
+            });
+            break;
+        }
+      },
+      onExitActionMode: () {
+        _transKey.currentState.clearSelection();
+      },
+    );
 
     _homeTrans = new HomePageTransaction(
       key: _transKey,
       bookId: widget.bookId,
-      date: _filterDate,
+      date: initialDate,
       config: widget.config,
+      onItemTap: (item) {
+        final params = <String, dynamic>{'id': item.id};
+        Navigator.pushNamed(context, routeWithParams(TransactionPage.kRouteName, params));
+      },
+      onItemsSelect: (items, index) {
+        if (items.length == 0)
+          _transBarKey.currentState.exitActionMode();
+        else
+          _transBarKey.currentState.showActionMode(items);
+      },
     );
   }
 
@@ -140,7 +174,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           _billBarKey.currentState.exitActionMode();
         else
           _billBarKey.currentState.showActionMode(items);
-      });
+      },
+    );
   }
 
   void _initBudget() {
@@ -233,10 +268,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     setState(() => _currentRoute = route);
   }
 
-  void _onDateChange(DateTime date) {
-    setState(() => _filterDate = date);
-  }
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -307,7 +338,11 @@ class _EmptyBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lang = Lang.of(context);
-    return new Center(child: new Text(
-      isLoading ? lang.msgLoading() : lang.msgEmptyData()));
+    return new Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: new Center(child: new Text(
+        isLoading ? lang.msgLoading() : lang.msgEmptyData())
+      ),
+    );
   }
 }

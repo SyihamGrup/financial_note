@@ -19,23 +19,32 @@ class HomePageTransaction extends StatefulWidget {
   final String bookId;
   final DateTime date;
 
-  const HomePageTransaction({Key key, @required this.bookId, this.date, this.config})
-    : assert(bookId != null),
-      super(key: key);
+  final OnItemTap<Transaction> onItemTap;
+  final OnItemSelect<Transaction> onItemsSelect;
+
+  const HomePageTransaction({
+    Key key, @required this.bookId, this.date, this.onItemTap, this.onItemsSelect,
+    this.config
+  }) : assert(bookId != null),
+       super(key: key);
 
   @override
-  State<StatefulWidget> createState() => new _HomePageTransactionState();
+  State<StatefulWidget> createState() => new _HomePageTransactionState(date);
 }
 
 class _HomePageTransactionState extends State<HomePageTransaction>
     with SingleTickerProviderStateMixin {
+  final List<Transaction> _selectedItems = [];
   var _isLoading = true;
+  DateTime _filterDate;
 
   AnimationController _animationCtrl;
   Animation<double> _animation;
 
   List<Transaction> _items;
   StreamSubscription<Event> _dataSubscr;
+
+  _HomePageTransactionState(DateTime date) : _filterDate = date;
 
   @override
   void initState() {
@@ -64,9 +73,9 @@ class _HomePageTransactionState extends State<HomePageTransaction>
 
   Future<Null> _refreshData(String bookId) async {
     setState(() => _isLoading = true);
-    final dateStart = new DateTime(widget.date.year, widget.date.month);
-    final dateEnd = new DateTime(widget.date.year, widget.date.month + 1, 0);
-    final openingBalance = await Balance.get(bookId, widget.date.year, widget.date.month);
+    final dateStart = new DateTime(_filterDate.year, _filterDate.month);
+    final dateEnd = new DateTime(_filterDate.year, _filterDate.month + 1, 0);
+    final openingBalance = await Balance.get(bookId, _filterDate.year, _filterDate.month);
     final items = await Transaction.list(bookId, dateStart, dateEnd, openingBalance);
 
     items.add(new Transaction(
@@ -100,7 +109,7 @@ class _HomePageTransactionState extends State<HomePageTransaction>
 
     return new Column(children: <Widget>[
       new Container(
-        decoration: new BoxDecoration(color: Colors.black12),
+        decoration: new BoxDecoration(color: Colors.blueGrey[100]),
         child: new ListTile(
           title: new Center(child: new Text(
             lang.titleBalance().toUpperCase(),
@@ -113,31 +122,80 @@ class _HomePageTransactionState extends State<HomePageTransaction>
         ),
       ),
       new Expanded(child: new ListView.builder(
-        padding: const EdgeInsets.only(top: 8.0, bottom: 72.0),
+        padding: const EdgeInsets.only(bottom: 72.0),
         itemCount: _items.length,
-        itemExtent: 50.0,
         itemBuilder: (context, index) {
-          if (index == _items.length - 1) {
+          final item = _items[index];
+          if (_items.length <= 1) {
+            return new _EmptyBody();
+          } else if (index == _items.length - 1) {
             return new ListTile(
               title: new Center(child: new Text(
                 lang.titleOpeningBalance().toUpperCase(),
                 style: theme.textTheme.body1.copyWith(color: Colors.black54),
               )),
               subtitle: new Center(child: new Text(
-                currFormatter.format(_items[index].balance),
+                currFormatter.format(item.balance),
                 style: theme.textTheme.title.copyWith(color: Colors.black54),
               )),
             );
           } else {
             return new _ContentTransactionItem(
               context: context,
-              item: _items[index],
+              item: item,
               currencySymbol: widget.config?.currencySymbol,
+              selected: _getSelectedIndex(_selectedItems, item) != -1,
+              onTap: () => _onTap(item),
+              onLongPress: () => _onLongPress(item),
             );
           }
         },
       )),
     ]);
+  }
+
+  void _onTap(Transaction item) {
+    if (_selectedItems.length > 0) {
+      final idx = _getSelectedIndex(_selectedItems, item);
+      if (idx >= 0) {
+        setState(() => _selectedItems.removeAt(idx));
+      } else {
+        setState(() => _selectedItems.add(item));
+      }
+      if (widget.onItemsSelect != null) {
+        widget.onItemsSelect(_selectedItems, idx);
+      }
+    } else {
+      if (widget.onItemTap != null) {
+        widget.onItemTap(item);
+      }
+    }
+  }
+
+  void _onLongPress(Transaction data) {
+    if (_selectedItems.length > 0) return;
+
+    setState(() => _selectedItems.add(data));
+    if (widget.onItemsSelect != null) {
+      widget.onItemsSelect(_selectedItems, 0);
+    }
+  }
+
+  int _getSelectedIndex(List<Transaction> items, Transaction item) {
+    if (items == null) return -1;
+    for (int i = 0; i < items.length; i++) {
+      if (items[i].id == item.id) return i;
+    }
+    return -1;
+  }
+
+  void setDate(DateTime date) {
+    setState(() => _filterDate = date);
+    _refreshData(widget.bookId);
+  }
+
+  void clearSelection() {
+    setState(() => _selectedItems.clear());
   }
 
   @override
@@ -152,34 +210,47 @@ class _ContentTransactionItem extends StatelessWidget {
   final Transaction item;
   final String currencySymbol;
 
-  const _ContentTransactionItem({@required this.context, @required this.item,
-                                 this.currencySymbol})
-    : assert(context != null),
-      assert(item != null);
+  final GestureTapCallback onTap;
+  final GestureLongPressCallback onLongPress;
+  final bool selected;
+
+  const _ContentTransactionItem({
+    @required this.context, @required this.item,
+    this.currencySymbol, this.selected, this.onTap, this.onLongPress
+  }) : assert(context != null),
+       assert(item != null);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final currFormatter = new NumberFormat.currency(symbol: currencySymbol);
+    final selectedBg = new BoxDecoration(color: theme.highlightColor);
 
-    return new ListTile(
-      title: new Text(
-        item.title ?? '',
-      ),
-      subtitle: new Text(
-        (item.value >= 0 ? '+' : '') + currFormatter.format(item.value),
-        style: theme.textTheme.body2.copyWith(
-          color: item.value >= 0 ? Colors.green[500] : Colors.orange[600],
-          fontWeight: FontWeight.normal,
+    return new Container(
+      decoration: selected ? selectedBg : null,
+      child: new ListTile(
+        dense: true,
+        title: new Text(
+          item.title ?? '',
+          style: theme.textTheme.subhead,
         ),
-      ),
-      trailing: new Container(
-        alignment: Alignment.topRight,
-        margin: const EdgeInsets.only(top: 8.0),
-        child: new Text(
-          currFormatter.format(item.balance),
-          style: theme.textTheme.subhead.copyWith(color: Colors.black54),
+        subtitle: new Text(
+          (item.value >= 0 ? '+' : '') + currFormatter.format(item.value),
+          style: theme.textTheme.body2.copyWith(
+            color: item.value >= 0 ? Colors.green[500] : Colors.orange[600],
+            fontWeight: FontWeight.normal,
+          ),
         ),
+        trailing: new Container(
+          alignment: Alignment.topRight,
+          margin: const EdgeInsets.only(top: 14.0),
+          child: new Text(
+            currFormatter.format(item.balance),
+            style: theme.textTheme.subhead.copyWith(color: Colors.black54),
+          ),
+        ),
+        onTap: onTap,
+        onLongPress: onLongPress,
       ),
     );
   }
@@ -188,11 +259,15 @@ class _ContentTransactionItem extends StatelessWidget {
 class TransactionAppBar extends StatefulWidget implements PreferredSizeWidget {
   final DateTime initialDate;
   final ValueChanged<DateTime> onDateChange;
-  final ValueChanged<String> onActionTap;
   final Size preferredSize;
 
-  TransactionAppBar({Key key, DateTime initialDate, this.onDateChange, this.onActionTap})
-    : this.initialDate = initialDate ?? new DateTime.now(),
+  final OnActionTap<List<Transaction>> onActionModeTap;
+  final VoidCallback onExitActionMode;
+
+  TransactionAppBar({
+    Key key, DateTime initialDate, this.onDateChange, this.onActionModeTap,
+    this.onExitActionMode
+  }) : this.initialDate = initialDate ?? new DateTime.now(),
       preferredSize = new Size.fromHeight(kToolbarHeight),
       super(key: key);
 
@@ -202,8 +277,22 @@ class TransactionAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _TransactionAppBarState extends State<TransactionAppBar> {
   DateTime _filterDate;
+  var _isActionMode = false;
+  var _items = <Transaction>[];
 
   _TransactionAppBarState(this._filterDate);
+
+  void showActionMode(List<Transaction> items) {
+    setState(() {
+      _isActionMode = true;
+      _items = items;
+    });
+  }
+
+  void exitActionMode() {
+    setState(() => _isActionMode = false);
+    if (widget.onExitActionMode != null) widget.onExitActionMode();
+  }
 
   Future<Null> _onMonthTap(BuildContext context) async {
     final DateTime picked = await showMonthPicker(context: context, initialDate: _filterDate);
@@ -212,49 +301,59 @@ class _TransactionAppBarState extends State<TransactionAppBar> {
     if (widget.onDateChange != null) widget.onDateChange(picked);
   }
 
-  void _onActionTap(String name) {
-    if (widget.onActionTap != null) widget.onActionTap(name);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return new AppBar(
-      title: new InkWell(
-        onTap: () => _onMonthTap(context),
-        child: new Container(
-          height: kToolbarHeight,
-          child: new Row(children: <Widget>[
-            new Text(new DateFormat.yMMM().format(_filterDate),
-                style: Theme.of(context).primaryTextTheme.title),
-            new Icon(Icons.arrow_drop_down),
-          ]),
-        ),
+    final actions = <Widget>[];
+    if (_isActionMode) {
+      if (_items.length == 1) {
+        actions.add(new IconButton(
+          icon: const Icon(Icons.edit),
+          onPressed: () {
+            if (widget.onActionModeTap != null) {
+              widget.onActionModeTap('edit', _items);
+            }
+          },
+        ));
+      }
+      actions.add(new IconButton(
+        icon: const Icon(Icons.delete),
+        onPressed: () {
+          if (widget.onActionModeTap != null) {
+            widget.onActionModeTap('delete', _items);
+          }
+        },
+      ));
+    }
+    return new WillPopScope(
+      child: new AppBar(
+        backgroundColor: _isActionMode ? kBgActionMode : null,
+        leading: _isActionMode ? new IconButton(icon: kIconBack, onPressed: () {
+          exitActionMode();
+        }) : null,
+        title: _isActionMode ? new Text(_items.length.toString()) : _dateTitle(),
+        actions: actions,
       ),
-      actions: <Widget>[
-        new IconButton(
-          icon: kIconSearch,
-          tooltip: Lang.of(context).menuSearch(),
-          onPressed: () => _onActionTap('search'),
-        ),
-        new PopupMenuButton<String>(
-          onSelected: (name) => _onActionTap(name),
-          itemBuilder: (context) => <PopupMenuItem<String>>[
-            const PopupMenuItem<String>(
-              value: 'menu_1',
-              child: const Text('Toolbar menu'),
-            ),
-            const PopupMenuItem<String>(
-              value: 'menu_2',
-              child: const Text('Right here'),
-            ),
-            const PopupMenuItem<String>(
-              value: 'menu_3',
-              child: const Text('Hooray!'),
-            ),
-          ],
-        ),
-      ],
+      onWillPop: _onWillPop,
     );
   }
 
+  Widget _dateTitle() {
+    return new InkWell(
+      onTap: () => _onMonthTap(context),
+      child: new Container(
+        height: kToolbarHeight,
+        child: new Row(children: <Widget>[
+          new Text(new DateFormat.yMMM().format(_filterDate),
+              style: Theme.of(context).primaryTextTheme.title),
+          new Icon(Icons.arrow_drop_down),
+        ]),
+      ),
+    );
+  }
+
+  Future<bool> _onWillPop() async {
+    if (!_isActionMode) return true;
+    exitActionMode();
+    return false;
+  }
 }
