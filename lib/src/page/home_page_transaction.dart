@@ -134,7 +134,10 @@ class _HomePageTransactionState extends State<HomePageTransaction>
     final balance = _items.length > 0 ? _items[0].balance : 0.0;
 
     return new Container(
-      decoration: new BoxDecoration(color: Colors.blueGrey[100]),
+      decoration: new BoxDecoration(
+        color: Colors.blueGrey[100],
+        boxShadow: <BoxShadow>[const BoxShadow(color: const Color(0x88000000), blurRadius: 2.0)],
+      ),
       child: new ListTile(
         dense: true,
         title: new Center(child: new Text(
