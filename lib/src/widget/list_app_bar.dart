@@ -20,9 +20,13 @@ class ListAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final OnActionTap<List<T>> onActionModeTap;
   final VoidCallback onExitActionMode;
 
-  ListAppBar({Key key, this.title, this.onActionModeTap, this.onExitActionMode})
-    : preferredSize = new Size.fromHeight(kToolbarHeight),
-      super(key: key);
+  ListAppBar({
+    Key key,
+    this.title,
+    this.onActionModeTap,
+    this.onExitActionMode,
+  }) : preferredSize = new Size.fromHeight(kToolbarHeight),
+       super(key: key);
 
   @override
   State<StatefulWidget> createState() => new ListAppBarState<T>();

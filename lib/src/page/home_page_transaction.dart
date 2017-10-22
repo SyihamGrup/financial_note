@@ -23,8 +23,12 @@ class HomePageTransaction extends StatefulWidget {
   final OnItemSelect<Transaction> onItemsSelect;
 
   const HomePageTransaction({
-    Key key, @required this.bookId, this.date, this.onItemTap, this.onItemsSelect,
-    this.config
+    Key key,
+    @required this.bookId,
+    this.date,
+    this.onItemTap,
+    this.onItemsSelect,
+    this.config,
   }) : assert(bookId != null),
        super(key: key);
 
@@ -232,8 +236,12 @@ class _ContentTransactionItem extends StatelessWidget {
   final bool selected;
 
   const _ContentTransactionItem({
-    @required this.context, @required this.item,
-    this.currFormatter, this.selected, this.onTap, this.onLongPress,
+    @required this.context,
+    @required this.item,
+    this.currFormatter,
+    this.selected,
+    this.onTap,
+    this.onLongPress,
   }) : assert(context != null),
        assert(item != null);
 

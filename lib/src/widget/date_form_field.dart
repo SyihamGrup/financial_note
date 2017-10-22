@@ -21,11 +21,17 @@ class DateFormField extends StatelessWidget {
   final DateFormat dateFormat;
   final ValueChanged<DateTime> onChange;
 
-  DateFormField({Key key, this.label, this.date, this.firstDate, this.lastDate,
-                 this.dateFormat, @required this.onChange})
-    : assert(onChange != null),
-      assert(date != null),
-      super(key: key);
+  DateFormField({
+    Key key,
+    this.label,
+    this.date,
+    this.firstDate,
+    this.lastDate,
+    this.dateFormat,
+    @required this.onChange
+  }) : assert(onChange != null),
+       assert(date != null),
+       super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -57,13 +63,19 @@ class DateItem extends StatelessWidget {
   final ValueChanged<DateTime> onChange;
   final double padding;
 
-  DateItem({ Key key, DateTime date, this.firstDate, this.lastDate,
-             DateFormat dateFormat, @required this.onChange, this.padding: 0.0 })
-    : assert(onChange != null),
-      assert(date != null),
-      this.date = new DateTime(date.year, date.month, date.day),
-      dateFormat = dateFormat ?? new DateFormat.yMMMEd(),
-      super(key: key);
+  DateItem({
+    Key key,
+    DateTime date,
+    this.firstDate,
+    this.lastDate,
+    DateFormat dateFormat,
+    @required this.onChange,
+    this.padding: 0.0,
+  }) : assert(onChange != null),
+       assert(date != null),
+       this.date = new DateTime(date.year, date.month, date.day),
+       dateFormat = dateFormat ?? new DateFormat.yMMMEd(),
+       super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -114,15 +126,21 @@ class DateTimeItem extends StatelessWidget {
   final ValueChanged<DateTime> onChange;
   final double padding;
 
-  DateTimeItem({ Key key, DateTime dateTime, this.firstDate, this.lastDate,
-             DateFormat dateFormat, DateFormat timeFormat, @required this.onChange,
-             this.padding: 0.0 })
-    : assert(onChange != null),
+  DateTimeItem({
+    Key key,
+    DateTime dateTime,
+    this.firstDate,
+    this.lastDate,
+    DateFormat dateFormat,
+    DateFormat timeFormat,
+    @required this.onChange,
+    this.padding: 0.0,
+  }) : assert(onChange != null),
       assert(dateTime != null),
-      date = new DateTime(dateTime.year, dateTime.month, dateTime.day),
-      time = new TimeOfDay(hour: dateTime.hour, minute: dateTime.minute),
-      dateFormat = dateFormat ?? new DateFormat.yMMMEd(),
-      super(key: key);
+       date = new DateTime(dateTime.year, dateTime.month, dateTime.day),
+       time = new TimeOfDay(hour: dateTime.hour, minute: dateTime.minute),
+       dateFormat = dateFormat ?? new DateFormat.yMMMEd(),
+       super(key: key);
 
   @override
   Widget build(BuildContext context) {

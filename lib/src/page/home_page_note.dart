@@ -19,11 +19,15 @@ class HomePageNote extends StatefulWidget {
   final OnItemTap<Note> onItemTap;
   final OnItemSelect<Note> onItemsSelect;
 
-  HomePageNote({Key key, @required this.bookId,
-                  this.onItemTap, this.onItemsSelect, this.config})
-    : assert(bookId != null),
-      ref = Note.ref(bookId),
-      super(key: key);
+  HomePageNote({
+    Key key,
+    @required this.bookId,
+    this.onItemTap,
+    this.onItemsSelect,
+    this.config,
+  }) : assert(bookId != null),
+       ref = Note.ref(bookId),
+       super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _HomePageNoteState();
@@ -102,7 +106,13 @@ class _ContentNoteItem extends StatelessWidget {
   final GestureLongPressCallback onLongPress;
   final bool selected;
 
-  _ContentNoteItem({this.item, this.animation, this.selected, this.onTap, this.onLongPress});
+  _ContentNoteItem({
+    this.item,
+    this.animation,
+    this.selected,
+    this.onTap,
+    this.onLongPress,
+  });
 
   @override
   Widget build(BuildContext context) {

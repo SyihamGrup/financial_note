@@ -19,11 +19,15 @@ class HomePageBudget extends StatefulWidget {
   final OnItemTap<Budget> onItemTap;
   final OnItemSelect<Budget> onItemsSelect;
 
-  HomePageBudget({Key key, @required this.bookId,
-                  this.onItemTap, this.onItemsSelect, this.config})
-    : assert(bookId != null),
-      ref = Budget.ref(bookId),
-      super(key: key);
+  HomePageBudget({
+    Key key,
+    @required this.bookId,
+    this.onItemTap,
+    this.onItemsSelect,
+    this.config,
+  }) : assert(bookId != null),
+       ref = Budget.ref(bookId),
+       super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _HomePageBudgetState();
@@ -104,8 +108,14 @@ class _ContentBudgetItem extends StatelessWidget {
   final GestureLongPressCallback onLongPress;
   final bool selected;
 
-  _ContentBudgetItem({this.item, this.animation, this.selected,
-                      this.onTap, this.onLongPress, this.currencySymbol});
+  _ContentBudgetItem({
+    this.item,
+    this.animation,
+    this.selected,
+    this.onTap,
+    this.onLongPress,
+    this.currencySymbol,
+  });
 
   @override
   Widget build(BuildContext context) {

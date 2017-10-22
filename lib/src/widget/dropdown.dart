@@ -18,10 +18,13 @@ class DropdownFormField<T> extends StatelessWidget {
   final List<DropdownMenuItem<T>> items;
   final ValueChanged<T> onChanged;
 
-  DropdownFormField({@required this.label, @required this.value, this.items,
-                     this.onChanged})
-    : assert(label != null),
-      assert(items != null);
+  DropdownFormField({
+    @required this.label,
+    @required this.value,
+    this.items,
+    this.onChanged,
+  }) : assert(label != null),
+       assert(items != null);
 
   @override
   Widget build(BuildContext context) {

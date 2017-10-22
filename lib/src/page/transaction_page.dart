@@ -28,10 +28,14 @@ class TransactionPage extends StatefulWidget {
   final int transType;
   final DatabaseReference ref;
 
-  TransactionPage({Key key, @required this.bookId, this.id, this.transType: kExpense})
-    : assert(bookId != null),
-      ref = Transaction.ref(bookId),
-      super(key: key);
+  TransactionPage({
+    Key key,
+    @required this.bookId,
+    this.id,
+    this.transType: kExpense,
+  }) : assert(bookId != null),
+       ref = Transaction.ref(bookId),
+       super(key: key);
 
   @override
   State<StatefulWidget> createState() {

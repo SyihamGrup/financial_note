@@ -32,7 +32,7 @@ class LinkTextSpan extends TextSpan {
   );
 }
 
-Future<bool> showConfirmDialog(BuildContext context, Widget content, {Widget title}) {
+Future<bool> showConfirmDialog(BuildContext context, Widget content, [Widget title]) {
   final lang = Lang.of(context);
   return showDialog<bool>(
     context: context,
@@ -57,6 +57,6 @@ Future<bool> showLeaveConfirmDialog(BuildContext context) async {
   return await showConfirmDialog(
     context,
     new Text(Lang.of(context).msgConfirmLeave()),
-    title: new Text(Lang.of(context).titleLeave()),
+    new Text(Lang.of(context).titleLeave()),
   );
 }

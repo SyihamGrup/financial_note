@@ -19,11 +19,15 @@ class HomePageBill extends StatefulWidget {
   final OnItemTap<BillGroup> onItemTap;
   final OnItemSelect<BillGroup> onItemsSelect;
 
-  HomePageBill({Key key, @required this.bookId,
-                  this.onItemTap, this.onItemsSelect, this.config})
-    : assert(bookId != null),
-      ref = BillGroup.ref(bookId),
-      super(key: key);
+  HomePageBill({
+    Key key,
+    @required this.bookId,
+    this.onItemTap,
+    this.onItemsSelect,
+    this.config,
+  }) : assert(bookId != null),
+       ref = BillGroup.ref(bookId),
+       super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _HomePageBillState();
@@ -104,8 +108,14 @@ class _ContentBillItem extends StatelessWidget {
   final GestureLongPressCallback onLongPress;
   final bool selected;
 
-  _ContentBillItem({this.item, this.animation, this.selected,
-                      this.onTap, this.onLongPress, this.currencySymbol});
+  _ContentBillItem({
+    this.item,
+    this.animation,
+    this.selected,
+    this.onTap,
+    this.onLongPress,
+    this.currencySymbol,
+  });
 
   @override
   Widget build(BuildContext context) {

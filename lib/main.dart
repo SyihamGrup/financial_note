@@ -49,8 +49,12 @@ class _MainAppState extends State<MainApp> {
 
   _MainAppState(this._config);
 
-  Widget _getRoute(BuildContext context, RouteSettings settings,
-                   Config config, ValueChanged<Config> configUpdater) {
+  Widget _getRoute(
+    BuildContext context,
+    RouteSettings settings,
+    Config config,
+    ValueChanged<Config> configUpdater
+  ) {
     final routes = getRouteParams(settings), routeName = routes[0], params = routes[1];
 
     switch (routeName) {

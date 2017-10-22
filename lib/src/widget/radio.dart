@@ -19,9 +19,12 @@ class RadioGroup<T> extends StatelessWidget {
   final T groupValue;
   final Axis direction;
 
-  RadioGroup({@required this.items, this.groupValue, this.onChanged,
-              this.direction: Axis.horizontal})
-    : assert(items != null && items.length > 1);
+  RadioGroup({
+    @required this.items,
+    this.groupValue,
+    this.onChanged,
+    this.direction: Axis.horizontal,
+  }) : assert(items != null && items.length > 1);
 
   @override
   Widget build(BuildContext context) {
