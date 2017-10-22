@@ -266,6 +266,13 @@ class _TransactionPageState extends State<TransactionPage> {
           new Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: new Column(children: <Widget>[
+              // -- date --
+              new DateFormField(
+                label: lang.lblDate(),
+                date: _item.date ?? new DateTime.now(),
+                onChange: (DateTime value) => _item.date = value,
+              ),
+
               new Column(children: <Widget>[
                 // -- budgetId --
                 new DropdownFormField<String>(
