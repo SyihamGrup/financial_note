@@ -30,6 +30,9 @@ const kFirebaseHost = 'us-central1-financialnote-d6d95.cloudfunctions.net';
 const kOpeningBalancePath = '/getOpeningBalance';
 const kCalcOpeningBalancePath = '/calcOpeningBalance';
 
+const kIncome = 1;
+const kExpense = -1;
+
 // Global variable current book
 FirebaseUser currentUser;
 Book currentBook;

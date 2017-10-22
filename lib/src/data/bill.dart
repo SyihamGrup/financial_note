@@ -16,6 +16,7 @@ class BillGroup {
 
   String id;
   String title;
+  int transType;
   DateTime startDate;
   DateTime endDate;
   double totalValue;
@@ -27,6 +28,7 @@ class BillGroup {
   BillGroup({
     this.id,
     this.title,
+    this.transType,
     this.startDate,
     this.endDate,
     this.itemsCount: 0,
@@ -38,6 +40,7 @@ class BillGroup {
 
   BillGroup.fromJson(this.id, Map<String, dynamic> json)
     : title      = parseString(mapValue(json, 'title')),
+      transType  = parseInt(mapValue(json, 'transType')),
       startDate  = parseDate(mapValue(json, 'startDate')),
       endDate    = parseDate(mapValue(json, 'endDate')),
       totalValue = parseDouble(mapValue(json, 'totalValue')),
@@ -48,6 +51,7 @@ class BillGroup {
   BillGroup.fromSnapshot(DataSnapshot snapshot)
     : id         = snapshot.key,
       title      = parseString(mapValue(snapshot.value, 'title')),
+      transType  = parseInt(mapValue(snapshot.value, 'transType')),
       startDate  = parseDate(mapValue(snapshot.value, 'startDate')),
       endDate    = parseDate(mapValue(snapshot.value, 'endDate')),
       totalValue = parseDouble(mapValue(snapshot.value, 'totalValue')),
@@ -63,6 +67,7 @@ class BillGroup {
     final json = <String, dynamic>{
       'id'         : id,
       'title'      : title,
+      'transType'  : transType,
       'startDate'  : startDate?.toIso8601String(),
       'endDate'    : endDate?.toIso8601String(),
       'totalValue' : totalValue,
@@ -77,6 +82,7 @@ class BillGroup {
   BillGroup copyWith({
     String id,
     String title,
+    int transType,
     DateTime startDate,
     DateTime endDate,
     double totalValue,
@@ -87,6 +93,7 @@ class BillGroup {
     return new BillGroup(
       id         : id         ?? this.id,
       title      : title      ?? this.title,
+      transType  : transType  ?? this.transType,
       startDate  : startDate  ?? this.startDate,
       endDate    : endDate    ?? this.endDate,
       totalValue : totalValue ?? this.totalValue,

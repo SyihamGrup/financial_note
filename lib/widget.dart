@@ -21,6 +21,7 @@ export 'src/widget/date_form_field.dart';
 export 'src/widget/drawer.dart';
 export 'src/widget/list_app_bar.dart';
 export 'src/widget/month_picker.dart';
+export 'src/widget/radio.dart';
 
 class LinkTextSpan extends TextSpan {
   LinkTextSpan({TextStyle style, String url, String text}) : super(

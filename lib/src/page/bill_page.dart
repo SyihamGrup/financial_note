@@ -241,6 +241,15 @@ class _BillPageState extends State<BillPage> {
           ),
         ),
 
+        new RadioGroup<int>(
+          items: <RadioItem<int>>[
+            new RadioItem(kIncome, lang.lblIncome()),
+            new RadioItem(kExpense, lang.lblExpense()),
+          ],
+          groupValue: _group.transType,
+          onChanged: (value) => setState(() => _group.transType = value),
+        ),
+
         // -- bill items --
         _buildFormItems(context),
 
