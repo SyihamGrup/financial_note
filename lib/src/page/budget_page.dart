@@ -94,11 +94,16 @@ class _BudgetPageState extends State<BudgetPage> {
 
     _showInSnackBar(Lang.of(context).msgSaving());
     form.save();
-    final newItem = _item.id != null ? widget.ref.child(_item.id) : widget.ref.push();
-    newItem.set(_item.toJson());
-
-    _showInSnackBar(Lang.of(context).msgSaved());
-    return true;
+    try {
+      final ref = _item.id != null ? widget.ref.child(_item.id)
+                                   : widget.ref.push();
+      ref.set(_item.toJson());
+      _showInSnackBar(Lang.of(context).msgSaved());
+      return true;
+    } catch (e) {
+      _showInSnackBar(e.message);
+      return false;
+    }
   }
 
   String _validateTitle(String value) {
@@ -135,13 +140,15 @@ class _BudgetPageState extends State<BudgetPage> {
           setState(() => _saveNeeded = false);
           nav.pop();
         }),
-        title: new Text(_item.id == null ? lang.titleAddBudget() : lang.titleEditBudget()),
+        title: new Text(_item.id == null ? lang.titleAddBudget()
+                                         : lang.titleEditBudget()),
         actions: <Widget>[
           new FlatButton(
             onPressed: () => _handleSubmitted().then((saved) {
               if (saved) Navigator.pop(context);
             }),
-            child: new Text(lang.btnSave().toUpperCase(), style: theme.primaryTextTheme.button),
+            child: new Text(lang.btnSave().toUpperCase(),
+                            style: theme.primaryTextTheme.button),
           ),
         ],
       ),

@@ -12,7 +12,6 @@ import 'dart:async';
 
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:intl/intl.dart';
 
 class Transaction {
   static const kNodeName = 'transactions';
@@ -46,6 +45,16 @@ class Transaction {
       balance   = parseDouble(mapValue(json, 'balance')),
       note      = parseString(mapValue(json, 'note'));
 
+  Transaction.fromSnapshot(DataSnapshot snapshot)
+    : id        = snapshot.key,
+      billId    = parseString(mapValue(snapshot.value, 'billId')),
+      budgetId  = parseString(mapValue(snapshot.value, 'budgetId')),
+      title     = parseString(mapValue(snapshot.value, 'title')),
+      date      = parseDate(mapValue(snapshot.value, 'date')),
+      value     = parseDouble(mapValue(snapshot.value, 'value')),
+      balance   = parseDouble(mapValue(snapshot.value, 'balance')),
+      note      = parseString(mapValue(snapshot.value, 'note'));
+
   static DatabaseReference ref(String bookId) {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
   }
@@ -53,9 +62,7 @@ class Transaction {
   static Future<List<Transaction>> list(
       String bookId, DateTime dateStart, DateTime dateEnd, openingBalance,
   ) async {
-    final formatter = new DateFormat('yyyy-MM-dd');
     final ret = new List<Transaction>();
-
     ret.add(new Transaction(
       title   : 'Opening Balance',
       date    : dateStart,
@@ -63,20 +70,23 @@ class Transaction {
       balance : openingBalance,
     ));
 
-    final snap = await ref(bookId)
-        .orderByChild('paidDate')
-        .startAt(formatter.format(dateStart), key: 'paidDate')
-        .endAt(formatter.format(dateEnd), key: 'paidDate')
+    final snap = await ref(bookId).orderByChild('paidDate')
+        .startAt(dateStart.toIso8601String()).endAt(dateEnd.toIso8601String())
         .once();
-
     if (snap.value == null) return ret;
 
+    final items = <Transaction>[];
+    final Map<String, Map<String, dynamic>> data = snap.value;
+    data.forEach((key, value) {
+      items.add(new Transaction.fromJson(key, value));
+    });
+    items.sort((a, b) => a.date?.compareTo(b.date) ?? 0);
+
     var balance = openingBalance;
-    final Map<String, Map<String, dynamic>> items = snap.value;
-    items.forEach((key, item) {
-      balance += parseDouble(mapValue(item, 'value'));
-      item['balance'] = balance;
-      ret.add(new Transaction.fromJson(key, item));
+    items.forEach((item) {
+      balance += item.value;
+      item.balance = balance;
+      ret.insert(0, item);
     });
 
     return ret;

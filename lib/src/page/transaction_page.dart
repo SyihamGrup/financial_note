@@ -13,21 +13,22 @@ import 'dart:async';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
+import 'package:financial_note/utils.dart';
+import 'package:financial_note/widget.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-enum TransType { income, expense }
-
 class TransactionPage extends StatefulWidget {
   static const kRouteName = '/transaction';
 
   final String bookId;
+  final String id;
+  final int transType;
   final DatabaseReference ref;
-  final TransType transType;
 
-  TransactionPage({Key key, @required this.bookId, this.transType: TransType.expense})
+  TransactionPage({Key key, @required this.bookId, this.id, this.transType: kExpense})
     : assert(bookId != null),
       ref = Transaction.ref(bookId),
       super(key: key);
@@ -42,108 +43,70 @@ class _TransactionPageState extends State<TransactionPage> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = new GlobalKey<FormState>();
 
-  TransType _transType;
-  var _trans = new Transaction(title: null, date: null, value: 0.0);
+  var _item = new Transaction(date: new DateTime.now());
+  var _ctrl = <String, TextEditingController>{
+    'title': new TextEditingController(),
+    'value': new TextEditingController(),
+  };
+  var _budgets = <Budget>[];
+  var _billsGroup = <BillGroup>[];
+  var _bills = <Bill>[];
+
+  int _transType;
 
   var _autoValidate = false;
-//  var _isCancelled = false;
-  var _formWasEdited = false;
   var _saveNeeded = false;
 
-  _TransactionPageState({TransType transType: TransType.expense})
+  _TransactionPageState({int transType: kExpense})
     : _transType = transType;
-
-  //  var person = new PersonData();
-//  final _passwordFieldKey = new GlobalKey<FormFieldState<String>>();
-//  final _phoneNumberFormatter = new _UsNumberTextInputFormatter();
 
   @override
   void initState() {
     super.initState();
+    _initData();
   }
 
-  void showInSnackBar(String value) {
+  Future<Null> _initData() async {
+    if (_item.id == null) return;
+
+    final snap = await widget.ref.child(_item.id).once();
+    if (snap.value == null) return;
+    _item = new Transaction.fromSnapshot(snap);
+    _ctrl = <String, TextEditingController>{
+      'title': new TextEditingController(text: _item.title ?? ''),
+      'value': new TextEditingController(text: _item.value.toString()),
+    };
+  }
+
+  void _showInSnackBar(String value) {
     _scaffoldKey.currentState.showSnackBar(new SnackBar(
       content: new Text(value),
     ));
   }
 
-  void _handleSubmitted() {
+  Future<bool> _handleSubmitted() async {
     final form = _formKey.currentState;
     if (!form.validate()) {
       _autoValidate = true;  // Start validating on every change
-      showInSnackBar(Lang.of(context).msgFormError());
-    } else {
-      form.save();
-      showInSnackBar(Lang.of(context).msgSaved());
+      _showInSnackBar(Lang.of(context).msgFormError());
+      return false;
     }
 
-//    reference.push().set({
-//      'text': text,
-//      'imageUrl': imageUrl,
-//      'senderName': googleSignIn.currentUser.displayName,
-//      'senderPhotoUrl': googleSignIn.currentUser.photoUrl,
-//    });
-  }
-
-  // TODO: Menyimpan data disini
-  Future<bool> _warnInvalidData() async {
-    final form = _formKey.currentState;
-    if (form == null || !_formWasEdited || form.validate()) return true;
-
-    final lang = Lang.of(context);
-    final nav = Navigator.of(context);
-
-    return await showDialog<bool>(
-      context: context,
-      child: new AlertDialog(
-        title: new Text(lang.msgFormHasError()),
-        content: new Text('confirm leaving?'),
-        actions: <Widget> [
-          new FlatButton(
-            child: new Text(lang.btnYes().toUpperCase()),
-            onPressed: () => nav.pop(true),
-          ),
-          new FlatButton(
-            child: new Text(lang.btnNo().toUpperCase()),
-            onPressed: () => nav.pop(false),
-          ),
-        ],
-      ),
-    ) ?? false;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    final lang = Lang.of(context);
-    final nav = Navigator.of(context);
-
-    return new Scaffold(
-      key: _scaffoldKey,
-      appBar: new AppBar(
-        leading: new IconButton(icon: kIconClose, onPressed: () => nav.pop()),
-        title: new Text(lang.titleAddTransaction()),
-        actions: <Widget>[
-          new FlatButton(
-            onPressed: _handleSubmitted,
-            child: new Text(lang.btnSave().toUpperCase(),
-                style: theme.primaryTextTheme.button),
-          ),
-        ],
-      ),
-      body: _buildForm(context),
-    );
-  }
-
-  void _onTransTypeChange(TransType type) {
-    _saveNeeded = true;
-    setState(() => _transType = type);
+    _showInSnackBar(Lang.of(context).msgSaving());
+    form.save();
+    try {
+      final ref = _item.id != null ? widget.ref.child(_item.id)
+                                   : widget.ref.push();
+      ref.set(_item.toJson());
+      _showInSnackBar(Lang.of(context).msgSaved());
+      return true;
+    } catch (e) {
+      _showInSnackBar(e.message);
+      return false;
+    }
   }
 
   String _validateTitle(String value) {
-    _saveNeeded = true;
     if (value.isEmpty) {
       return Lang.of(context).msgFieldRequired();
     }
@@ -151,128 +114,160 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   String _validateValue(String value) {
-//    _saveNeeded = true;
-//    if (value.isEmpty) {
-//      return Lang.of(context).msgFieldRequired();
-//    }
+    if (value.isEmpty) {
+      return Lang.of(context).msgFieldRequired();
+    }
     return null;
   }
 
-  Widget _buildForm(BuildContext context) {
+  Future<bool> _onWillPop() async {
+    if (!_saveNeeded) return true;
+    final saved = await _handleSubmitted();
+    if (!saved) return await showLeaveConfirmDialog(context);
+    return true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final lang = Lang.of(context);
+    final nav = Navigator.of(context);
+
+    return new Scaffold(
+      key: _scaffoldKey,
+      appBar: new AppBar(
+        leading: new IconButton(icon: kIconClose, onPressed: () {
+          setState(() => _saveNeeded = false);
+          nav.pop();
+        }),
+        title: new Text(_item.id == null ? lang.titleAddTransaction()
+                                         : lang.titleEditTransaction()),
+        actions: <Widget>[
+          new FlatButton(
+            onPressed: () => _handleSubmitted().then((saved) {
+              if (saved) Navigator.pop(context);
+            }),
+            child: new Text(lang.btnSave().toUpperCase(),
+                            style: theme.primaryTextTheme.button),
+          ),
+        ],
+      ),
+      body: _buildForm(context),
+    );
+  }
+
+  Widget _buildForm(BuildContext context) {
+    final theme = Theme.of(context);
+    final lang = Lang.of(context);
+
+    final budgetItems = <DropdownMenuItem<String>>[
+      new DropdownMenuItem<String>(value: '', child: new Text('None')),
+      new DropdownMenuItem<String>(value: '1', child: new Text('Hiking')),
+      new DropdownMenuItem<String>(value: '2', child: new Text('Swimming')),
+      new DropdownMenuItem<String>(value: '3', child: new Text('Boating')),
+      new DropdownMenuItem<String>(value: '4', child: new Text('Fishing')),
+    ];
+
+    final groupItems = <DropdownMenuItem<String>>[
+      new DropdownMenuItem<String>(value: '', child: new Text('None')),
+      new DropdownMenuItem<String>(value: '1', child: new Text('Hiking')),
+      new DropdownMenuItem<String>(value: '2', child: new Text('Swimming')),
+      new DropdownMenuItem<String>(value: '3', child: new Text('Boating')),
+      new DropdownMenuItem<String>(value: '4', child: new Text('Fishing')),
+    ];
+
+    final billItems = <DropdownMenuItem<String>>[
+      new DropdownMenuItem<String>(value: '', child: new Text('None')),
+      new DropdownMenuItem<String>(value: '1', child: new Text('Hiking')),
+      new DropdownMenuItem<String>(value: '2', child: new Text('Swimming')),
+      new DropdownMenuItem<String>(value: '3', child: new Text('Boating')),
+      new DropdownMenuItem<String>(value: '4', child: new Text('Fishing')),
+    ];
 
     return new Form(
       key: _formKey,
       autovalidate: _autoValidate,
-      onWillPop: _warnInvalidData,
+      onWillPop: _onWillPop,
       child: new ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         children: <Widget>[
+          // -- transType --
           new Container(
-            padding: const EdgeInsets.all(8.0),
-            decoration: new BoxDecoration(color: Theme.of(context).highlightColor),
-            child: new Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-              new Radio(
-                value: TransType.income,
-                groupValue: _transType,
-                onChanged: (TransType value) => _onTransTypeChange(value),
-              ),
-              new Container(
-                child: new GestureDetector(
-                  child: new Text(lang.lblIncome()),
-                  onTap: () => _onTransTypeChange(TransType.income),
-                ),
-                margin: const EdgeInsets.only(right: 8.0),
-              ),
-              new Radio(
-                value: TransType.expense,
-                groupValue: _transType,
-                onChanged: (TransType value) => _onTransTypeChange(value),
-              ),
-              new GestureDetector(
-                child: new Text(lang.lblExpense()),
-                onTap: () => _onTransTypeChange(TransType.expense),
-              ),
-            ]),
-          ),
-
-          new InputDecorator(
-            decoration: new InputDecoration(labelText: lang.lblBudget()),
-            isEmpty: _trans.budgetId == null,
-            child: new DropdownButtonHideUnderline(child: new DropdownButton<String>(
-              value: _trans.budgetId,
-              isDense: true,
-              onChanged: (String newValue) {
-                setState(() => _trans.budgetId = newValue == '' ? null : newValue);
-              },
-              items: <DropdownMenuItem<String>>[
-                new DropdownMenuItem<String>(value: '', child: new Text('None')),
-                new DropdownMenuItem<String>(value: '1', child: new Text('Hiking')),
-                new DropdownMenuItem<String>(value: '2', child: new Text('Swimming')),
-                new DropdownMenuItem<String>(value: '3', child: new Text('Boating')),
-                new DropdownMenuItem<String>(value: '4', child: new Text('Fishing')),
+            decoration: new BoxDecoration(color: theme.highlightColor),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.only(right: 32.0),
+            child: new RadioGroup(
+              groupValue: _transType,
+              items: <RadioItem<int>>[
+                new RadioItem<int>(kIncome, lang.lblIncome()),
+                new RadioItem<int>(kExpense, lang.lblExpense()),
               ],
-            )),
+              onChanged: (value) => setState(() => _transType = value),
+            ),
           ),
 
-          new Row(children: <Widget>[
-            new Expanded(child: new InputDecorator(
-              decoration: new InputDecoration(labelText: lang.lblBill()),
-              isEmpty: _trans.billId == null,
-              child: new DropdownButtonHideUnderline(child: new DropdownButton<String>(
-                value: _trans.billId,
-                isDense: true,
-                onChanged: (String newValue) {
-                  setState(() => _trans.billId = newValue == '' ? null : newValue);
-                },
-                items: <DropdownMenuItem<String>>[
-                  new DropdownMenuItem<String>(value: '', child: new Text('None')),
-                  new DropdownMenuItem<String>(value: '1', child: new Text('Hiking')),
-                  new DropdownMenuItem<String>(value: '2', child: new Text('Swimming')),
-                  new DropdownMenuItem<String>(value: '3', child: new Text('Boating')),
-                  new DropdownMenuItem<String>(value: '4', child: new Text('Fishing')),
-                ],
-              )),
-            )),
+          new Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: new Column(children: <Widget>[
+              new Column(children: <Widget>[
+                // -- budgetId --
+                new DropdownFormField<String>(
+                  label: lang.lblBudget(),
+                  value: _item.budgetId,
+                  items: budgetItems,
+                  onChanged: (value) {
+                    setState(() => _item.budgetId = value == '' ? null : value);
+                  },
+                ),
 
-            new Container(width: 16.0),
+                new Row(children: <Widget>[
+                  // -- groupId --
+                  new Expanded(child: new DropdownFormField<String>(
+                    label: lang.lblBill(),
+                    value: _item.billId,
+                    items: groupItems,
+                    onChanged: (value) {
+                      setState(() => _item.billId = value == '' ? null : value);
+                    },
+                  )),
 
-            new Expanded(child: new InputDecorator(
-              decoration: new InputDecoration(labelText: lang.lblBillPeriod()),
-              isEmpty: _trans.billId == null,
-              child: new DropdownButtonHideUnderline(child: new DropdownButton<String>(
-                value: _trans.billId,
-                isDense: true,
-                onChanged: (String newValue) {
-                  setState(() => _trans.billId = newValue == '' ? null : newValue);
-                },
-                items: <DropdownMenuItem<String>>[
-                  new DropdownMenuItem<String>(value: '', child: new Text('None')),
-                  new DropdownMenuItem<String>(value: '1', child: new Text('Hiking')),
-                  new DropdownMenuItem<String>(value: '2', child: new Text('Swimming')),
-                  new DropdownMenuItem<String>(value: '3', child: new Text('Boating')),
-                  new DropdownMenuItem<String>(value: '4', child: new Text('Fishing')),
-                ],
-              )),
-            )),
-          ]),
+                  new Padding(padding: const EdgeInsets.only(left: 16.0)),
 
-          new TextFormField(
-            decoration: new InputDecoration(labelText: lang.lblTitle()),
-            onSaved: (String value) => setState(() => _trans.title = value),
-            validator: _validateTitle,
-          ),
+                  // -- billId --
+                  new Expanded(child: new DropdownFormField<String>(
+                    label: lang.lblBillPeriod(),
+                    value: _item.billId,
+                    items: billItems,
+                    onChanged: (value) {
+                      setState(() => _item.billId = value == '' ? null : value);
+                    },
+                  )),
+                ]),
 
-          new TextFormField(
-            controller: new TextEditingController(text: '0'),
-            decoration: new InputDecoration(labelText: lang.lblValue()),
-            keyboardType: TextInputType.number,
-            onSaved: (String value) => setState(() => _trans.value = double.parse(value)),
-            validator: _validateValue,
+                // -- title --
+                new TextFormField(
+                  initialValue: _ctrl['title'].text,
+                  controller: _ctrl['title'],
+                  decoration: new InputDecoration(labelText: lang.lblTitle()),
+                  onSaved: (String value) => _item.title = value,
+                  validator: _validateTitle,
+                ),
+
+                // -- value --
+                new TextFormField(
+                  initialValue: _ctrl['value'].text,
+                  controller: _ctrl['value'],
+                  decoration: new InputDecoration(labelText: lang.lblValue()),
+                  keyboardType: TextInputType.number,
+                  onSaved: (String value) => _item.value = parseDouble(value),
+                  validator: _validateValue,
+                ),
+              ]),
+            ]),
           ),
         ],
       ),
     );
+
   }
 
 }

@@ -46,6 +46,7 @@ class RadioGroup<T> extends StatelessWidget {
       style: Theme.of(context).textTheme.subhead,
         child: new Flex(
         direction: direction,
+        mainAxisSize: MainAxisSize.min,
         children: widgets,
       ),
     );
