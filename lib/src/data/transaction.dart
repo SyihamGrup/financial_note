@@ -70,7 +70,7 @@ class Transaction {
       balance : openingBalance,
     ));
 
-    final snap = await ref(bookId).orderByChild('paidDate')
+    final snap = await ref(bookId).orderByChild('date')
         .startAt(dateStart.toIso8601String()).endAt(dateEnd.toIso8601String())
         .once();
     if (snap.value == null) return ret;
