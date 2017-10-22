@@ -119,6 +119,12 @@ class _ContentBillItem extends StatelessWidget {
       child: new Container(
         decoration: selected ? selectedBg : null,
         child: new ListTile(
+          leading: new CircleAvatar(
+            backgroundColor: item.transType == null ? Colors.grey[600]
+               : (item.transType == kIncome ? Colors.green[400] : Colors.orange[300]),
+            child: item.transType == null ? null
+               : new Icon(item.transType == kIncome ? Icons.add : Icons.remove),
+          ),
           title: new Text(item.title, overflow: TextOverflow.ellipsis),
           subtitle: new Text(currFormatter.format(item.totalValue)),
           trailing: new Container(
