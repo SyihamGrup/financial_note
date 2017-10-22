@@ -100,26 +100,4 @@ class Transaction {
     if (!showBalance) json.remove('balance');
     return json;
   }
-
-  Transaction copyWith({
-    String id,
-    String billId,
-    String budgetId,
-    String title,
-    DateTime date,
-    double value,
-    double balance,
-    String note,
-  }) {
-    return new Transaction(
-      id       : id       ?? this.id,
-      billId   : billId   ?? this.billId,
-      budgetId : budgetId ?? this.budgetId,
-      title    : title    ?? this.title,
-      date     : date     ?? this.date,
-      value    : value    ?? this.value,
-      balance  : balance  ?? this.balance,
-      note     : note     ?? this.note,
-    );
-  }
 }

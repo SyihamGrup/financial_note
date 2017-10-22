@@ -61,23 +61,4 @@ class Note {
     if (!showId) json.remove('id');
     return json;
   }
-
-  Note copyWith({
-    String id,
-    String title,
-    String note,
-    DateTime reminder,
-    DateTime createdAt,
-    DateTime updatedAt,
-  }) {
-    return new Note(
-      id        : id        ?? this.id,
-      title     : title     ?? this.title,
-      note      : note      ?? this.note,
-      reminder  : reminder  ?? this.reminder,
-      createdAt : createdAt ?? this.createdAt,
-      updatedAt : updatedAt ?? this.updatedAt,
-    );
-  }
-
 }

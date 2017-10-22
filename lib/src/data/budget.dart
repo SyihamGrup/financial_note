@@ -66,25 +66,4 @@ class Budget {
     if (!showId) json.remove('id');
     return json;
   }
-
-  Budget copyWith({
-    String id,
-    String title,
-    DateTime date,
-    double value,
-    double spent,
-    bool isExpire,
-    String descr,
-  }) {
-    return new Budget(
-      id        : id        ?? this.id,
-      title     : title     ?? this.title,
-      date      : date      ?? this.date,
-      value     : value     ?? this.value,
-      spent     : spent     ?? this.spent,
-      isExpire  : isExpire  ?? this.isExpire,
-      descr     : descr     ?? this.descr,
-    );
-  }
-
 }

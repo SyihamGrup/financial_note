@@ -64,17 +64,4 @@ class Book {
     if (!showId) json.remove('id');
     return json;
   }
-
-  Book copyWith({
-    String id,
-    String title,
-    String descr,
-  }) {
-    return new Book(
-      id    : id    ?? this.id,
-      title : title ?? this.title,
-      descr : descr ?? this.descr,
-    );
-  }
-
 }

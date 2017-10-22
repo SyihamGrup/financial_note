@@ -164,27 +164,4 @@ class Bill {
     if (!showId) json.remove('id');
     return json;
   }
-
-  Bill copyWith({
-    String id,
-    String groupId,
-    String title,
-    DateTime date,
-    double value,
-    DateTime paidDate,
-    double paidValue,
-    String descr,
-  }) {
-    return new Bill(
-      id        : id        ?? this.id,
-      groupId   : groupId   ?? this.groupId,
-      title     : title     ?? this.title,
-      date      : date      ?? this.date,
-      value     : value     ?? this.value,
-      paidDate  : paidDate  ?? this.paidDate,
-      paidValue : paidValue ?? this.paidValue,
-      descr     : descr     ?? this.descr,
-    );
-  }
-
 }
