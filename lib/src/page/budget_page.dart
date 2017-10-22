@@ -92,13 +92,11 @@ class _BudgetPageState extends State<BudgetPage> {
       return false;
     }
 
-    _showInSnackBar(Lang.of(context).msgSaving());
     form.save();
     try {
       final ref = _item.id != null ? widget.ref.child(_item.id)
                                    : widget.ref.push();
       ref.set(_item.toJson());
-      _showInSnackBar(Lang.of(context).msgSaved());
       return true;
     } catch (e) {
       _showInSnackBar(e.message);

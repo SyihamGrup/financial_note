@@ -117,28 +117,33 @@ class _BillPageState extends State<BillPage> {
       return false;
     }
 
-    _showInSnackBar(Lang.of(context).msgSaving());
     form.save();
     _fillData();
 
-    final groupSnap = _group.id != null ? widget.groupRef.child(_group.id) : widget.groupRef.push();
-    await groupSnap.set(_group.toJson());
-
-    final existing = await widget.ref.orderByChild('group_id').equalTo(groupSnap.key).once();
-    if (existing.value is Map) {
-      existing.value.forEach((key, value) {
-        if (!_inItems(key)) widget.ref.child(key).remove();
+    try {
+      final groupSnap = _group.id != null ? widget.groupRef.child(_group.id)
+                                          : widget.groupRef.push();
+      groupSnap.set(_group.toJson()).then((_) async {
+        final existing = await widget.ref.orderByChild('group_id')
+                             .equalTo(groupSnap.key).once();
+        if (existing.value is Map) {
+          existing.value.forEach((key, value) {
+            if (!_inItems(key)) widget.ref.child(key).remove();
+          });
+        }
+        _items.forEach((item) {
+          final snap = item.id != null ? widget.ref.child(item.id)
+                                       : widget.ref.push();
+          final data = item.toJson();
+          data['group_id'] = groupSnap.key;
+          snap.set(data);
+        });
       });
+      return true;
+    } catch (e) {
+      _showInSnackBar(e.message);
+      return false;
     }
-    _items.forEach((item) {
-      final snap = item.id != null ? widget.ref.child(item.id) : widget.ref.push();
-      final data = item.toJson();
-      data['group_id'] = groupSnap.key;
-      snap.set(data);
-    });
-
-    _showInSnackBar(Lang.of(context).msgSaved());
-    return true;
   }
 
   bool _inItems(String key) {

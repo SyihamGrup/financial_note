@@ -90,14 +90,17 @@ class _NotePageState extends State<NotePage> {
       return false;
     }
 
-    _showInSnackBar(Lang.of(context).msgSaving());
     form.save();
     _item.updatedAt = new DateTime.now();
-    final newItem = _item.id != null ? widget.ref.child(_item.id) : widget.ref.push();
-    newItem.set(_item.toJson());
-
-    _showInSnackBar(Lang.of(context).msgSaved());
-    return true;
+    try {
+      final newItem = _item.id != null ? widget.ref.child(_item.id)
+                                       : widget.ref.push();
+      newItem.set(_item.toJson());
+      return true;
+    } catch (e) {
+      _showInSnackBar(e.message);
+      return false;
+    }
   }
 
   String _validateTitle(String value) {
