@@ -146,6 +146,8 @@ class _TransactionPageState extends State<TransactionPage> {
     }
 
     form.save();
+    _item.value = _item.value * _transType;
+
     try {
       final ref = _item.id != null ? widget.ref.child(_item.id)
                                    : widget.ref.push();
