@@ -92,7 +92,7 @@ class Transaction {
     return ret;
   }
 
-  Map<String, dynamic> toJson({showId: false}) {
+  Map<String, dynamic> toJson({showId: false, showBalance: false}) {
     final json = <String, dynamic>{
       'id'       : id,
       'billId'   : billId,
@@ -104,6 +104,7 @@ class Transaction {
       'note'     : note,
     };
     if (!showId) json.remove('id');
+    if (!showBalance) json.remove('balance');
     return json;
   }
 
