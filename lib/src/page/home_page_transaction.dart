@@ -52,10 +52,9 @@ class _HomePageTransactionState extends State<HomePageTransaction>
 
     _initProgress();
 
-    _dataSubscr = Transaction.ref(widget.bookId).onChildChanged.listen((event) {
+    _dataSubscr = Transaction.ref(widget.bookId).onValue.listen((event) {
       _refreshData(widget.bookId);
     });
-    _refreshData(widget.bookId);
   }
 
   void _initProgress() {
