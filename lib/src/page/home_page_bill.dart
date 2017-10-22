@@ -109,7 +109,7 @@ class _ContentBillItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currFormatter = new NumberFormat.currency(symbol: currencySymbol);
+    final currFormatter = new NumberFormat.currency(symbol: currencySymbol, decimalDigits: 0);
     final dateFormatter = new DateFormat.MMMd();
     final selectedBg = new BoxDecoration(color: Theme.of(context).highlightColor);
 

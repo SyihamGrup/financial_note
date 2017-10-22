@@ -115,7 +115,7 @@ class _ContentBudgetItem extends StatelessWidget {
 
     final value = item.value ?? 0;
     final spent = item.spent ?? 0;
-    final currFormatter = new NumberFormat.currency(symbol: currencySymbol,decimalDigits: 0);
+    final currFormatter = new NumberFormat.currency(symbol: currencySymbol, decimalDigits: 0);
 
     final percentColor = theme.primaryColor;
     final percentBg = theme.highlightColor;

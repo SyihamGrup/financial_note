@@ -100,8 +100,13 @@ class _HomePageTransactionState extends State<HomePageTransaction>
     if (_items == null || _items.length == 0)
       return new _EmptyBody(isLoading: _isLoading);
 
+    final currFormatter = new NumberFormat.currency(
+      symbol: widget.config?.currencySymbol,
+      decimalDigits: 0,
+    );
+
     return new Column(children: <Widget>[
-      _buildBalance(),
+      _buildBalance(currFormatter),
       new Expanded(child: new ListView.builder(
         padding: const EdgeInsets.only(bottom: 72.0),
         itemCount: _items.length,
@@ -110,12 +115,12 @@ class _HomePageTransactionState extends State<HomePageTransaction>
           if (_items.length <= 1) {
             return new _EmptyBody();
           } else if (index == _items.length - 1) {
-            return _buildOpeningBalance(item);
+            return _buildOpeningBalance(item, currFormatter);
           } else {
             return new _ContentTransactionItem(
               context: context,
               item: item,
-              currencySymbol: widget.config?.currencySymbol,
+              currFormatter: currFormatter,
               selected: _getSelectedIndex(_selectedItems, item) != -1,
               onTap: () => _onTap(item),
               onLongPress: () => _onLongPress(item),
@@ -126,10 +131,9 @@ class _HomePageTransactionState extends State<HomePageTransaction>
     ]);
   }
 
-  Widget _buildBalance() {
+  Widget _buildBalance(NumberFormat currFormatter) {
     final theme = Theme.of(context);
     final lang = Lang.of(context);
-    final currFormatter = new NumberFormat.currency(symbol: widget.config?.currencySymbol);
     final balance = _items.length > 0 ? _items[0].balance : 0.0;
 
     return new Container(
@@ -151,10 +155,9 @@ class _HomePageTransactionState extends State<HomePageTransaction>
     );
   }
 
-  Widget _buildOpeningBalance(Transaction item) {
+  Widget _buildOpeningBalance(Transaction item, NumberFormat currFormatter) {
     final theme = Theme.of(context);
     final lang = Lang.of(context);
-    final currFormatter = new NumberFormat.currency(symbol: widget.config?.currencySymbol);
 
     return new ListTile(
       title: new Center(child: new Text(
@@ -222,7 +225,7 @@ class _HomePageTransactionState extends State<HomePageTransaction>
 class _ContentTransactionItem extends StatelessWidget {
   final BuildContext context;
   final Transaction item;
-  final String currencySymbol;
+  final NumberFormat currFormatter;
 
   final GestureTapCallback onTap;
   final GestureLongPressCallback onLongPress;
@@ -230,14 +233,13 @@ class _ContentTransactionItem extends StatelessWidget {
 
   const _ContentTransactionItem({
     @required this.context, @required this.item,
-    this.currencySymbol, this.selected, this.onTap, this.onLongPress
+    this.currFormatter, this.selected, this.onTap, this.onLongPress,
   }) : assert(context != null),
        assert(item != null);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final currFormatter = new NumberFormat.currency(symbol: currencySymbol);
     final selectedBg = new BoxDecoration(color: theme.highlightColor);
 
     return new Container(
