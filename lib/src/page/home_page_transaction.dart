@@ -101,26 +101,8 @@ class _HomePageTransactionState extends State<HomePageTransaction>
     if (_items == null || _items.length == 0)
       return new _EmptyBody(isLoading: _isLoading);
 
-    final theme = Theme.of(context);
-    final lang = Lang.of(context);
-
-    final currFormatter = new NumberFormat.currency(symbol: widget.config?.currencySymbol);
-    final balance = _items.length > 0 ? _items[0].balance : 0.0;
-
     return new Column(children: <Widget>[
-      new Container(
-        decoration: new BoxDecoration(color: Colors.blueGrey[100]),
-        child: new ListTile(
-          title: new Center(child: new Text(
-            lang.titleBalance().toUpperCase(),
-            style: theme.textTheme.body1.copyWith(color: Colors.black54),
-          )),
-          subtitle: new Center(child: new Text(
-            currFormatter.format(balance),
-            style: theme.textTheme.title.copyWith(color: Colors.black87),
-          )),
-        ),
-      ),
+      _buildBalance(),
       new Expanded(child: new ListView.builder(
         padding: const EdgeInsets.only(bottom: 72.0),
         itemCount: _items.length,
@@ -129,16 +111,7 @@ class _HomePageTransactionState extends State<HomePageTransaction>
           if (_items.length <= 1) {
             return new _EmptyBody();
           } else if (index == _items.length - 1) {
-            return new ListTile(
-              title: new Center(child: new Text(
-                lang.titleOpeningBalance().toUpperCase(),
-                style: theme.textTheme.body1.copyWith(color: Colors.black54),
-              )),
-              subtitle: new Center(child: new Text(
-                currFormatter.format(item.balance),
-                style: theme.textTheme.title.copyWith(color: Colors.black54),
-              )),
-            );
+            return _buildOpeningBalance(item);
           } else {
             return new _ContentTransactionItem(
               context: context,
@@ -152,6 +125,45 @@ class _HomePageTransactionState extends State<HomePageTransaction>
         },
       )),
     ]);
+  }
+
+  Widget _buildBalance() {
+    final theme = Theme.of(context);
+    final lang = Lang.of(context);
+    final currFormatter = new NumberFormat.currency(symbol: widget.config?.currencySymbol);
+    final balance = _items.length > 0 ? _items[0].balance : 0.0;
+
+    return new Container(
+      decoration: new BoxDecoration(color: Colors.blueGrey[100]),
+      child: new ListTile(
+        dense: true,
+        title: new Center(child: new Text(
+          lang.titleBalance().toUpperCase(),
+          style: theme.textTheme.body1.copyWith(color: Colors.black54),
+        )),
+        subtitle: new Center(child: new Text(
+          currFormatter.format(balance),
+          style: theme.textTheme.title.copyWith(color: Colors.black87),
+        )),
+      ),
+    );
+  }
+
+  Widget _buildOpeningBalance(Transaction item) {
+    final theme = Theme.of(context);
+    final lang = Lang.of(context);
+    final currFormatter = new NumberFormat.currency(symbol: widget.config?.currencySymbol);
+
+    return new ListTile(
+      title: new Center(child: new Text(
+        lang.titleOpeningBalance().toUpperCase(),
+        style: theme.textTheme.body1.copyWith(color: Colors.black54, fontSize: 12.0),
+      )),
+      subtitle: new Center(child: new Text(
+        currFormatter.format(item.balance),
+        style: theme.textTheme.title.copyWith(color: Colors.black54, fontSize: 20.0),
+      )),
+    );
   }
 
   void _onTap(Transaction item) {
