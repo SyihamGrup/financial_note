@@ -202,12 +202,13 @@ class _NotePageState extends State<NotePage> {
   }
 
   Widget _buildReminder() {
+    final theme = Theme.of(context);
     final lang = Lang.of(context);
 
     final widgets = <Widget>[
       new Checkbox(value: _hasReminder, onChanged: _onReminderChange),
       new GestureDetector(
-        child: new Text(lang.lblReminder()),
+        child: new Text(lang.lblReminder(), style: theme.textTheme.subhead),
         onTap: () => _onReminderChange(!_hasReminder),
       ),
     ];
