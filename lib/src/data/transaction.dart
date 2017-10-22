@@ -63,13 +63,6 @@ class Transaction {
       String bookId, DateTime dateStart, DateTime dateEnd, openingBalance,
   ) async {
     final ret = new List<Transaction>();
-    ret.add(new Transaction(
-      title   : 'Opening Balance',
-      date    : dateStart,
-      value   : openingBalance,
-      balance : openingBalance,
-    ));
-
     final snap = await ref(bookId).orderByChild('date')
         .startAt(dateStart.toIso8601String()).endAt(dateEnd.toIso8601String())
         .once();

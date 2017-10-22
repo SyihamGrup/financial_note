@@ -44,6 +44,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+  final _transBarKey = new GlobalKey<_TransactionAppBarState>();
+  final _transKey = new GlobalKey<_HomePageTransactionState>();
   final _budgetBarKey = new GlobalKey<ListAppBarState<Budget>>();
   final _budgetKey = new GlobalKey<_HomePageBudgetState>();
   final _billBarKey = new GlobalKey<ListAppBarState<BillGroup>>();
@@ -59,7 +61,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   HomePageBudget _homeBudget;
   HomePageNote _homeNote;
 
-  AppBarTransaction _appBarTrans;
+  TransactionAppBar _appBarTrans;
   ListAppBar<BillGroup> _appBarBill;
   ListAppBar<Budget> _appBarBudget;
   ListAppBar<Note> _appBarNote;
@@ -89,9 +91,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   void _initTrans() {
-    _appBarTrans = new AppBarTransaction(initialDate: _filterDate, onDateChange: _onDateChange);
+    _appBarTrans = new TransactionAppBar(initialDate: _filterDate, onDateChange: _onDateChange);
 
-    _homeTrans = new HomePageTransaction(bookId: widget.bookId, date: _filterDate);
+    _homeTrans = new HomePageTransaction(
+      key: _transKey,
+      bookId: widget.bookId,
+      date: _filterDate,
+      config: widget.config,
+    );
   }
 
   void _initBill() {

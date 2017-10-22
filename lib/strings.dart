@@ -47,6 +47,7 @@ class Lang {
   String titleSignIn()    => _('titleSignIn',   'Sign In');
 
   String titleOpeningBalance()  => _('titleOpeningBalance',  'Opening Balance');
+  String titleBalance()         => _('titleBalance',          'Balance');
   String titleAddTransaction()  => _('titleAddTransaction',  'New Transaction');
   String titleEditTransaction() => _('titleEditTransaction', 'Edit Transaction');
   String titleAddBill()         => _('titleAddBill',         'New Bill');

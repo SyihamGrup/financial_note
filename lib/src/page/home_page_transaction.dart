@@ -15,10 +15,11 @@ part of page;
 class HomePageTransaction extends StatefulWidget {
   static const kRouteName = '/home-transactions';
 
+  final Config config;
   final String bookId;
   final DateTime date;
 
-  const HomePageTransaction({Key key, @required this.bookId, this.date})
+  const HomePageTransaction({Key key, @required this.bookId, this.date, this.config})
     : assert(bookId != null),
       super(key: key);
 
@@ -33,7 +34,7 @@ class _HomePageTransactionState extends State<HomePageTransaction>
   AnimationController _animationCtrl;
   Animation<double> _animation;
 
-  List<Transaction> _data;
+  List<Transaction> _items;
   StreamSubscription<Event> _dataSubscr;
 
   @override
@@ -63,13 +64,18 @@ class _HomePageTransactionState extends State<HomePageTransaction>
 
   Future<Null> _refreshData(String bookId) async {
     setState(() => _isLoading = true);
-
     final dateStart = new DateTime(widget.date.year, widget.date.month);
     final dateEnd = new DateTime(widget.date.year, widget.date.month + 1, 0);
     final openingBalance = await Balance.get(bookId, widget.date.year, widget.date.month);
-    final data = await Transaction.list(bookId, dateStart, dateEnd, openingBalance);
+    final items = await Transaction.list(bookId, dateStart, dateEnd, openingBalance);
+
+    items.add(new Transaction(
+      title: Lang.of(context).titleOpeningBalance(),
+      balance: openingBalance
+    ));
+
     setState(() {
-      _data = data;
+      _items = items;
       _isLoading = false;
     });
   }
@@ -83,20 +89,55 @@ class _HomePageTransactionState extends State<HomePageTransaction>
   }
 
   Widget _buildBody(BuildContext context) {
-    if (_data == null || _data.length == 0)
+    if (_items == null || _items.length == 0)
       return new _EmptyBody(isLoading: _isLoading);
 
-    return new ListView.builder(
-      padding: const EdgeInsets.all(8.0),
-      itemCount: _data.length,
-      itemExtent: 40.0,
-      itemBuilder: (context, index) {
-        final item = (index == 0)
-          ? _data[index].copyWith(title: Lang.of(context).titleOpeningBalance())
-          : _data[index];
-        return new _ContentTransactionItem(context, item);
-      },
-    );
+    final theme = Theme.of(context);
+    final lang = Lang.of(context);
+
+    final currFormatter = new NumberFormat.currency(symbol: widget.config?.currencySymbol);
+    final balance = _items.length > 0 ? _items[0].balance : 0.0;
+
+    return new Column(children: <Widget>[
+      new Container(
+        decoration: new BoxDecoration(color: Colors.black12),
+        child: new ListTile(
+          title: new Center(child: new Text(
+            lang.titleBalance().toUpperCase(),
+            style: theme.textTheme.body1.copyWith(color: Colors.black54),
+          )),
+          subtitle: new Center(child: new Text(
+            currFormatter.format(balance),
+            style: theme.textTheme.title.copyWith(color: Colors.black87),
+          )),
+        ),
+      ),
+      new Expanded(child: new ListView.builder(
+        padding: const EdgeInsets.only(top: 8.0, bottom: 72.0),
+        itemCount: _items.length,
+        itemExtent: 50.0,
+        itemBuilder: (context, index) {
+          if (index == _items.length - 1) {
+            return new ListTile(
+              title: new Center(child: new Text(
+                lang.titleOpeningBalance().toUpperCase(),
+                style: theme.textTheme.body1.copyWith(color: Colors.black54),
+              )),
+              subtitle: new Center(child: new Text(
+                currFormatter.format(_items[index].balance),
+                style: theme.textTheme.title.copyWith(color: Colors.black54),
+              )),
+            );
+          } else {
+            return new _ContentTransactionItem(
+              context: context,
+              item: _items[index],
+              currencySymbol: widget.config?.currencySymbol,
+            );
+          }
+        },
+      )),
+    ]);
   }
 
   @override
@@ -109,25 +150,48 @@ class _HomePageTransactionState extends State<HomePageTransaction>
 class _ContentTransactionItem extends StatelessWidget {
   final BuildContext context;
   final Transaction item;
+  final String currencySymbol;
 
-  const _ContentTransactionItem(this.context, this.item);
+  const _ContentTransactionItem({@required this.context, @required this.item,
+                                 this.currencySymbol})
+    : assert(context != null),
+      assert(item != null);
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final currFormatter = new NumberFormat.currency(symbol: currencySymbol);
+
     return new ListTile(
-      title: new Text(item.title ?? ''),
-      subtitle: new Text('Balance: ${item.balance}'),
+      title: new Text(
+        item.title ?? '',
+      ),
+      subtitle: new Text(
+        (item.value >= 0 ? '+' : '') + currFormatter.format(item.value),
+        style: theme.textTheme.body2.copyWith(
+          color: item.value >= 0 ? Colors.green[500] : Colors.orange[600],
+          fontWeight: FontWeight.normal,
+        ),
+      ),
+      trailing: new Container(
+        alignment: Alignment.topRight,
+        margin: const EdgeInsets.only(top: 8.0),
+        child: new Text(
+          currFormatter.format(item.balance),
+          style: theme.textTheme.subhead.copyWith(color: Colors.black54),
+        ),
+      ),
     );
   }
 }
 
-class AppBarTransaction extends StatefulWidget implements PreferredSizeWidget {
+class TransactionAppBar extends StatefulWidget implements PreferredSizeWidget {
   final DateTime initialDate;
   final ValueChanged<DateTime> onDateChange;
   final ValueChanged<String> onActionTap;
   final Size preferredSize;
 
-  AppBarTransaction({Key key, DateTime initialDate, this.onDateChange, this.onActionTap})
+  TransactionAppBar({Key key, DateTime initialDate, this.onDateChange, this.onActionTap})
     : this.initialDate = initialDate ?? new DateTime.now(),
       preferredSize = new Size.fromHeight(kToolbarHeight),
       super(key: key);
@@ -136,7 +200,7 @@ class AppBarTransaction extends StatefulWidget implements PreferredSizeWidget {
   State<StatefulWidget> createState() => new _TransactionAppBarState(initialDate);
 }
 
-class _TransactionAppBarState extends State<AppBarTransaction> {
+class _TransactionAppBarState extends State<TransactionAppBar> {
   DateTime _filterDate;
 
   _TransactionAppBarState(this._filterDate);
