@@ -81,7 +81,7 @@ class _BillPageState extends State<BillPage> {
       'note': new TextEditingController(text: _group.note ?? ''),
     };
 
-    final snap = await widget.ref.orderByChild('group_id').equalTo(_group.id).once();
+    final snap = await widget.ref.orderByChild('groupId').equalTo(_group.id).once();
     if (snap.value == null) return;
     final Map<String, Map<String, dynamic>> data = snap.value;
     var items = <Bill>[];
@@ -124,7 +124,7 @@ class _BillPageState extends State<BillPage> {
       final groupSnap = _group.id != null ? widget.groupRef.child(_group.id)
                                           : widget.groupRef.push();
       groupSnap.set(_group.toJson()).then((_) async {
-        final existing = await widget.ref.orderByChild('group_id')
+        final existing = await widget.ref.orderByChild('groupId')
                              .equalTo(groupSnap.key).once();
         if (existing.value is Map) {
           existing.value.forEach((key, value) {
@@ -132,10 +132,10 @@ class _BillPageState extends State<BillPage> {
           });
         }
         _items.forEach((item) {
+          item.groupId = groupSnap.key;
           final snap = item.id != null ? widget.ref.child(item.id)
                                        : widget.ref.push();
           final data = item.toJson();
-          data['group_id'] = groupSnap.key;
           snap.set(data);
         });
       });

@@ -78,6 +78,7 @@ class _TransactionPageState extends State<TransactionPage> {
     if (snap.value == null) return;
     _item = new Transaction.fromSnapshot(snap);
     _transType = _item.value > 0 ? kIncome : kExpense;
+    _item.value = _item.value.abs();
 
     _ctrl = <String, TextEditingController>{
       'title': new TextEditingController(text: _item.title ?? ''),
@@ -125,7 +126,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   Future<List<Bill>> _getBills(String groupId) async {
-    final snap = await Bill.ref(widget.bookId).orderByChild('group_id')
+    final snap = await Bill.ref(widget.bookId).orderByChild('groupId')
                            .equalTo(groupId).once();
     final items = <Bill>[];
     if (snap.value == null) return items;
