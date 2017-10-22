@@ -35,7 +35,7 @@ class TransactionPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return new _TransactionPageState(transType: this.transType);
+    return new _TransactionPageState(id: id, transType: this.transType);
   }
 }
 
@@ -58,8 +58,10 @@ class _TransactionPageState extends State<TransactionPage> {
   var _autoValidate = false;
   var _saveNeeded = false;
 
-  _TransactionPageState({int transType: kExpense})
-    : _transType = transType;
+  _TransactionPageState({String id, int transType: kExpense})
+    : _transType = transType {
+    _item.id = id;
+  }
 
   @override
   void initState() {
