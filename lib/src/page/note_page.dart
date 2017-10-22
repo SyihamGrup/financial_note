@@ -217,7 +217,7 @@ class _NotePageState extends State<NotePage> {
         padding: const EdgeInsets.only(left: 16.0),
         child: new DateTimeItem(
           dateTime: _item.reminder,
-          dateFormat: new DateFormat.yMMMd(),
+          dateFormat: new DateFormat.MMMd(),
           onChange: (DateTime value) => _item.reminder = value,
         )
       ));
