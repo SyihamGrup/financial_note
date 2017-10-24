@@ -17,7 +17,6 @@ import 'package:financial_note/data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-export 'src/data/balance.dart';
 export 'src/data/bill.dart';
 export 'src/data/book.dart';
 export 'src/data/budget.dart';

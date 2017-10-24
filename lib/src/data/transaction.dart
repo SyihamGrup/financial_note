@@ -9,12 +9,16 @@
  */
 
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:financial_note/data.dart';
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/services.dart';
 
 class Transaction {
   static const kNodeName = 'transactions';
+  static const kNodeBalances = 'balances';
 
   String id;
   String billId;
@@ -59,6 +63,10 @@ class Transaction {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
   }
 
+  static DatabaseReference balanceRef(String bookId) {
+    return FirebaseDatabase.instance.reference().child(kNodeBalances).child(bookId);
+  }
+
   static Future<List<Transaction>> list(
       String bookId, DateTime dateStart, DateTime dateEnd, openingBalance,
   ) async {
@@ -83,6 +91,25 @@ class Transaction {
     });
 
     return ret;
+  }
+
+  static Future<double> getBalance(String bookId, int year, int month) async {
+    final snap = await balanceRef(bookId).child("$year$month").once();
+    return parseDouble(snap.value);
+  }
+
+  static Future<Null> calculateBalance(String bookId, int year, int month) async {
+    final httpClient = createHttpClient();
+
+    final params = <String, dynamic>{
+      'bookId' : bookId,
+      'year'   : year,
+      'month'  : month,
+    };
+    final response = await httpClient.get(firebaseUri(kCalcOpeningBalancePath, params));
+
+    Map<String, dynamic> json = JSON.decode(response.body);
+    return parseDouble(mapValue(json, 'balance'));
   }
 
   Map<String, dynamic> toJson({showId: false, showBalance: false}) {

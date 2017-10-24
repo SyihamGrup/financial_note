@@ -78,7 +78,9 @@ class _HomePageTransactionState extends State<HomePageTransaction>
     setState(() => _isLoading = true);
     final dateStart = new DateTime(_filterDate.year, _filterDate.month);
     final dateEnd = new DateTime(_filterDate.year, _filterDate.month + 1, 0);
-    final openingBalance = await Balance.get(bookId, _filterDate.year, _filterDate.month);
+    final openingBalance = await Transaction.getBalance(
+      bookId, _filterDate.year, _filterDate.month
+    );
     final items = await Transaction.list(bookId, dateStart, dateEnd, openingBalance);
 
     items.add(new Transaction(

@@ -69,14 +69,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
 
-    final ref = FirebaseDatabase.instance.reference();
-    ref.child(Book.kNodeName).child(currentUser.uid).keepSynced(true);
-    ref.child(Budget.kNodeName).child(currentBook.id).keepSynced(true);
-    ref.child(BillGroup.kNodeName).child(currentBook.id).keepSynced(true);
-    ref.child(Bill.kNodeName).child(currentBook.id).keepSynced(true);
-    ref.child(Balance.kNodeName).child(currentBook.id).keepSynced(true);
-    ref.child(Transaction.kNodeName).child(currentBook.id).keepSynced(true);
-    ref.child(Note.kNodeName).child(currentBook.id).keepSynced(true);
+    Book.ref(currentUser.uid).keepSynced(true);
+    Budget.ref(currentBook.id).keepSynced(true);
+    BillGroup.ref(currentBook.id).keepSynced(true);
+    Bill.ref(currentBook.id).keepSynced(true);
+    Transaction.ref(currentBook.id).keepSynced(true);
+    Transaction.balanceRef(currentBook.id).keepSynced(true);
+    Note.ref(currentBook.id).keepSynced(true);
   }
 
   @override
