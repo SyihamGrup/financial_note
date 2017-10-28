@@ -15,7 +15,6 @@ import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
 import 'package:financial_note/utils.dart';
 import 'package:financial_note/widget.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -26,7 +25,6 @@ class TransactionPage extends StatefulWidget {
   final String bookId;
   final String id;
   final int transType;
-  final DatabaseReference ref;
 
   TransactionPage({
     Key key,
@@ -34,12 +32,11 @@ class TransactionPage extends StatefulWidget {
     this.id,
     this.transType: kExpense,
   }) : assert(bookId != null),
-       ref = Transaction.ref(bookId),
        super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return new _TransactionPageState(id: id, transType: this.transType);
+    return new _TransactionPageState(transType: this.transType);
   }
 }
 
@@ -47,14 +44,11 @@ class _TransactionPageState extends State<TransactionPage> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = new GlobalKey<FormState>();
 
-  var _item = new Transaction(date: new DateTime.now());
-  var _ctrl = <String, TextEditingController>{
-    'title': new TextEditingController(),
-    'value': new TextEditingController(),
-  };
-  var _budgets = <Budget>[];
-  var _billsGroup = <BillGroup>[];
-  var _bills = <Bill>[];
+  Transaction _item;
+  Map<String, TextEditingController> _ctrl;
+  List<Budget> _budgets;
+  List<BillGroup> _billsGroup;
+  List<Bill> _bills;
 
   int _transType;
   String _billGroupId;
@@ -62,10 +56,7 @@ class _TransactionPageState extends State<TransactionPage> {
   var _autoValidate = false;
   var _saveNeeded = false;
 
-  _TransactionPageState({String id, int transType: kExpense})
-    : _transType = transType {
-    _item.id = id;
-  }
+  _TransactionPageState({int transType: kExpense}) : _transType = transType;
 
   @override
   void initState() {
@@ -76,13 +67,13 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   Future<Null> _initData() async {
-    if (_item.id == null) return;
-
-    final snap = await widget.ref.child(_item.id).once();
-    if (snap.value == null) return;
-    _item = new Transaction.fromSnapshot(snap);
-    _transType = _item.value > 0 ? kIncome : kExpense;
-    _item.value = _item.value.abs();
+    _item = await Transaction.get(widget.bookId, widget.id);
+    if (_item != null) {
+      _transType = _item.value > 0 ? kIncome : kExpense;
+      _item.value = _item.value.abs();
+    } else {
+      _item = new Transaction(date: new DateTime.now());
+    }
 
     _ctrl = <String, TextEditingController>{
       'title': new TextEditingController(text: _item.title ?? ''),
@@ -91,53 +82,22 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   Future<Null> _initBudgets() async {
-    _budgets = await _getBudgets();
+    _budgets = await Budget.list(widget.bookId);
   }
 
   Future<Null> _initBills() async {
-    _billsGroup = await _getBillsGroup();
+    _billsGroup = await BillGroup.list(widget.bookId);
 
     if (_item.billId != null) {
-      final billSnap = await Bill.ref(widget.bookId).child(_item.billId).once();
-      _billGroupId = mapValue(billSnap.value, 'groupId');
+      final bill = await Bill.get(widget.bookId, _item.billId);
+      if (bill != null) _billGroupId = bill.groupId;
     }
     if (_billsGroup == null && _billsGroup.length > 0) {
       _billGroupId = _billsGroup[0].id;
     }
     if (_billGroupId != null) {
-      _bills = await _getBills(_billGroupId);
+      _bills = await BillGroup.getItems(widget.bookId, _billGroupId);
     }
-  }
-
-  Future<List<Budget>> _getBudgets() async {
-    final snap = await Budget.ref(widget.bookId).once();
-    final items = <Budget>[];
-    if (snap.value == null) return items;
-    final Map<String, Map<String, dynamic>> data = snap.value;
-    data.forEach((key, json) => items.add(new Budget.fromJson(key, json)));
-    items.sort((a, b) => a.date?.compareTo(b.date) ?? 0);
-    return items;
-  }
-
-  Future<List<BillGroup>> _getBillsGroup() async {
-    final snap = await BillGroup.ref(widget.bookId).once();
-    final items = <BillGroup>[];
-    if (snap.value == null) return items;
-    final Map<String, Map<String, dynamic>> data = snap.value;
-    data.forEach((key, json) => items.add(new BillGroup.fromJson(key, json)));
-    items.sort((a, b) => a.startDate?.compareTo(b.startDate) ?? 0);
-    return items;
-  }
-
-  Future<List<Bill>> _getBills(String groupId) async {
-    final snap = await Bill.ref(widget.bookId).orderByChild('groupId')
-                           .equalTo(groupId).once();
-    final items = <Bill>[];
-    if (snap.value == null) return items;
-    final Map<String, Map<String, dynamic>> data = snap.value;
-    data.forEach((key, json) => items.add(new Bill.fromJson(key, json)));
-    items.sort((a, b) => a.date?.compareTo(b.date) ?? 0);
-    return items;
   }
 
   void _showInSnackBar(String value) {
@@ -158,9 +118,7 @@ class _TransactionPageState extends State<TransactionPage> {
     _item.value = _item.value * _transType;
 
     try {
-      final ref = _item.id != null ? widget.ref.child(_item.id)
-                                   : widget.ref.push();
-      ref.set(_item.toJson());
+      await _item.save(widget.bookId);
       return true;
     } catch (e) {
       _showInSnackBar(e.message);
@@ -202,8 +160,8 @@ class _TransactionPageState extends State<TransactionPage> {
           setState(() => _saveNeeded = false);
           nav.pop();
         }),
-        title: new Text(_item.id == null ? lang.titleAddTransaction()
-                                         : lang.titleEditTransaction()),
+        title: new Text(widget.id == null ? lang.titleAddTransaction()
+                                          : lang.titleEditTransaction()),
         actions: <Widget>[
           new FlatButton(
             onPressed: () => _handleSubmitted().then((saved) {
@@ -221,37 +179,6 @@ class _TransactionPageState extends State<TransactionPage> {
   Widget _buildForm(BuildContext context) {
     final theme = Theme.of(context);
     final lang = Lang.of(context);
-
-    final budgetItems = <DropdownMenuItem<String>>[
-      new DropdownMenuItem<String>(value: '', child: new Text(lang.lblNone())),
-    ];
-    _budgets.forEach((item) {
-      budgetItems.add(new DropdownMenuItem<String>(
-        value: item.id,
-        child: new Text(item.title, overflow: TextOverflow.ellipsis),
-      ));
-    });
-
-    final groupItems = <DropdownMenuItem<String>>[
-      new DropdownMenuItem<String>(value: '', child: new Text('None')),
-    ];
-    _billsGroup.forEach((item) {
-      groupItems.add(new DropdownMenuItem<String>(
-        value: item.id,
-        child: new Text(item.title, overflow: TextOverflow.ellipsis),
-      ));
-    });
-
-    final billItems = <DropdownMenuItem<String>>[];
-    _bills.forEach((item) {
-      billItems.add(new DropdownMenuItem<String>(
-        value: item.id,
-        child: new Text(item.title, overflow: TextOverflow.ellipsis),
-      ));
-    });
-    if (billItems.length == 0) {
-      billItems.add(new DropdownMenuItem<String>(value: '', child: new Text('None')));
-    }
 
     return new Form(
       key: _formKey,
@@ -279,8 +206,8 @@ class _TransactionPageState extends State<TransactionPage> {
             child: new Column(children: <Widget>[
               // -- title --
               new TextFormField(
-                initialValue: _ctrl['title'].text,
-                controller: _ctrl['title'],
+                initialValue: _ctrl != null ? _ctrl['title'].text : '',
+                controller: mapValue(_ctrl, 'title'),
                 decoration: new InputDecoration(labelText: lang.lblTitle()),
                 onSaved: (String value) => _item.title = value,
                 validator: _validateTitle,
@@ -289,63 +216,26 @@ class _TransactionPageState extends State<TransactionPage> {
               // -- date --
               new DateFormField(
                 label: lang.lblDate(),
-                date: _item.date ?? new DateTime.now(),
+                date: _item?.date ?? new DateTime.now(),
                 onChange: (DateTime value) => _item.date = value,
               ),
 
               new Column(children: <Widget>[
                 // -- budgetId --
-                new DropdownFormField<String>(
-                  label: lang.lblBudget(),
-                  value: _item.budgetId,
-                  items: budgetItems,
-                  onChanged: (value) {
-                    setState(() => _item.budgetId = value == '' ? null : value);
-                  },
-                ),
+                _buildBudgetDropdown(context),
 
                 new Row(children: <Widget>[
                   // -- groupId --
-                  new Expanded(child: new DropdownFormField<String>(
-                    label: lang.lblBill(),
-                    value: _billGroupId,
-                    items: groupItems,
-                    onChanged: (value) {
-                      setState(() => _billGroupId = value == '' ? null : value);
-
-                      if (_billGroupId == null) {
-                        setState(() {
-                          _item.billId = null;
-                          _bills = <Bill>[];
-                        });
-                        return;
-                      }
-                      _getBills(_billGroupId).then((item) {
-                        setState(() {
-                          _bills = item;
-                          _item.billId = _bills.length > 0 ? _bills[0].id : null;
-                        });
-                      });
-                    },
-                  )),
-
+                  new Expanded(child: _buildGroupDropdown(context)),
                   new Padding(padding: const EdgeInsets.only(left: 16.0)),
-
                   // -- billId --
-                  new Expanded(child: new DropdownFormField<String>(
-                    label: lang.lblBillPeriod(),
-                    value: _item.billId,
-                    items: billItems,
-                    onChanged: (value) {
-                      setState(() => _item.billId = value == '' ? null : value);
-                    },
-                  )),
+                  new Expanded(child: _buildBillDropdown(context)),
                 ]),
 
                 // -- value --
                 new TextFormField(
-                  initialValue: _ctrl['value'].text,
-                  controller: _ctrl['value'],
+                  initialValue: _ctrl != null ? _ctrl['value'].text : '',
+                  controller: mapValue(_ctrl, 'value'),
                   decoration: new InputDecoration(labelText: lang.lblValue()),
                   keyboardType: TextInputType.number,
                   onSaved: (String value) => _item.value = parseDouble(value),
@@ -357,7 +247,92 @@ class _TransactionPageState extends State<TransactionPage> {
         ],
       ),
     );
-
   }
 
+  Widget _buildBudgetDropdown(BuildContext context) {
+    final lang = Lang.of(context);
+    final items = <DropdownMenuItem<String>>[
+      new DropdownMenuItem<String>(value: '', child: new Text(lang.lblNone())),
+    ];
+    if (_budgets != null) {
+      for (final item in _budgets) {
+        items.add(new DropdownMenuItem<String>(
+          value: item.id,
+          child: new Text(item.title, overflow: TextOverflow.ellipsis),
+        ));
+      }
+    }
+
+    return new DropdownFormField<String>(
+      label: lang.lblBudget(),
+      value: _item?.budgetId,
+      items: items,
+      onChanged: (value) {
+        setState(() => _item.budgetId = value == '' ? null : value);
+      },
+    );
+  }
+
+  Widget _buildGroupDropdown(BuildContext context) {
+    final lang = Lang.of(context);
+    final items = <DropdownMenuItem<String>>[
+      new DropdownMenuItem<String>(value: '', child: new Text(lang.lblNone())),
+    ];
+    if (_billsGroup != null) {
+      for (final item in _billsGroup) {
+        items.add(new DropdownMenuItem<String>(
+          value: item.id,
+          child: new Text(item.title, overflow: TextOverflow.ellipsis),
+        ));
+      }
+    }
+
+    return new DropdownFormField<String>(
+      label: lang.lblBill(),
+      value: _billGroupId,
+      items: items,
+      onChanged: (value) {
+        setState(() => _billGroupId = value == '' ? null : value);
+
+        if (_billGroupId == null) {
+          setState(() {
+            _item.billId = null;
+            _bills = <Bill>[];
+          });
+          return;
+        }
+        BillGroup.getItems(widget.bookId, _billGroupId).then((items) {
+          setState(() {
+            _bills = items;
+            _item.billId = _bills != null && _bills.length > 0 ? _bills[0].id : null;
+          });
+        });
+      },
+    );
+  }
+
+  Widget _buildBillDropdown(BuildContext context) {
+    final lang = Lang.of(context);
+    final items = <DropdownMenuItem<String>>[];
+    if (_bills != null) {
+      for (final item in _bills) {
+        items.add(new DropdownMenuItem<String>(
+          value: item.id,
+          child: new Text(item.title, overflow: TextOverflow.ellipsis),
+        ));
+      }
+    }
+    if (items.length == 0) {
+      items.add(new DropdownMenuItem<String>(value: '', child: new Text(lang.lblNone())));
+    }
+
+    return new DropdownFormField<String>(
+      label: lang.lblBillPeriod(),
+      value: _item?.billId,
+      items: items,
+      onChanged: (value) {
+        setState(() => _item.billId = value == '' ? null : value);
+      },
+    );
+  }
 }

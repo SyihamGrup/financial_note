@@ -14,7 +14,6 @@ class HomePageBudget extends StatefulWidget {
   static const kRouteName = '/home-budgets';
 
   final Config config;
-  final DatabaseReference ref;
   final String bookId;
   final OnItemTap<Budget> onItemTap;
   final OnItemSelect<Budget> onItemsSelect;
@@ -26,7 +25,6 @@ class HomePageBudget extends StatefulWidget {
     this.onItemsSelect,
     this.config,
   }) : assert(bookId != null),
-       ref = Budget.ref(bookId),
        super(key: key);
 
   @override
@@ -39,7 +37,7 @@ class _HomePageBudgetState extends State<HomePageBudget> {
   @override
   Widget build(BuildContext context) {
     return new FirebaseAnimatedList(
-      query: widget.ref,
+      query: Budget.getNode(widget.bookId),
       sort: (a, b) {
         final aDate = a.value is Map && a.value.containsKey('date') ? a.value['date'] : '';
         final bDate = b.value is Map && b.value.containsKey('date') ? b.value['date'] : '';

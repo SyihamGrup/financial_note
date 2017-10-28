@@ -1,5 +1,3 @@
-
-
 /*
  * Copyright (c) 2017. All rights reserved.
  *
@@ -56,7 +54,7 @@ class _HomePageTransactionState extends State<HomePageTransaction>
 
     _initProgress();
 
-    _dataSubscr = Transaction.ref(widget.bookId).onValue.listen((event) {
+    _dataSubscr = Transaction.getNode(widget.bookId).onValue.listen((event) {
       _refreshData(widget.bookId);
     });
   }
@@ -78,7 +76,7 @@ class _HomePageTransactionState extends State<HomePageTransaction>
     setState(() => _isLoading = true);
     final dateStart = new DateTime(_filterDate.year, _filterDate.month);
     final dateEnd = new DateTime(_filterDate.year, _filterDate.month + 1, 0);
-    final openingBalance = await Transaction.getBalance(
+    final openingBalance = await Balance.get(
       bookId, _filterDate.year, _filterDate.month
     );
     final items = await Transaction.list(bookId, dateStart, dateEnd, openingBalance);
@@ -250,20 +248,32 @@ class _ContentTransactionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
     final selectedBg = new BoxDecoration(color: theme.highlightColor);
 
     return new Container(
       decoration: selected ? selectedBg : null,
       child: new ListTile(
         dense: true,
+        leading: new Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Text(new DateFormat.MMM().format(item.date),
+              style: textTheme.caption
+            ),
+            new Text(new DateFormat.d().format(item.date),
+              style: textTheme.headline.copyWith(color: Colors.grey[700])
+            ),
+          ],
+        ),
         title: new Text(
           item.title ?? '',
           style: theme.textTheme.subhead,
         ),
         subtitle: new Text(
           (item.value >= 0 ? '+' : '') + currFormatter.format(item.value),
-          style: theme.textTheme.body2.copyWith(
-            color: item.value >= 0 ? Colors.green[500] : Colors.orange[600],
+          style: textTheme.body2.copyWith(
+            color: item.value >= 0 ? Colors.red[500] : Colors.orange[600],
             fontWeight: FontWeight.normal,
           ),
         ),
@@ -272,7 +282,7 @@ class _ContentTransactionItem extends StatelessWidget {
           margin: const EdgeInsets.only(top: 14.0),
           child: new Text(
             currFormatter.format(item.balance),
-            style: theme.textTheme.subhead.copyWith(color: Colors.black54),
+            style: textTheme.subhead.copyWith(color: Colors.black87),
           ),
         ),
         onTap: onTap,

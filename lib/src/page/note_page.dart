@@ -13,8 +13,8 @@ import 'dart:async';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
+import 'package:financial_note/utils.dart';
 import 'package:financial_note/widget.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -25,36 +25,25 @@ class NotePage extends StatefulWidget {
 
   final String bookId;
   final String id;
-  final DatabaseReference ref;
 
   NotePage({Key key, @required this.bookId, this.id})
     : assert(bookId != null),
-      ref = Note.ref(bookId),
       super(key: key);
 
   @override
-  State<StatefulWidget> createState() {
-    return new _NotePageState(id: id);
-  }
+  State<StatefulWidget> createState() => new _NotePageState();
 }
 
 class _NotePageState extends State<NotePage> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = new GlobalKey<FormState>();
 
-  var _item = new Note(createdAt: new DateTime.now());
-  var _ctrl = <String, TextEditingController>{
-    'title': new TextEditingController(),
-    'note': new TextEditingController(),
-  };
+  Note _item;
+  Map<String, TextEditingController> _ctrl;
 
   var _autoValidate = false;
   var _saveNeeded = true;
   var _hasReminder = false;
-
-  _NotePageState({String id}) {
-    _item.id = id;
-  }
 
   @override
   void initState() {
@@ -63,13 +52,8 @@ class _NotePageState extends State<NotePage> {
   }
 
   Future<Null> _initData() async {
-    if (_item.id == null) return;
-
-    final snap = await widget.ref.child(_item.id).once();
-    if (snap.value == null) return;
-    _item = new Note.fromSnapshot(snap);
-    if (_item.createdAt == null) _item.createdAt = new DateTime.now();
-    _hasReminder = _item.reminder != null;
+    _item = await Note.get(widget.bookId, widget.id);
+    if (_item == null) _item = new Note();
     _ctrl = <String, TextEditingController>{
       'title': new TextEditingController(text: _item.title ?? ''),
       'note': new TextEditingController(text: _item.note ?? ''),
@@ -91,11 +75,10 @@ class _NotePageState extends State<NotePage> {
     }
 
     form.save();
-    _item.updatedAt = new DateTime.now();
     try {
-      final newItem = _item.id != null ? widget.ref.child(_item.id)
-                                       : widget.ref.push();
-      newItem.set(_item.toJson());
+    if (_item.createdAt == null) _item.createdAt = new DateTime.now();
+    _item.updatedAt = new DateTime.now();
+    await _item.save(widget.bookId);
       return true;
     } catch (e) {
       _showInSnackBar(e.message);
@@ -148,7 +131,7 @@ class _NotePageState extends State<NotePage> {
           setState(() => _saveNeeded = false);
           nav.pop();
         }),
-        title: new Text(_item.id == null ? lang.titleAddNote() : lang.titleEditNote()),
+        title: new Text(widget.id == null ? lang.titleAddNote() : lang.titleEditNote()),
         actions: <Widget>[
           new FlatButton(
             onPressed: () => _handleSubmitted().then((saved) {
@@ -175,12 +158,12 @@ class _NotePageState extends State<NotePage> {
           new Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: new TextFormField(
-              initialValue: _ctrl['title'].text,
-              controller: _ctrl['title'],
+              initialValue: _ctrl != null ? _ctrl['title'].text : '',
+              controller: mapValue(_ctrl, 'title'),
               decoration: new InputDecoration(labelText: lang.lblTitle()),
               onSaved: (String value) => _item.title = value,
               validator: _validateTitle,
-              autofocus: _item.id == null,
+              autofocus: widget.id == null,
             ),
           ),
 
@@ -191,8 +174,8 @@ class _NotePageState extends State<NotePage> {
           new Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: new TextFormField(
-              initialValue: _ctrl['note'].text,
-              controller: _ctrl['note'],
+              initialValue: _ctrl != null ? _ctrl['note'].text : '',
+              controller: mapValue(_ctrl, 'note'),
               maxLines: 15,
               decoration: new InputDecoration(labelText: lang.lblDescr()),
               onSaved: (String value) => _item.note = value,

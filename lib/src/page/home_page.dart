@@ -69,13 +69,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
 
-    Book.ref(currentUser.uid).keepSynced(true);
-    Budget.ref(currentBook.id).keepSynced(true);
-    BillGroup.ref(currentBook.id).keepSynced(true);
-    Bill.ref(currentBook.id).keepSynced(true);
-    Transaction.ref(currentBook.id).keepSynced(true);
-    Transaction.balanceRef(currentBook.id).keepSynced(true);
-    Note.ref(currentBook.id).keepSynced(true);
+    Book.getNode(currentUser.uid).keepSynced(true);
+    Budget.getNode(currentBook.id).keepSynced(true);
+    BillGroup.getNode(currentBook.id).keepSynced(true);
+    Bill.getNode(currentBook.id).keepSynced(true);
+    Transaction.getNode(currentBook.id).keepSynced(true);
+    Balance.getNode(currentBook.id).keepSynced(true);
+    Note.getNode(currentBook.id).keepSynced(true);
   }
 
   @override
@@ -105,7 +105,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           case 'delete':
             showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
               if (!ret) return;
-              items.forEach((val) => Transaction.ref(currentBook.id).child(val.id).remove());
+              items.forEach((val) => Transaction.remove(currentBook.id, val.id));
               _transBarKey.currentState.exitActionMode();
             });
             break;
@@ -149,7 +149,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           case 'delete':
             showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
               if (!ret) return;
-              items.forEach((val) => Bill.ref(currentBook.id).child(val.id).remove());
+              items.forEach((val) => Bill.remove(currentBook.id, val.id));
               _billBarKey.currentState.exitActionMode();
             });
             break;
@@ -192,7 +192,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           case 'delete':
             showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
               if (!ret) return;
-              items.forEach((val) => Budget.ref(currentBook.id).child(val.id).remove());
+              items.forEach((val) => Budget.remove(currentBook.id, val.id));
               _budgetBarKey.currentState.exitActionMode();
             });
             break;
@@ -235,7 +235,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           case 'delete':
             showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
               if (!ret) return;
-              items.forEach((val) => Note.ref(currentBook.id).child(val.id).remove());
+              items.forEach((val) => Note.remove(currentBook.id, val.id));
               _noteBarKey.currentState.exitActionMode();
             });
             break;

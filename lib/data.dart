@@ -65,9 +65,5 @@ Future<Book> _getBookFromPrefs(String userId) async {
   final prefs = await SharedPreferences.getInstance();
   final bookId = prefs.getString(kPrefBookId);
   if (bookId == null) return null;
-
-  final snap = await Book.ref(userId).child(bookId).once();
-  if (snap.value == null) return null;
-
-  return new Book.fromJson(snap.key, snap.value);
+  return await Book.get(userId, bookId);
 }

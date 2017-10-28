@@ -14,7 +14,6 @@ class HomePageBill extends StatefulWidget {
   static const kRouteName = '/home-bills';
 
   final Config config;
-  final DatabaseReference ref;
   final String bookId;
   final OnItemTap<BillGroup> onItemTap;
   final OnItemSelect<BillGroup> onItemsSelect;
@@ -26,7 +25,6 @@ class HomePageBill extends StatefulWidget {
     this.onItemsSelect,
     this.config,
   }) : assert(bookId != null),
-       ref = BillGroup.ref(bookId),
        super(key: key);
 
   @override
@@ -39,7 +37,7 @@ class _HomePageBillState extends State<HomePageBill> {
   @override
   Widget build(BuildContext context) {
     return new FirebaseAnimatedList(
-      query: widget.ref,
+      query: BillGroup.getNode(widget.bookId),
       sort: (a, b) {
         final aDate = a.value is Map && a.value.containsKey('date') ? a.value['date'] : '';
         final bDate = b.value is Map && b.value.containsKey('date') ? b.value['date'] : '';

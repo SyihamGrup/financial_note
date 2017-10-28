@@ -101,6 +101,7 @@ class DateItem extends StatelessWidget {
               lastDate: lastDate ?? date.add(const Duration(days: 365 * 5))
             )
             .then<Null>((DateTime value) {
+              if (value == null) return;
               onChange(new DateTime(value.year, value.month, value.day));
             });
           },

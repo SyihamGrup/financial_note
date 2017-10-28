@@ -15,7 +15,6 @@ import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
 import 'package:financial_note/utils.dart';
 import 'package:financial_note/widget.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -25,43 +24,26 @@ class BillPage extends StatefulWidget {
 
   final String bookId;
   final String groupId;
-  final DatabaseReference groupRef;
-  final DatabaseReference ref;
 
   BillPage({Key key, @required this.bookId, this.groupId})
     : assert(bookId != null),
-      groupRef = BillGroup.ref(bookId),
-      ref = Bill.ref(bookId),
       super(key: key);
 
   @override
-  State<StatefulWidget> createState() {
-    return new _BillPageState(groupId: groupId);
-  }
+  State<StatefulWidget> createState() => new _BillPageState();
 }
 
 class _BillPageState extends State<BillPage> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = new GlobalKey<FormState>();
 
-  var _groupCtrl = <String, TextEditingController>{
-    'title': new TextEditingController(),
-    'note': new TextEditingController(),
-  };
-  var _ctrls = <Map<String, TextEditingController>>[{
-    'title': new TextEditingController(),
-    'value': new TextEditingController(),
-  }];
-
-  var _group = new BillGroup();
-  var _items = <Bill>[new Bill(date: new DateTime.now())];
+  BillGroup _group;
+  List<Bill> _items;
+  Map<String, TextEditingController> _groupCtrl;
+  List<Map<String, TextEditingController>> _ctrls;
 
   var _autoValidate = false;
   var _saveNeeded = true;
-
-  _BillPageState({String groupId}) {
-    _group.id = groupId;
-  }
 
   @override
   void initState() {
@@ -70,37 +52,24 @@ class _BillPageState extends State<BillPage> {
   }
 
   Future<Null> _initData() async {
-    if (_group.id == null) return;
-
-    final groupSnap = await widget.groupRef.child(_group.id).once();
-    if (groupSnap.value == null) return;
-    _group = new BillGroup.fromSnapshot(groupSnap);
-
+    _group = await BillGroup.get(widget.bookId, widget.groupId);
+    if (_group == null) _group = new BillGroup();
     _groupCtrl = <String, TextEditingController>{
       'title': new TextEditingController(text: _group.title ?? ''),
       'note': new TextEditingController(text: _group.note ?? ''),
     };
 
-    final snap = await widget.ref.orderByChild('groupId').equalTo(_group.id).once();
-    if (snap.value == null) return;
-    final Map<String, Map<String, dynamic>> data = snap.value;
-    var items = <Bill>[];
-    data.forEach((key, value) => items.add(new Bill.fromJson(key, value)));
-    items.sort((a, b) {
-      final dateComparison = a.date.compareTo(b.date);
-      if (dateComparison != 0) return dateComparison;
-      return a.title.compareTo(b.title);
-    });
-    _items = items;
-
-    final ctrls = <Map<String, TextEditingController>>[];
+    _items = await BillGroup.getItems(widget.bookId, _group.id);
+    if (_items == null || _items.length == 0) {
+      _items = <Bill>[new Bill(date: new DateTime.now())];
+    }
+    _ctrls = <Map<String, TextEditingController>>[];
     _items.forEach((item) {
-      ctrls.add(<String, TextEditingController>{
+      _ctrls.add(<String, TextEditingController>{
         'title': new TextEditingController(text: item.title ?? ''),
         'value': new TextEditingController(text: item.value.toString()),
       });
     });
-    _ctrls = ctrls;
   }
 
   void _showInSnackBar(String value) {
@@ -121,36 +90,13 @@ class _BillPageState extends State<BillPage> {
     _fillData();
 
     try {
-      final groupSnap = _group.id != null ? widget.groupRef.child(_group.id)
-                                          : widget.groupRef.push();
-      groupSnap.set(_group.toJson()).then((_) async {
-        final existing = await widget.ref.orderByChild('groupId')
-                             .equalTo(groupSnap.key).once();
-        if (existing.value is Map) {
-          existing.value.forEach((key, value) {
-            if (!_inItems(key)) widget.ref.child(key).remove();
-          });
-        }
-        _items.forEach((item) {
-          item.groupId = groupSnap.key;
-          final snap = item.id != null ? widget.ref.child(item.id)
-                                       : widget.ref.push();
-          final data = item.toJson();
-          snap.set(data);
-        });
-      });
+      await _group.save(widget.bookId);
+      await _group.saveItems(widget.bookId, _items);
       return true;
     } catch (e) {
       _showInSnackBar(e.message);
       return false;
     }
-  }
-
-  bool _inItems(String key) {
-    for (final item in _items) {
-      if (item.id == key) return true;
-    }
-    return false;
   }
 
   void _fillData() {
@@ -211,7 +157,7 @@ class _BillPageState extends State<BillPage> {
           setState(() => _saveNeeded = false);
           nav.pop();
         }),
-        title: new Text(_group.id == null ? lang.titleAddBill() : lang.titleEditBill()),
+        title: new Text(widget.groupId == null ? lang.titleAddBill() : lang.titleEditBill()),
         actions: <Widget>[
           new FlatButton(
             onPressed: () => _handleSubmitted().then((saved) {
@@ -237,12 +183,12 @@ class _BillPageState extends State<BillPage> {
         new Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: new TextFormField(
-            initialValue: _groupCtrl['title'].text,
-            controller: _groupCtrl['title'],
+            initialValue: _groupCtrl != null ? _groupCtrl['title'].text : '',
+            controller: mapValue(_groupCtrl, 'title'),
             decoration: new InputDecoration(labelText: lang.lblTitle()),
             onSaved: (String value) => _group.title = value,
             validator: _validateTitle,
-            autofocus: _group.id == null,
+            autofocus: widget.groupId == null,
           ),
         ),
 
@@ -251,7 +197,7 @@ class _BillPageState extends State<BillPage> {
             new RadioItem(kIncome, lang.lblIncome()),
             new RadioItem(kExpense, lang.lblExpense()),
           ],
-          groupValue: _group.transType,
+          groupValue: _group?.transType,
           onChanged: (value) => setState(() => _group.transType = value),
         ),
 
@@ -262,8 +208,8 @@ class _BillPageState extends State<BillPage> {
         new Column(children: <Widget>[new Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: new TextFormField(
-            initialValue: _groupCtrl['note'].text,
-            controller: _groupCtrl['note'],
+            initialValue: _groupCtrl != null ? _groupCtrl['note'].text : '',
+            controller: _groupCtrl != null ? _groupCtrl['note'] : null,
             maxLines: 3,
             decoration: new InputDecoration(labelText: lang.lblNote()),
             onSaved: (String value) => _group.note = value,
@@ -274,10 +220,11 @@ class _BillPageState extends State<BillPage> {
   }
 
   Widget _buildFormItems(BuildContext context) {
-    final lang = Lang.of(context);
+    if (_items == null) return new Container();
 
+    final lang = Lang.of(context);
     final widgets = <Widget>[];
-    _items.forEach((item) {
+    for (final item in _items) {
       final index = _items.indexOf(item);
 
       widgets.add(new Row(
@@ -338,7 +285,7 @@ class _BillPageState extends State<BillPage> {
           ),
         ),
       ]));
-    });
+    }
 
     // -- add item --
     widgets.add(new Padding(

@@ -8,6 +8,8 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
+import 'dart:async';
+
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -45,7 +47,25 @@ class Note {
       createdAt = parseDate(mapValue(snapshot.value, 'createdAt')),
       updatedAt = parseDate(mapValue(snapshot.value, 'updatedAt'));
 
-  static DatabaseReference ref(String bookId) {
+  static Future<Note> get(String bookId, String id) async {
+    final snap = await getNode(bookId).child(id).once();
+    if (snap.value == null) return null;
+    return new Note.fromSnapshot(snap);
+  }
+
+  Future<Null> save(String bookId) async {
+    final node = getNode(bookId);
+    final ref = id != null ? node.child(id) : node.push();
+    await ref.set(toJson());
+    id = ref.key;
+  }
+
+  static Future<Null> remove(String bookId, String id) async {
+    final node = getNode(bookId);
+    await node.child(id).remove();
+  }
+
+  static DatabaseReference getNode(String bookId) {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
   }
 

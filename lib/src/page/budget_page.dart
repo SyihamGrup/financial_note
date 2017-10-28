@@ -15,7 +15,6 @@ import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
 import 'package:financial_note/utils.dart';
 import 'package:financial_note/widget.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,37 +25,24 @@ class BudgetPage extends StatefulWidget {
 
   final String bookId;
   final String id;
-  final DatabaseReference ref;
 
   BudgetPage({Key key, @required this.bookId, this.id})
     : assert(bookId != null),
-      ref = Budget.ref(bookId),
       super(key: key);
 
   @override
-  State<StatefulWidget> createState() {
-    return new _BudgetPageState(id: id);
-  }
+  State<StatefulWidget> createState() => new _BudgetPageState();
 }
 
 class _BudgetPageState extends State<BudgetPage> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = new GlobalKey<FormState>();
 
-  var _item = new Budget(date: new DateTime.now());
-  var _ctrl = <String, TextEditingController>{
-    'title': new TextEditingController(),
-    'value': new TextEditingController(),
-    'spent': new TextEditingController(),
-    'descr': new TextEditingController(),
-  };
+  Budget _item;
+  Map<String, TextEditingController> _ctrl;
 
   var _autoValidate = false;
   var _saveNeeded = true;
-
-  _BudgetPageState({String id}) {
-    _item.id = id;
-  }
 
   @override
   void initState() {
@@ -65,11 +51,8 @@ class _BudgetPageState extends State<BudgetPage> {
   }
 
   Future<Null> _initData() async {
-    if (_item.id == null) return;
-
-    final snap = await widget.ref.child(_item.id).once();
-    if (snap.value == null) return;
-    _item = new Budget.fromSnapshot(snap);
+    _item = await Budget.get(widget.bookId, widget.id);
+    if (_item == null) _item = new Budget(date: new DateTime.now());
     _ctrl = <String, TextEditingController>{
       'title': new TextEditingController(text: _item.title ?? ''),
       'value': new TextEditingController(text: _item.value.toString()),
@@ -94,9 +77,7 @@ class _BudgetPageState extends State<BudgetPage> {
 
     form.save();
     try {
-      final ref = _item.id != null ? widget.ref.child(_item.id)
-                                   : widget.ref.push();
-      ref.set(_item.toJson());
+      await _item.save(widget.bookId);
       return true;
     } catch (e) {
       _showInSnackBar(e.message);
@@ -138,8 +119,7 @@ class _BudgetPageState extends State<BudgetPage> {
           setState(() => _saveNeeded = false);
           nav.pop();
         }),
-        title: new Text(_item.id == null ? lang.titleAddBudget()
-                                         : lang.titleEditBudget()),
+        title: new Text(widget.id == null ? lang.titleAddBudget() : lang.titleEditBudget()),
         actions: <Widget>[
           new FlatButton(
             onPressed: () => _handleSubmitted().then((saved) {
@@ -166,18 +146,18 @@ class _BudgetPageState extends State<BudgetPage> {
         children: <Widget>[
           // -- title --
           new TextFormField(
-            initialValue: _ctrl['title'].text,
-            controller: _ctrl['title'],
+            initialValue: _ctrl != null ? _ctrl['title'].text : '',
+            controller: mapValue(_ctrl, 'title'),
             decoration: new InputDecoration(labelText: lang.lblTitle()),
             onSaved: (String value) => _item.title = value,
             validator: _validateTitle,
-            autofocus: _item.id == null,
+            autofocus: widget.id == null,
           ),
 
           // -- date --
           new DateFormField(
             label: lang.lblDate(),
-            date: _item.date ?? new DateTime.now(),
+            date: _item?.date ?? new DateTime.now(),
             onChange: (DateTime value) => _item.date = value,
           ),
 
@@ -185,8 +165,8 @@ class _BudgetPageState extends State<BudgetPage> {
             children: <Widget>[
               // -- value --
               new Expanded(child: new TextFormField(
-                initialValue: _ctrl['value'].text,
-                controller: _ctrl['value'],
+                initialValue: _ctrl != null ? _ctrl['value'].text : '',
+                controller: mapValue(_ctrl, 'value'),
                 decoration: new InputDecoration(labelText: lang.lblValue()),
                 keyboardType: TextInputType.number,
                 onSaved: (String value) => _item.value = parseDouble(value),
@@ -197,8 +177,8 @@ class _BudgetPageState extends State<BudgetPage> {
 
               // -- spent --
               new Expanded(child: new TextFormField(
-                initialValue: _ctrl['spent'].text,
-                controller: _ctrl['spent'],
+                initialValue: _ctrl != null ? _ctrl['spent'].text : '',
+                controller: mapValue(_ctrl, 'spent'),
                 decoration: new InputDecoration(labelText: lang.lblSpent()),
                 keyboardType: TextInputType.number,
                 onSaved: (String value) => _item.spent = parseDouble(value),
@@ -209,8 +189,8 @@ class _BudgetPageState extends State<BudgetPage> {
 
           // -- descr --
           new TextFormField(
-            initialValue: _ctrl['descr'].text,
-            controller: _ctrl['descr'],
+            initialValue: _ctrl != null ? _ctrl['descr'].text : '',
+            controller: mapValue(_ctrl, 'descr'),
             maxLines: 3,
             decoration: new InputDecoration(labelText: lang.lblDescr()),
             onSaved: (String value) => _item.descr = value,

@@ -58,13 +58,15 @@ String routeWithParams(String routeName, Map<String, dynamic> params) {
 }
 
 /// Get route name dan parameter dari route RouteSettings
-/// return array Index 0 -> route name, Index 1 -> params
-List<dynamic> getRouteParams(RouteSettings settings) {
-  if (settings.name == null) return [null, null];
-
+/// settings.name tidak boleh null
+RouteParams getRouteParams(RouteSettings settings) {
+  assert(settings.name != null);
   final routes = settings.name.split('?');
-  return [
-    routes[0],
-    routes.length > 1 ? JSON.decode(routes[1]) : null,
-  ];
+  return new RouteParams(routes[0], routes.length > 1 ? JSON.decode(routes[1]) : null);
+}
+
+class RouteParams {
+  String name;
+  Map<String, dynamic> params;
+  RouteParams(this.name, this.params);
 }

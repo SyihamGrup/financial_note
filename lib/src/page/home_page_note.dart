@@ -14,7 +14,6 @@ class HomePageNote extends StatefulWidget {
   static const kRouteName = '/home-notes';
 
   final Config config;
-  final DatabaseReference ref;
   final String bookId;
   final OnItemTap<Note> onItemTap;
   final OnItemSelect<Note> onItemsSelect;
@@ -26,7 +25,6 @@ class HomePageNote extends StatefulWidget {
     this.onItemsSelect,
     this.config,
   }) : assert(bookId != null),
-       ref = Note.ref(bookId),
        super(key: key);
 
   @override
@@ -39,7 +37,7 @@ class _HomePageNoteState extends State<HomePageNote> {
   @override
   Widget build(BuildContext context) {
     return new FirebaseAnimatedList(
-      query: widget.ref,
+      query: Note.getNode(widget.bookId),
       sort: (a, b) {
         final itemA = a.value is Map && a.value.containsKey('updatedAt') ? a.value['updatedAt'] : '';
         final itemB = b.value is Map && b.value.containsKey('updatedAt') ? b.value['updatedAt'] : '';

@@ -8,6 +8,8 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
+import 'dart:async';
+
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -49,7 +51,36 @@ class Budget {
       isExpire  = parseBool(mapValue(snapshot.value, 'isExpire', false)),
       descr     = parseString(mapValue(snapshot.value, 'descr'));
 
-  static DatabaseReference ref(String bookId) {
+  static Future<Budget> get(String bookId, String id) async {
+    final snap = await getNode(bookId).child(id).once();
+    if (snap.value == null) return null;
+    return new Budget.fromSnapshot(snap);
+  }
+
+  static Future<List<Budget>> list(String bookId) async {
+    final snap = await getNode(bookId).once();
+    if (snap.value == null) return null;
+
+    final items = <Budget>[];
+    final Map<String, Map<String, dynamic>> data = snap.value;
+    data.forEach((key, json) => items.add(new Budget.fromJson(key, json)));
+    items.sort((a, b) => a.date?.compareTo(b.date) ?? 0);
+    return items;
+  }
+
+  Future<Null> save(String bookId) async {
+    final node = getNode(bookId);
+    final ref = id != null ? node.child(id) : node.push();
+    await ref.set(toJson());
+    id = ref.key;
+  }
+
+  static Future<Null> remove(String bookId, String id) async {
+    final node = getNode(bookId);
+    await node.child(id).remove();
+  }
+
+  static DatabaseReference getNode(String bookId) {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
   }
 

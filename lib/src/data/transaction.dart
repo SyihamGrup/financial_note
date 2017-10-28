@@ -18,7 +18,6 @@ import 'package:flutter/services.dart';
 
 class Transaction {
   static const kNodeName = 'transactions';
-  static const kNodeBalances = 'balances';
 
   String id;
   String billId;
@@ -59,19 +58,11 @@ class Transaction {
       balance   = parseDouble(mapValue(snapshot.value, 'balance')),
       note      = parseString(mapValue(snapshot.value, 'note'));
 
-  static DatabaseReference ref(String bookId) {
-    return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
-  }
-
-  static DatabaseReference balanceRef(String bookId) {
-    return FirebaseDatabase.instance.reference().child(kNodeBalances).child(bookId);
-  }
-
   static Future<List<Transaction>> list(
       String bookId, DateTime dateStart, DateTime dateEnd, openingBalance,
   ) async {
     final ret = new List<Transaction>();
-    final snap = await ref(bookId).orderByChild('date')
+    final snap = await getNode(bookId).orderByChild('date')
         .startAt(dateStart.toIso8601String()).endAt(dateEnd.toIso8601String())
         .once();
     if (snap.value == null) return ret;
@@ -93,23 +84,26 @@ class Transaction {
     return ret;
   }
 
-  static Future<double> getBalance(String bookId, int year, int month) async {
-    final snap = await balanceRef(bookId).child("$year$month").once();
-    return parseDouble(snap.value);
+  static Future<Transaction> get(String bookId, String id) async {
+    final snap = await getNode(bookId).child(id).once();
+    if (snap.value == null) return null;
+    return new Transaction.fromSnapshot(snap);
   }
 
-  static Future<Null> calculateBalance(String bookId, int year, int month) async {
-    final httpClient = createHttpClient();
+  Future<Null> save(String bookId) async {
+    final node = getNode(bookId);
+    final ref = id != null ? node.child(id) : node.push();
+    await ref.set(toJson());
+    id = ref.key;
+  }
 
-    final params = <String, dynamic>{
-      'bookId' : bookId,
-      'year'   : year,
-      'month'  : month,
-    };
-    final response = await httpClient.get(firebaseUri(kCalcOpeningBalancePath, params));
+  static Future<Null> remove(String bookId, String id) async {
+    final node = getNode(bookId);
+    await node.child(id).remove();
+  }
 
-    Map<String, dynamic> json = JSON.decode(response.body);
-    return parseDouble(mapValue(json, 'balance'));
+  static DatabaseReference getNode(String bookId) {
+    return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
   }
 
   Map<String, dynamic> toJson({showId: false, showBalance: false}) {
@@ -127,4 +121,32 @@ class Transaction {
     if (!showBalance) json.remove('balance');
     return json;
   }
+}
+
+class Balance {
+  static const kNodeName = 'balances';
+
+  static Future<double> get(String bookId, int year, int month) async {
+    final snap = await getNode(bookId).child("$year$month").once();
+    return parseDouble(snap.value);
+  }
+
+  static Future<double> calculate(String bookId, int year, int month) async {
+    final httpClient = createHttpClient();
+
+    final params = <String, dynamic>{
+      'bookId' : bookId,
+      'year'   : year,
+      'month'  : month,
+    };
+    final response = await httpClient.get(firebaseUri(kCalcOpeningBalancePath, params));
+
+    Map<String, dynamic> json = JSON.decode(response.body);
+    return parseDouble(mapValue(json, 'balance'));
+  }
+
+  static DatabaseReference getNode(String bookId) {
+    return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
+  }
+
 }
