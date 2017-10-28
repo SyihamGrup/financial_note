@@ -115,9 +115,8 @@ class _TransactionPageState extends State<TransactionPage> {
     }
 
     form.save();
-    _item.value = _item.value * _transType;
-
     try {
+      _item.value = _item.value * _transType;
       await _item.save(widget.bookId);
       return true;
     } catch (e) {
