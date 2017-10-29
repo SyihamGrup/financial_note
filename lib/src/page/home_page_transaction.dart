@@ -74,10 +74,11 @@ class _HomePageTransactionState extends State<HomePageTransaction>
 
   Future<Null> _refreshData(String bookId) async {
     setState(() => _isLoading = true);
+    final dateOpening = new DateTime(_filterDate.year, _filterDate.month, 0);
     final dateStart = new DateTime(_filterDate.year, _filterDate.month);
     final dateEnd = new DateTime(_filterDate.year, _filterDate.month + 1, 0);
     final openingBalance = await Balance.get(
-      bookId, _filterDate.year, _filterDate.month
+      bookId, dateOpening.year, dateOpening.month
     );
     final items = await Transaction.list(bookId, dateStart, dateEnd, openingBalance);
 

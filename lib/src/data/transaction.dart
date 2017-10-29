@@ -15,6 +15,7 @@ import 'package:financial_note/data.dart';
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class Transaction {
   static const kNodeName = 'transactions';
@@ -91,15 +92,82 @@ class Transaction {
   }
 
   Future<Null> save(String bookId) async {
+    final existing = id != null ? await Transaction.get(bookId, id) : null;
+
     final node = getNode(bookId);
     final ref = id != null ? node.child(id) : node.push();
     await ref.set(toJson());
     id = ref.key;
+
+    await _updateBudget(bookId, existing, this);
+    await _updateBill(bookId, existing, this);
+    await _updateBalance(bookId, existing, this);
   }
 
   static Future<Null> remove(String bookId, String id) async {
+    final existing = await Transaction.get(bookId, id);
+
     final node = getNode(bookId);
     await node.child(id).remove();
+
+    await _updateBudget(bookId, existing, null);
+    await _updateBill(bookId, existing, null);
+    await _updateBalance(bookId, existing, null);
+  }
+
+  static Future<Null> _updateBudget(
+    String bookId, Transaction oldItem, Transaction newItem
+  ) async {
+    if (oldItem != null && oldItem.budgetId != null) {
+      final budget = await Budget.get(bookId, oldItem.budgetId);
+      if (budget != null) {
+        budget.value += oldItem.value;
+        budget.save(bookId);
+      }
+    }
+    if (newItem != null && newItem.budgetId != null) {
+      final budget = await Budget.get(bookId, newItem.budgetId);
+      if (budget != null) {
+        budget.value -= newItem.value;
+        budget.save(bookId);
+      }
+    }
+  }
+
+  static Future<Null> _updateBill(
+    String bookId, Transaction oldItem, Transaction newItem
+  ) async {
+    if (oldItem != null && oldItem.billId != null) {
+      final bill = await Bill.get(bookId, oldItem.billId);
+      if (bill != null) {
+        bill.value += oldItem.value;
+        bill.save(bookId);
+      }
+    }
+    if (newItem != null && newItem.billId != null) {
+      final bill = await Bill.get(bookId, newItem.billId);
+      if (bill != null) {
+        bill.value -= newItem.value;
+        bill.save(bookId);
+      }
+    }
+  }
+
+  static Future<Null> _updateBalance(
+    String bookId, Transaction oldItem, Transaction newItem
+  ) async {
+    if (oldItem != null) {
+      final year = oldItem.date.year;
+      final month = oldItem.date.month;
+      final balance = await Balance.get(bookId, year, month);
+      Balance.set(bookId, year, month, balance - oldItem.value);
+    }
+    if (newItem != null) {
+      final month = newItem.date.year;
+      final year = newItem.date.month;
+      final balance = await Balance.get(bookId, year, month);
+      Balance.set(bookId, year, month, balance + newItem.value);
+    }
   }
 
   static DatabaseReference getNode(String bookId) {
@@ -127,8 +195,14 @@ class Balance {
   static const kNodeName = 'balances';
 
   static Future<double> get(String bookId, int year, int month) async {
-    final snap = await getNode(bookId).child("$year$month").once();
+    final period = new DateFormat('MMdd').format(new DateTime(year, month));
+    final snap = await getNode(bookId).child(period).once();
     return parseDouble(snap.value);
+  }
+
+  static Future<Null> set(String bookId, int year, int month, double value) async {
+    final period = new DateFormat('MMdd').format(new DateTime(year, month));
+    await getNode(bookId).child(period).set(value);
   }
 
   static Future<double> calculate(String bookId, int year, int month) async {
