@@ -20,11 +20,12 @@ class HomePageBudget extends StatefulWidget {
 
   HomePageBudget({
     Key key,
+    @required this.config,
     @required this.bookId,
     this.onItemTap,
     this.onItemsSelect,
-    this.config,
-  }) : assert(bookId != null),
+  }) : assert(config != null),
+       assert(bookId != null),
        super(key: key);
 
   @override
@@ -47,6 +48,7 @@ class _HomePageBudgetState extends State<HomePageBudget> {
       itemBuilder: (context, snapshot, animation, index) {
         final item = new Budget.fromSnapshot(snapshot);
         return new _ContentBudgetItem(
+          config: widget.config,
           item: item,
           animation: animation,
           selected: _getSelectedIndex(_selectedItems, item) != -1,
@@ -99,6 +101,7 @@ class _HomePageBudgetState extends State<HomePageBudget> {
 }
 
 class _ContentBudgetItem extends StatelessWidget {
+  final Config config;
   final String currencySymbol;
   final Budget item;
   final Animation animation;
@@ -107,13 +110,14 @@ class _ContentBudgetItem extends StatelessWidget {
   final bool selected;
 
   _ContentBudgetItem({
+    @required this.config,
     this.item,
     this.animation,
     this.selected,
     this.onTap,
     this.onLongPress,
     this.currencySymbol,
-  });
+  }) : assert(config != null);
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +129,8 @@ class _ContentBudgetItem extends StatelessWidget {
     final spent = item.spent ?? 0;
     final currFormatter = new NumberFormat.currency(symbol: currencySymbol, decimalDigits: 0);
 
-    final percentColor = theme.primaryColor;
+    final percentColor = config.themeName == ThemeName.dark
+                       ? theme.accentColor : theme.primaryColor;
     final percentBg = theme.highlightColor;
 
     final dateFormatter = new DateFormat.MMMd();
