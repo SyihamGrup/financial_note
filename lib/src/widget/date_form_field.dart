@@ -109,7 +109,7 @@ class DateItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               new Text(dateFormat.format(date)),
-              const Icon(Icons.arrow_drop_down, color: Colors.black54, size: 22.0),
+              new Icon(Icons.arrow_drop_down, color: theme.hintColor, size: 22.0),
             ],
           ),
         ),
@@ -175,7 +175,7 @@ class DateTimeItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 new Text(dateFormat.format(date)),
-                const Icon(Icons.arrow_drop_down, color: Colors.black54, size: 22.0),
+                new Icon(Icons.arrow_drop_down, color: theme.hintColor, size: 22.0),
               ],
             ),
           ),
