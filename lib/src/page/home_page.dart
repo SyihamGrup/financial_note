@@ -264,6 +264,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   void _onDrawerChange(String route) {
+    if (route == SettingsPage.kRouteName) {
+      Navigator.pushNamed(context, SettingsPage.kRouteName);
+      return;
+    }
     setState(() => _currentRoute = route);
   }
 
