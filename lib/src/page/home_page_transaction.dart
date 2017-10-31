@@ -141,26 +141,18 @@ class _HomePageTransactionState extends State<HomePageTransaction>
   Widget _buildBalance(NumberFormat currFormatter) {
     final theme = Theme.of(context);
     final lang = Lang.of(context);
-    final bgColor = widget.config.themeName == ThemeName.dark
-                  ? Colors.grey[800] : Colors.blueGrey[100];
     final balance = _items.length > 0 ? _items[0].balance : 0.0;
-    return new Container(
-      decoration: new BoxDecoration(
-        color: bgColor,
-        boxShadow: <BoxShadow>[const BoxShadow(color: const Color(0x88000000), blurRadius: 2.0)],
-      ),
-      child: new ListTile(
-        dense: true,
-        title: new Center(child: new Text(
-          lang.titleBalance().toUpperCase(),
-          style: theme.textTheme.caption,
-        )),
-        subtitle: new Center(child: new Text(
-          currFormatter.format(balance),
-          style: theme.textTheme.title,
-        )),
-      ),
-    );
+    return new ContentHighlight(config: widget.config, child: new ListTile(
+      dense: true,
+      title: new Center(child: new Text(
+        lang.titleBalance().toUpperCase(),
+        style: theme.textTheme.caption,
+      )),
+      subtitle: new Center(child: new Text(
+        currFormatter.format(balance),
+        style: theme.textTheme.title,
+      )),
+    ));
   }
 
   Widget _buildOpeningBalance(Transaction item, NumberFormat currFormatter) {

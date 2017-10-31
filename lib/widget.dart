@@ -17,6 +17,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+export 'src/widget/content.dart';
 export 'src/widget/date_form_field.dart';
 export 'src/widget/drawer.dart';
 export 'src/widget/dropdown.dart';

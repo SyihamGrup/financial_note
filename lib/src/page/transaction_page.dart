@@ -10,6 +10,7 @@
 
 import 'dart:async';
 
+import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
@@ -22,16 +23,19 @@ import 'package:flutter/widgets.dart';
 class TransactionPage extends StatefulWidget {
   static const kRouteName = '/transaction';
 
+  final Config config;
   final String bookId;
   final String id;
   final int transType;
 
   TransactionPage({
     Key key,
+    @required this.config,
     @required this.bookId,
     this.id,
     this.transType: kExpense,
-  }) : assert(bookId != null),
+  }) : assert(config != null),
+       assert(bookId != null),
        super(key: key);
 
   @override
@@ -176,7 +180,6 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   Widget _buildForm(BuildContext context) {
-    final theme = Theme.of(context);
     final lang = Lang.of(context);
 
     return new Form(
@@ -186,8 +189,8 @@ class _TransactionPageState extends State<TransactionPage> {
       child: new ListView(
         children: <Widget>[
           // -- transType --
-          new Container(
-            decoration: new BoxDecoration(color: theme.highlightColor),
+          new ContentHighlight(
+            config: widget.config,
             alignment: Alignment.center,
             padding: const EdgeInsets.only(right: 32.0),
             child: new RadioGroup(
@@ -197,7 +200,7 @@ class _TransactionPageState extends State<TransactionPage> {
                 new RadioItem<int>(kExpense, lang.lblExpense()),
               ],
               onChanged: (value) => setState(() => _transType = value),
-            ),
+            )
           ),
 
           new Padding(

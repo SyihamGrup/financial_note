@@ -73,7 +73,7 @@ class _MainAppState extends State<MainApp> {
       // Transaction page
       case TransactionPage.kRouteName:
         final id = mapValue<String>(route.params, 'id');
-        return new TransactionPage(bookId: currentBook?.id, id: id);
+        return new TransactionPage(config: config, bookId: currentBook?.id, id: id);
 
       // Bill page
       case BillPage.kRouteName:
