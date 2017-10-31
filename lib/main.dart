@@ -58,6 +58,7 @@ class _MainAppState extends State<MainApp> {
     ValueChanged<Config> configUpdater
   ) {
     final route = getRouteParams(settings);
+    final id = mapValue<String>(route.params, 'id');
 
     switch (route.name) {
       // Sign In
@@ -68,28 +69,32 @@ class _MainAppState extends State<MainApp> {
       case SettingsPage.kRouteName:
         return new SettingsPage(config: config, updater: configUpdater);
 
+      // Balance List
+      case BalanceListPage.kRouteName:
+        return new BalanceListPage(config: config, bookId: currentBook?.id);
+
+      // Balance
+      case BalancePage.kRouteName:
+        return new BalancePage(bookId: currentBook?.id, id: id);
+
       // Home page
       case HomePage.kRouteName:
         return new HomePage(bookId: currentBook?.id, config: config);
 
       // Transaction page
       case TransactionPage.kRouteName:
-        final id = mapValue<String>(route.params, 'id');
         return new TransactionPage(bookId: currentBook?.id, id: id);
 
       // Bill page
       case BillPage.kRouteName:
-        final id = mapValue<String>(route.params, 'id');
         return new BillPage(bookId: currentBook?.id, groupId: id);
 
       // Budget page
       case BudgetPage.kRouteName:
-        final id = mapValue<String>(route.params, 'id');
         return new BudgetPage(bookId: currentBook?.id, id: id);
 
       // Note page
       case NotePage.kRouteName:
-        final id = mapValue<String>(route.params, 'id');
         return new NotePage(bookId: currentBook?.id, id: id);
 
       // Splash

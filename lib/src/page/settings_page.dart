@@ -9,6 +9,7 @@
  */
 
 import 'package:financial_note/config.dart';
+import 'package:financial_note/src/page/balance_list_page.dart';
 import 'package:financial_note/strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -27,11 +28,13 @@ class SettingsPage extends StatelessWidget {
       super(key: key);
 
   Widget buildSettingsPane(BuildContext context) {
+    final lang = Lang.of(context);
+
     return new ListView(
       padding: const EdgeInsets.symmetric(vertical: 20.0),
       children: <Widget>[
         new ListTile(
-          title: new Text(Lang.of(context).prefUseDark()),
+          title: new Text(lang.prefUseDark()),
           onTap: () {
             _handleThemeChanged(config.brightness == Brightness.dark
                 ? Brightness.light : Brightness.dark);
@@ -42,7 +45,12 @@ class SettingsPage extends StatelessWidget {
               _handleThemeChanged(value ? Brightness.dark : Brightness.light);
             },
           ),
-        )
+        ),
+        new ListTile(
+          title: new Text(lang.prefMonthlyBalance()),
+          subtitle: new Text(lang.prefMonthlyBalanceDescr()),
+          onTap: () => Navigator.pushNamed(context, BalanceListPage.kRouteName),
+        ),
       ],
     );
   }

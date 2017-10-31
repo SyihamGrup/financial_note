@@ -159,14 +159,14 @@ class Transaction {
     if (oldItem != null) {
       final year = oldItem.date.year;
       final month = oldItem.date.month;
-      final balance = await Balance.get(bookId, year, month);
-      Balance.set(bookId, year, month, balance - oldItem.value);
+      final balance = await Balance.getValue(bookId, year, month);
+      Balance.setValue(bookId, year, month, balance - oldItem.value);
     }
     if (newItem != null) {
       final month = newItem.date.year;
       final year = newItem.date.month;
-      final balance = await Balance.get(bookId, year, month);
-      Balance.set(bookId, year, month, balance + newItem.value);
+      final balance = await Balance.getValue(bookId, year, month);
+      Balance.setValue(bookId, year, month, balance + newItem.value);
     }
   }
 
@@ -193,16 +193,60 @@ class Transaction {
 
 class Balance {
   static const kNodeName = 'balances';
+  static const kPeriodFormat = 'yMM';
 
-  static Future<double> get(String bookId, int year, int month) async {
-    final period = new DateFormat('MMdd').format(new DateTime(year, month));
+  String id;
+  double value;
+
+  Balance({this.id, this.value : 0.0});
+
+  Balance.fromSnapshot(DataSnapshot snapshot)
+    : id = snapshot.key,
+      value = parseDouble(snapshot.value);
+
+  int get year {
+    if (id == null) return 0;
+    return parseInt(id?.substring(0, 4)) ?? 0;
+  }
+
+  set year(int value) {
+    final sYear = '$value';
+    final sMonth = '$month';
+    id = sYear.padLeft(4, '0') + sMonth.padLeft(2, '0');
+  }
+
+  int get month {
+    if (id == null || id.length <= 4) return 0;
+    return parseInt(id?.substring(4, 6)) ?? 0;
+  }
+
+  set month(int value) {
+    final sYear = '$year';
+    final sMonth = '$value';
+    id = sYear.padLeft(4, '0') + sMonth.padLeft(2, '0');
+  }
+
+  static Future<Balance> get(String bookId, String id) async {
+    if (id == null) return null;
+    final snap = await getNode(bookId).child(id).once();
+    if (snap.value == null) return null;
+    return new Balance.fromSnapshot(snap);
+  }
+
+  static Future<double> getValue(String bookId, int year, int month) async {
+    final period = new DateFormat(kPeriodFormat).format(new DateTime(year, month));
     final snap = await getNode(bookId).child(period).once();
     return parseDouble(snap.value);
   }
 
-  static Future<Null> set(String bookId, int year, int month, double value) async {
-    final period = new DateFormat('MMdd').format(new DateTime(year, month));
+  static Future<Null> setValue(String bookId, int year, int month, double value) async {
+    final period = new DateFormat(kPeriodFormat).format(new DateTime(year, month));
     await getNode(bookId).child(period).set(value);
+  }
+
+  void setPeriod(int year, int month) {
+    final date = new DateTime(year, month);
+    id = new DateFormat(Balance.kPeriodFormat).format(date);
   }
 
   static Future<double> calculate(String bookId, int year, int month) async {
@@ -217,6 +261,11 @@ class Balance {
 
     Map<String, dynamic> json = JSON.decode(response.body);
     return parseDouble(mapValue(json, 'balance'));
+  }
+
+  static Future<Null> remove(String bookId, String id) async {
+    final node = getNode(bookId);
+    await node.child(id).remove();
   }
 
   static DatabaseReference getNode(String bookId) {

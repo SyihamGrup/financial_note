@@ -37,7 +37,9 @@ class Lang {
     return Intl.message(message, name: name, locale: _localeName);
   }
 
-  String prefUseDark() => _('prefUseDark', 'Use Dark Theme');
+  String prefUseDark()             => _('prefUseDark', 'Use Dark Theme');
+  String prefMonthlyBalance()      => _('prefMonthlyBalance', 'Monthly Balance');
+  String prefMonthlyBalanceDescr() => _('prefMonthlyBalanceDescr', 'Balances are automatically updated, but you can change it manually.');
 
   String title()          => _('title',         'Financial Note');
   String titleBill()      => _('titleBill',     'Bills');
@@ -56,6 +58,8 @@ class Lang {
   String titleEditBudget()      => _('titleEditBudget',      'Edit Budget');
   String titleAddNote()         => _('titleAddNote',         'New Note');
   String titleEditNote()        => _('titleEditNote',        'Edit Note');
+  String titleAddBalance()      => _('titleAddBalance',      'New Balance');
+  String titleEditBalance()     => _('titleEditBalance',     'Edit Balance');
   String titleConfirmation()    => _('titleConfirmation',    'Confirmation');
   String titleValidate()        => _('titleValidate',        'Validate');
   String titleLeave()           => _('titleLeave',           'Leave?');
@@ -88,6 +92,7 @@ class Lang {
   String lblBillPeriod()   => _('lblBillPeriod', 'Period');
   String lblTitle()        => _('lblTitle',      'Title');
   String lblDate()         => _('lblDate',       'Date');
+  String lblMonth()        => _('lblMonth',      'Month');
   String lblValue()        => _('lblValue',      'Value');
   String lblTotal()        => _('lblTotal',      'Total');
   String lblSpent()        => _('lblSpent',      'Spent');
