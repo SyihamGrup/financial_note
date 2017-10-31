@@ -33,13 +33,13 @@ class SettingsPage extends StatelessWidget {
         new ListTile(
           title: new Text(Lang.of(context).prefUseDark()),
           onTap: () {
-            _handleThemeChanged(config.themeName == ThemeName.dark
-                ? ThemeName.light : ThemeName.dark);
+            _handleThemeChanged(config.brightness == Brightness.dark
+                ? Brightness.light : Brightness.dark);
           },
           trailing: new Switch(
-            value: config.themeName == ThemeName.dark,
+            value: config.brightness == Brightness.dark,
             onChanged: (bool value) {
-              _handleThemeChanged(value ? ThemeName.dark : ThemeName.light);
+              _handleThemeChanged(value ? Brightness.dark : Brightness.light);
             },
           ),
         )
@@ -47,10 +47,10 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  void _handleThemeChanged(ThemeName theme) {
-    final newConfig = config.copyWith(themeName: theme);
+  void _handleThemeChanged(Brightness brightness) {
+    final newConfig = config.copyWith(brightness: brightness);
     SharedPreferences.getInstance().then((prefs) {
-      final themeStr = theme == ThemeName.light ? kPrefThemeLight : kPrefThemeDark;
+      final themeStr = brightness == Brightness.light ? kPrefThemeLight : kPrefThemeDark;
       prefs.setString(kPrefTheme, themeStr);
     });
     updater(newConfig);

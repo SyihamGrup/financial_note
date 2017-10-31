@@ -125,7 +125,6 @@ class _HomePageTransactionState extends State<HomePageTransaction>
           } else {
             return new _ContentTransactionItem(
               context: context,
-              config: widget.config,
               item: item,
               currFormatter: currFormatter,
               selected: _getSelectedIndex(_selectedItems, item) != -1,
@@ -142,7 +141,7 @@ class _HomePageTransactionState extends State<HomePageTransaction>
     final theme = Theme.of(context);
     final lang = Lang.of(context);
     final balance = _items.length > 0 ? _items[0].balance : 0.0;
-    return new ContentHighlight(config: widget.config, child: new ListTile(
+    return new ContentHighlight(child: new ListTile(
       dense: true,
       title: new Center(child: new Text(
         lang.titleBalance().toUpperCase(),
@@ -223,7 +222,6 @@ class _HomePageTransactionState extends State<HomePageTransaction>
 }
 
 class _ContentTransactionItem extends StatelessWidget {
-  final Config config;
   final BuildContext context;
   final Transaction item;
   final NumberFormat currFormatter;
@@ -233,15 +231,13 @@ class _ContentTransactionItem extends StatelessWidget {
   final bool selected;
 
   const _ContentTransactionItem({
-    @required this.config,
     @required this.context,
     @required this.item,
     this.currFormatter,
     this.selected,
     this.onTap,
     this.onLongPress,
-  }) : assert(config != null),
-       assert(context != null),
+  }) : assert(context != null),
        assert(item != null);
 
   @override
@@ -249,9 +245,9 @@ class _ContentTransactionItem extends StatelessWidget {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
     final selectedBg = new BoxDecoration(color: theme.highlightColor);
-    final valueColor1 = config.themeName == ThemeName.dark
+    final valueColor1 = theme.brightness == Brightness.dark
                       ? Colors.green[100] : Colors.green[700];
-    final valueColor2 = config.themeName == ThemeName.dark
+    final valueColor2 = theme.brightness == Brightness.dark
                       ? Colors.red[100] : Colors.red[700];
 
     return new Container(

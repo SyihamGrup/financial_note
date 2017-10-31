@@ -10,7 +10,6 @@
 
 import 'dart:async';
 
-import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
@@ -23,19 +22,16 @@ import 'package:flutter/widgets.dart';
 class TransactionPage extends StatefulWidget {
   static const kRouteName = '/transaction';
 
-  final Config config;
   final String bookId;
   final String id;
   final int transType;
 
   TransactionPage({
     Key key,
-    @required this.config,
     @required this.bookId,
     this.id,
     this.transType: kExpense,
-  }) : assert(config != null),
-       assert(bookId != null),
+  }) : assert(bookId != null),
        super(key: key);
 
   @override
@@ -190,7 +186,6 @@ class _TransactionPageState extends State<TransactionPage> {
         children: <Widget>[
           // -- transType --
           new ContentHighlight(
-            config: widget.config,
             alignment: Alignment.center,
             padding: const EdgeInsets.only(right: 32.0),
             child: new RadioGroup(

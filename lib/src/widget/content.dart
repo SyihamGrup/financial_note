@@ -1,5 +1,3 @@
-import 'package:financial_note/config.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /*
@@ -13,14 +11,11 @@ import 'package:flutter/material.dart';
  */
 
 class ContentHighlight extends StatelessWidget {
-  final Config config;
   final Widget child;
   final AlignmentGeometry alignment;
   final EdgeInsetsGeometry padding;
 
   const ContentHighlight({
-    @required
-    this.config,
     this.alignment,
     this.padding,
     this.child,
@@ -28,7 +23,8 @@ class ContentHighlight extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = config.themeName == ThemeName.dark
+    final brightness = Theme.of(context).brightness;
+    final bgColor = brightness == Brightness.dark
                   ? Colors.grey[800] : Colors.blueGrey[100];
     return new Container(
       decoration: new BoxDecoration(

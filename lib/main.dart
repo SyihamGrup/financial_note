@@ -30,9 +30,11 @@ Future<Null> main() async {
 
 Future<Config> _initConfig() async {
   final prefs = await SharedPreferences.getInstance();
-  final theme = prefs.getString(kPrefTheme) == kPrefThemeDark ? ThemeName.dark : ThemeName.light;
-  final currencySymbol = prefs.getString(kPrefCurrencySymbol) ?? 'Rp';
-  return new Config(themeName: theme, currencySymbol: currencySymbol);
+  return new Config(
+    brightness     : prefs.getString(kPrefTheme) == kPrefThemeDark
+                   ? Brightness.dark : Brightness.light,
+    currencySymbol : prefs.getString(kPrefCurrencySymbol) ?? 'Rp'
+  );
 }
 
 class MainApp extends StatefulWidget {
@@ -73,7 +75,7 @@ class _MainAppState extends State<MainApp> {
       // Transaction page
       case TransactionPage.kRouteName:
         final id = mapValue<String>(route.params, 'id');
-        return new TransactionPage(config: config, bookId: currentBook?.id, id: id);
+        return new TransactionPage(bookId: currentBook?.id, id: id);
 
       // Bill page
       case BillPage.kRouteName:
@@ -105,7 +107,7 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: kTitle,
-      theme: getTheme(_config.themeName),
+      theme: getTheme(_config.brightness),
       localizationsDelegates: <_LocalizationsDelegate>[
         new _LocalizationsDelegate()
       ],

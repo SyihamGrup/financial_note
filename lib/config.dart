@@ -20,32 +20,30 @@ const kPrefCurrencySymbol = 'currencySymbol';
 
 const kPrefBookId = 'bookId';
 
-enum ThemeName { light, dark }
-
 class Config {
-  final ThemeName themeName;
+  final Brightness brightness;
   final String currencySymbol;
 
-  const Config({this.themeName, this.currencySymbol});
+  const Config({this.brightness, this.currencySymbol});
 
-  Config copyWith({ThemeName themeName, String currencySymbol}) {
+  Config copyWith({Brightness brightness, String currencySymbol}) {
     return new Config(
-      themeName: themeName ?? this.themeName,
+      brightness: brightness ?? this.brightness,
       currencySymbol: currencySymbol ?? this.currencySymbol,
     );
   }
 }
 
-ThemeData getTheme(ThemeName themeName) {
-  switch (themeName) {
-    case ThemeName.light:
+ThemeData getTheme(Brightness brightness) {
+  switch (brightness) {
+    case Brightness.light:
       return new ThemeData(
         brightness: Brightness.light,
         primarySwatch: Colors.teal,
         primaryColor: Colors.teal[700],
         accentColor: Colors.orangeAccent[700],
       );
-    case ThemeName.dark:
+    case Brightness.dark:
       return new ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.teal,
