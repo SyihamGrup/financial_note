@@ -205,8 +205,8 @@ class Balance {
       value = parseDouble(snapshot.value);
 
   int get year {
-    if (id == null) return 0;
-    return parseInt(id?.substring(0, 4)) ?? 0;
+    if (id == null || id.length < 4) return 0;
+    return parseInt(id.substring(0, 4)) ?? 0;
   }
 
   set year(int value) {
@@ -216,8 +216,8 @@ class Balance {
   }
 
   int get month {
-    if (id == null || id.length <= 4) return 0;
-    return parseInt(id?.substring(4, 6)) ?? 0;
+    if (id == null || id.length < 6) return 0;
+    return parseInt(id.substring(4, 6)) ?? 0;
   }
 
   set month(int value) {
