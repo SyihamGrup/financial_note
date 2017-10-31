@@ -80,6 +80,8 @@ class DateItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final dropdownColor = theme.brightness == Brightness.light
+                        ? Colors.grey.shade700 : Colors.white70;
 
     return new DefaultTextStyle(
       style: theme.textTheme.subhead,
@@ -109,7 +111,7 @@ class DateItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               new Text(dateFormat.format(date)),
-              new Icon(Icons.arrow_drop_down, color: theme.hintColor, size: 22.0),
+              new Icon(Icons.arrow_drop_down, color: dropdownColor, size: 22.0),
             ],
           ),
         ),
@@ -146,6 +148,8 @@ class DateTimeItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final dropdownColor = theme.brightness == Brightness.light
+                        ? Colors.grey.shade700 : Colors.white70;
 
     return new DefaultTextStyle(
       style: theme.textTheme.subhead,
@@ -175,7 +179,7 @@ class DateTimeItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 new Text(dateFormat.format(date)),
-                new Icon(Icons.arrow_drop_down, color: theme.hintColor, size: 22.0),
+                new Icon(Icons.arrow_drop_down, color: dropdownColor, size: 22.0),
               ],
             ),
           ),
@@ -203,7 +207,7 @@ class DateTimeItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 new Text(time.format(context)),
-                const Icon(Icons.arrow_drop_down, color: Colors.black54, size: 22.0),
+                new Icon(Icons.arrow_drop_down, color: dropdownColor, size: 22.0),
               ],
             ),
           ),
