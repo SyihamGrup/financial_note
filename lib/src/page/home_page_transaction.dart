@@ -22,12 +22,13 @@ class HomePageTransaction extends StatefulWidget {
 
   const HomePageTransaction({
     Key key,
+    @required this.config,
     @required this.bookId,
     this.date,
     this.onItemTap,
     this.onItemsSelect,
-    this.config,
-  }) : assert(bookId != null),
+  }) : assert(config != null),
+       assert(bookId != null),
        super(key: key);
 
   @override
@@ -124,6 +125,7 @@ class _HomePageTransactionState extends State<HomePageTransaction>
           } else {
             return new _ContentTransactionItem(
               context: context,
+              config: widget.config,
               item: item,
               currFormatter: currFormatter,
               selected: _getSelectedIndex(_selectedItems, item) != -1,
@@ -139,39 +141,40 @@ class _HomePageTransactionState extends State<HomePageTransaction>
   Widget _buildBalance(NumberFormat currFormatter) {
     final theme = Theme.of(context);
     final lang = Lang.of(context);
+    final bgColor = widget.config.themeName == ThemeName.dark
+                  ? Colors.grey[800] : Colors.blueGrey[100];
     final balance = _items.length > 0 ? _items[0].balance : 0.0;
-
     return new Container(
       decoration: new BoxDecoration(
-        color: Colors.blueGrey[100],
+        color: bgColor,
         boxShadow: <BoxShadow>[const BoxShadow(color: const Color(0x88000000), blurRadius: 2.0)],
       ),
       child: new ListTile(
         dense: true,
         title: new Center(child: new Text(
           lang.titleBalance().toUpperCase(),
-          style: theme.textTheme.body1.copyWith(color: Colors.black54),
+          style: theme.textTheme.caption,
         )),
         subtitle: new Center(child: new Text(
           currFormatter.format(balance),
-          style: theme.textTheme.title.copyWith(color: Colors.black87),
+          style: theme.textTheme.title,
         )),
       ),
     );
   }
 
   Widget _buildOpeningBalance(Transaction item, NumberFormat currFormatter) {
-    final theme = Theme.of(context);
+    final textTheme = Theme.of(context).textTheme;
     final lang = Lang.of(context);
 
     return new ListTile(
       title: new Center(child: new Text(
         lang.titleOpeningBalance().toUpperCase(),
-        style: theme.textTheme.body1.copyWith(color: Colors.black54, fontSize: 12.0),
+        style: textTheme.caption.copyWith(fontSize: 12.0),
       )),
       subtitle: new Center(child: new Text(
         currFormatter.format(item.balance),
-        style: theme.textTheme.title.copyWith(color: Colors.black54, fontSize: 20.0),
+        style: textTheme.title.copyWith(fontSize: 20.0),
       )),
     );
   }
@@ -228,6 +231,7 @@ class _HomePageTransactionState extends State<HomePageTransaction>
 }
 
 class _ContentTransactionItem extends StatelessWidget {
+  final Config config;
   final BuildContext context;
   final Transaction item;
   final NumberFormat currFormatter;
@@ -237,13 +241,15 @@ class _ContentTransactionItem extends StatelessWidget {
   final bool selected;
 
   const _ContentTransactionItem({
+    @required this.config,
     @required this.context,
     @required this.item,
     this.currFormatter,
     this.selected,
     this.onTap,
     this.onLongPress,
-  }) : assert(context != null),
+  }) : assert(config != null),
+       assert(context != null),
        assert(item != null);
 
   @override
@@ -251,6 +257,10 @@ class _ContentTransactionItem extends StatelessWidget {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
     final selectedBg = new BoxDecoration(color: theme.highlightColor);
+    final valueColor1 = config.themeName == ThemeName.dark
+                      ? Colors.green[100] : Colors.green[700];
+    final valueColor2 = config.themeName == ThemeName.dark
+                      ? Colors.red[100] : Colors.red[700];
 
     return new Container(
       decoration: selected ? selectedBg : null,
@@ -263,7 +273,7 @@ class _ContentTransactionItem extends StatelessWidget {
               style: textTheme.caption
             ),
             new Text(new DateFormat.d().format(item.date),
-              style: textTheme.headline.copyWith(color: Colors.grey[700])
+              style: textTheme.headline
             ),
           ],
         ),
@@ -274,7 +284,7 @@ class _ContentTransactionItem extends StatelessWidget {
         subtitle: new Text(
           (item.value >= 0 ? '+' : '') + currFormatter.format(item.value),
           style: textTheme.body2.copyWith(
-            color: item.value >= 0 ? Colors.red[500] : Colors.orange[600],
+            color: item.value >= 0 ? valueColor1 : valueColor2,
             fontWeight: FontWeight.normal,
           ),
         ),
@@ -283,7 +293,7 @@ class _ContentTransactionItem extends StatelessWidget {
           margin: const EdgeInsets.only(top: 14.0),
           child: new Text(
             currFormatter.format(item.balance),
-            style: textTheme.subhead.copyWith(color: Colors.black87),
+            style: textTheme.subhead,
           ),
         ),
         onTap: onTap,
