@@ -69,7 +69,7 @@ class _BalanceListPageState extends State<BalanceListPage> {
         sort: (a, b) {
           return a.key.compareTo(b.key);
         },
-        defaultChild: new Center(child: new Text(Lang.of(context).msgEmptyData())),
+        defaultChild: const EmptyBody(),
         itemBuilder: (context, snapshot, animation, index) {
           final item = new Balance.fromSnapshot(snapshot);
           return new _ContentBalanceItem(

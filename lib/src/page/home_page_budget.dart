@@ -44,7 +44,7 @@ class _HomePageBudgetState extends State<HomePageBudget> {
         final bDate = b.value is Map && b.value.containsKey('date') ? b.value['date'] : '';
         return bDate.compareTo(aDate);
       },
-      defaultChild: new Center(child: new Text(Lang.of(context).msgEmptyData())),
+      defaultChild: const EmptyBody(),
       itemBuilder: (context, snapshot, animation, index) {
         final item = new Budget.fromSnapshot(snapshot);
         return new _ContentBudgetItem(

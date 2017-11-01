@@ -104,7 +104,7 @@ class _HomePageTransactionState extends State<HomePageTransaction>
 
   Widget _buildBody(BuildContext context) {
     if (_items == null || _items.length == 0)
-      return new _EmptyBody(isLoading: _isLoading);
+      return new EmptyBody(isLoading: _isLoading);
 
     final currFormatter = new NumberFormat.currency(
       symbol: widget.config?.currencySymbol,
@@ -119,7 +119,7 @@ class _HomePageTransactionState extends State<HomePageTransaction>
         itemBuilder: (context, index) {
           final item = _items[index];
           if (_items.length <= 1) {
-            return new _EmptyBody();
+            return new EmptyBody();
           } else if (index == _items.length - 1) {
             return _buildOpeningBalance(item, currFormatter);
           } else {

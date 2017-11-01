@@ -43,7 +43,7 @@ class _HomePageNoteState extends State<HomePageNote> {
         final itemB = b.value is Map && b.value.containsKey('updatedAt') ? b.value['updatedAt'] : '';
         return itemB.compareTo(itemA);
       },
-      defaultChild: new Center(child: new Text(Lang.of(context).msgEmptyData())),
+      defaultChild: const EmptyBody(),
       itemBuilder: (context, snapshot, animation, index) {
         final item = new Note.fromSnapshot(snapshot);
         return new _ContentNoteItem(

@@ -209,7 +209,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       config: widget.config,
       onItemTap: (item) {
         final params = <String, dynamic>{'id': item.id};
-        Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));
+        Navigator.pushNamed(context, routeWithParams(BudgetViewPage.kRouteName, params));
       },
       onItemsSelect: (items, index) {
         if (items.length == 0)
@@ -329,23 +329,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             return;
         }
       },
-    );
-  }
-}
-
-class _EmptyBody extends StatelessWidget {
-  final isLoading;
-
-  _EmptyBody({this.isLoading: false});
-
-  @override
-  Widget build(BuildContext context) {
-    final lang = Lang.of(context);
-    return new Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: new Center(child: new Text(
-        isLoading ? lang.msgLoading() : lang.msgEmptyData())
-      ),
     );
   }
 }

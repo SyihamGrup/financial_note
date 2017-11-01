@@ -62,7 +62,7 @@ class Transaction {
   static Future<List<Transaction>> list(
       String bookId, DateTime dateStart, DateTime dateEnd, openingBalance,
   ) async {
-    final ret = new List<Transaction>();
+    final ret = <Transaction>[];
     final snap = await getNode(bookId).orderByChild('date')
         .startAt(dateStart.toIso8601String()).endAt(dateEnd.toIso8601String())
         .once();
@@ -75,14 +75,26 @@ class Transaction {
     });
     items.sort((a, b) => a.date?.compareTo(b.date) ?? 0);
 
-    var balance = openingBalance;
-    items.forEach((item) {
-      balance += item.value;
-      item.balance = balance;
-      ret.insert(0, item);
-    });
+    fillBalance(items, openingBalance);
 
     return ret;
+  }
+
+  static void fillBalance(List<Transaction> items, double openingBalance,
+                          {bool reverse: true}) {
+    if (items == null || items.length == 0) return;
+
+    var balance = openingBalance;
+    var i = 0;
+    final len = items.length;
+
+    while (i < len) {
+      final idx = reverse ? len - i - 1 : i;
+      final item = items[idx];
+      balance += item.value;
+      item.balance = balance;
+      i++;
+    }
   }
 
   static Future<Transaction> get(String bookId, String id) async {

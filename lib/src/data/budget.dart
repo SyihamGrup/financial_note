@@ -10,6 +10,7 @@
 
 import 'dart:async';
 
+import 'package:financial_note/data.dart';
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -66,6 +67,21 @@ class Budget {
     data.forEach((key, json) => items.add(new Budget.fromJson(key, json)));
     items.sort((a, b) => a.date?.compareTo(b.date) ?? 0);
     return items;
+  }
+
+  Future<List<Transaction>> getTransactions(String bookId) async {
+    final ret = <Transaction>[];
+    final node = Transaction.getNode(bookId);
+    final snap = await node.orderByChild('budgetId').equalTo(id).once();
+    if (snap.value == null) return ret;
+
+    final Map<String, Map<String, dynamic>> data = snap.value;
+    data.forEach((key, json) {
+      ret.add(new Transaction.fromJson(key, json));
+    });
+    ret.sort((a, b) => a.date?.compareTo(b.date) ?? 0);
+
+    return ret;
   }
 
   Future<Null> save(String bookId) async {

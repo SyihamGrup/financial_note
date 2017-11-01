@@ -93,6 +93,10 @@ class _MainAppState extends State<MainApp> {
       case BudgetPage.kRouteName:
         return new BudgetPage(bookId: currentBook?.id, id: id);
 
+      // View budget page
+      case BudgetViewPage.kRouteName:
+        return new BudgetViewPage(bookId: currentBook?.id, id: id);
+
       // Note page
       case NotePage.kRouteName:
         return new NotePage(bookId: currentBook?.id, id: id);

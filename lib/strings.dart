@@ -83,6 +83,7 @@ class Lang {
   String btnSignInGoogle() => _('btnSignInGoogle', 'Sign In With Google');
   String btnAdd()          => _('btnAdd',          'Add');
   String btnAddItem()      => _('btnAddItem',      'Add Item');
+  String btnEdit()         => _('btnEdit',         'Edit');
   String btnSave()         => _('btnSave',         'Save');
 
   String lblIncome()       => _('lblIncome',     'Income');

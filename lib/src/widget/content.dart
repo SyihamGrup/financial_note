@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /*
  * Copyright (c) 2017. All rights reserved.
  *
@@ -9,6 +7,26 @@ import 'package:flutter/material.dart';
  * Written by:
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
+
+import 'package:financial_note/strings.dart';
+import 'package:flutter/material.dart';
+
+class EmptyBody extends StatelessWidget {
+  final isLoading;
+
+  const EmptyBody({this.isLoading: false});
+
+  @override
+  Widget build(BuildContext context) {
+    final lang = Lang.of(context);
+    return new Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: new Center(child: new Text(
+        isLoading ? lang.msgLoading() : lang.msgEmptyData())
+      ),
+    );
+  }
+}
 
 class ContentHighlight extends StatelessWidget {
   final Widget child;
