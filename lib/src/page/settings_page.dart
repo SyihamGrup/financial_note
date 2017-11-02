@@ -9,6 +9,7 @@
  */
 
 import 'package:financial_note/config.dart';
+import 'package:financial_note/page.dart';
 import 'package:financial_note/src/page/balance_list_page.dart';
 import 'package:financial_note/strings.dart';
 import 'package:flutter/foundation.dart';
@@ -67,7 +68,10 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(title: new Text(Lang.of(context).titleSettings())),
+      appBar: new AppBar(
+        backgroundColor: config.getSettingTheme(context).appBarBackground,
+        title: new Text(Lang.of(context).titleSettings())
+      ),
       body: buildSettingsPane(context),
     );
   }

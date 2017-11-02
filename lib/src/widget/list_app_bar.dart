@@ -19,12 +19,14 @@ class ListAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final String title;
   final OnActionTap<List<T>> onActionModeTap;
   final VoidCallback onExitActionMode;
+  final Color backgroundColor;
 
   ListAppBar({
     Key key,
     this.title,
     this.onActionModeTap,
     this.onExitActionMode,
+    this.backgroundColor,
   }) : preferredSize = new Size.fromHeight(kToolbarHeight),
        super(key: key);
 
@@ -73,7 +75,7 @@ class ListAppBarState<T> extends State<ListAppBar> {
     }
     return new WillPopScope(
       child: new AppBar(
-        backgroundColor: _isActionMode ? kBgActionMode : null,
+        backgroundColor: _isActionMode ? kBgActionMode : widget.backgroundColor,
         leading: _isActionMode ? new IconButton(icon: kIconBack, onPressed: () {
           exitActionMode();
         }) : null,

@@ -48,7 +48,7 @@ class ContentHighlight extends StatelessWidget {
       decoration: new BoxDecoration(
         color: bgColor,
         boxShadow: <BoxShadow>[
-          const BoxShadow(color: const Color(0x88000000), blurRadius: 2.0)
+          const BoxShadow(color: const Color(0xaa000000), blurRadius: 1.0)
         ],
       ),
       alignment: alignment,

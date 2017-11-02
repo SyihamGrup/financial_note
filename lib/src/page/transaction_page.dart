@@ -10,6 +10,7 @@
 
 import 'dart:async';
 
+import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
@@ -22,16 +23,19 @@ import 'package:flutter/widgets.dart';
 class TransactionPage extends StatefulWidget {
   static const kRouteName = '/transaction';
 
+  final Config config;
   final String bookId;
   final String id;
   final int transType;
 
   TransactionPage({
     Key key,
+    @required this.config,
     @required this.bookId,
     this.id,
     this.transType: kExpense,
-  }) : assert(bookId != null),
+  }) : assert(config != null),
+       assert(bookId != null),
        super(key: key);
 
   @override
@@ -148,13 +152,17 @@ class _TransactionPageState extends State<TransactionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = widget.config.getItemTheme(context);
     final lang = Lang.of(context);
     final nav = Navigator.of(context);
 
     return new Scaffold(
       key: _scaffoldKey,
       appBar: new AppBar(
+        backgroundColor: theme.appBarBackground,
+        textTheme: theme.appBarTextTheme,
+        iconTheme: theme.appBarIconTheme,
+        elevation: theme.appBarElevation,
         leading: new IconButton(icon: kIconClose, onPressed: () {
           setState(() => _saveNeeded = false);
           nav.pop();
@@ -167,7 +175,7 @@ class _TransactionPageState extends State<TransactionPage> {
               if (saved) Navigator.pop(context);
             }),
             child: new Text(lang.btnSave().toUpperCase(),
-                            style: theme.primaryTextTheme.button),
+                            style: theme.appBarTextTheme.button),
           ),
         ],
       ),

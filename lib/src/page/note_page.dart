@@ -10,6 +10,7 @@
 
 import 'dart:async';
 
+import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
@@ -23,11 +24,12 @@ import 'package:intl/intl.dart';
 class NotePage extends StatefulWidget {
   static const kRouteName = '/note';
 
+  final Config config;
   final String bookId;
   final String id;
 
-  NotePage({Key key, @required this.bookId, this.id})
-    : assert(bookId != null),
+  NotePage({Key key, @required this.config, @required this.bookId, this.id})
+    : assert(config != null), assert(bookId != null),
       super(key: key);
 
   @override
@@ -120,13 +122,17 @@ class _NotePageState extends State<NotePage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = widget.config.getItemTheme(context);
     final lang = Lang.of(context);
     final nav = Navigator.of(context);
 
     return new Scaffold(
       key: _scaffoldKey,
       appBar: new AppBar(
+        backgroundColor: theme.appBarBackground,
+        textTheme: theme.appBarTextTheme,
+        iconTheme: theme.appBarIconTheme,
+        elevation: theme.appBarElevation,
         leading: new IconButton(icon: kIconClose, onPressed: () {
           setState(() => _saveNeeded = false);
           nav.pop();
@@ -137,7 +143,8 @@ class _NotePageState extends State<NotePage> {
             onPressed: () => _handleSubmitted().then((saved) {
               if (saved) Navigator.pop(context);
             }),
-            child: new Text(lang.btnSave().toUpperCase(), style: theme.primaryTextTheme.button),
+            child: new Text(lang.btnSave().toUpperCase(),
+                            style: theme.appBarTextTheme.button),
           ),
         ],
       ),

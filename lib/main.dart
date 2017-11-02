@@ -75,7 +75,7 @@ class _MainAppState extends State<MainApp> {
 
       // Balance
       case BalancePage.kRouteName:
-        return new BalancePage(bookId: currentBook?.id, id: id);
+        return new BalancePage(config: config, bookId: currentBook?.id, id: id);
 
       // Home page
       case HomePage.kRouteName:
@@ -83,23 +83,23 @@ class _MainAppState extends State<MainApp> {
 
       // Transaction page
       case TransactionPage.kRouteName:
-        return new TransactionPage(bookId: currentBook?.id, id: id);
+        return new TransactionPage(config: config, bookId: currentBook?.id, id: id);
 
       // Bill page
       case BillPage.kRouteName:
-        return new BillPage(bookId: currentBook?.id, groupId: id);
+        return new BillPage(config: config, bookId: currentBook?.id, groupId: id);
 
       // Budget page
       case BudgetPage.kRouteName:
-        return new BudgetPage(bookId: currentBook?.id, id: id);
+        return new BudgetPage(config: config, bookId: currentBook?.id, id: id);
 
       // View budget page
       case BudgetViewPage.kRouteName:
-        return new BudgetViewPage(bookId: currentBook?.id, id: id);
+        return new BudgetViewPage(config: config, bookId: currentBook?.id, id: id);
 
       // Note page
       case NotePage.kRouteName:
-        return new NotePage(bookId: currentBook?.id, id: id);
+        return new NotePage(config: config, bookId: currentBook?.id, id: id);
 
       // Splash
       case '/':
@@ -116,7 +116,7 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: kTitle,
-      theme: getTheme(_config.brightness),
+      theme: Config.getTheme(_config.brightness),
       localizationsDelegates: <_LocalizationsDelegate>[
         new _LocalizationsDelegate()
       ],

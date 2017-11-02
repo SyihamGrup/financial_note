@@ -47,6 +47,7 @@ class _BalanceListPageState extends State<BalanceListPage> {
     return new Scaffold(
       appBar: new ListAppBar<Balance>(
         key: _appBarKey,
+        backgroundColor: widget.config.getSettingTheme(context).appBarBackground,
         title: lang.titleBalance(),
         onActionModeTap: (key, items) {
           switch (key) {
