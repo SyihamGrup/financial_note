@@ -44,6 +44,7 @@ class _BudgetViewPage extends State<BudgetViewPage> {
   }
 
   Future<Null> _initData() async {
+    final theme = Theme.of(context);
     final lang = Lang.of(context);
 
     _item = await Budget.get(widget.bookId, widget.id);
@@ -51,19 +52,57 @@ class _BudgetViewPage extends State<BudgetViewPage> {
     _transactions = await _item.getTransactions(widget.bookId);
     _widgets = <Widget>[];
 
-    final textTheme = Theme.of(context).textTheme;
     final dateFormatter = new DateFormat.yMMMMd();
     final currFormatter = new NumberFormat.currency(symbol: widget.config.currencySymbol);
 
-    _widgets.add(_buildItemText(
-      textTheme, lang.lblDate(), dateFormatter.format(_item.date))
-    );
-    _widgets.add(_buildItemText(
-      textTheme, lang.lblValue(), currFormatter.format(_item.value))
-    );
+    _widgets.add(new Row(
+      children: <Widget>[
+        new Expanded(child: new Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _buildItemText(dateFormatter.format(_item.date), lang.lblDate()),
+            _buildItemText(_item.descr, lang.lblDescr()),
+          ],
+        )),
+        new Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _buildItemText(currFormatter.format(_item.value), lang.lblValue()),
+            _buildItemText(currFormatter.format(_item.spent), lang.lblSpent()),
+          ],
+        ),
+      ],
+    ));
+
+    if (_transactions.length > 0) {
+      _widgets.add(new Divider());
+      _widgets.add(new Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: new Text(lang.lblTransactions(), style: theme.textTheme.caption)
+      ));
+    }
 
     for (final trans in _transactions) {
-      _widgets.add(new Text(trans.title));
+      _widgets.add(new Padding(
+        padding: const EdgeInsets.fromLTRB(16.0, 10.0, 16.0, 0.0),
+        child: new Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new Expanded(
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Text(trans.title, style: theme.textTheme.subhead),
+                  new Text(dateFormatter.format(trans.date),
+                           style: theme.textTheme.caption),
+                ],
+              ),
+            ),
+            new Text((trans.value > 0 ? '+' : '') + currFormatter.format(trans.value),
+                     style: theme.textTheme.subhead),
+          ],
+        ),
+      ));
     }
   }
 
@@ -86,30 +125,38 @@ class _BudgetViewPage extends State<BudgetViewPage> {
               final params = <String, dynamic>{'id': _item.id};
               Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));
             },
-            child: new Text(lang.btnEdit(),
+            child: new Text(lang.btnEdit().toUpperCase(),
                             style: theme.appBarTextTheme.button),
           ),
         ],
       ),
       body: _widgets != null && _widgets.length > 0
-        ? new ListView(
-          padding: const EdgeInsets.all(16.0),
-          children: _widgets,
+        ? new SingleChildScrollView(
+          padding: const EdgeInsets.all(8.0),
+          child: new Card(child: new Container(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            width: double.INFINITY,
+            child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: _widgets
+            ),
+          )),
         )
         : const EmptyBody(isLoading: true),
     );
   }
 
-  Widget _buildItemText(TextTheme theme, label, String value) {
+  Widget _buildItemText(String value, [label, double margin = 10.0]) {
+    final textTheme = Theme.of(context).textTheme;
+    final children = <Widget>[];
+    if (label != null) children.add(new Text(label, style: textTheme.caption));
+    children.add(new Text(value, style: textTheme.subhead));
     return new Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: new EdgeInsets.fromLTRB(16.0, 0.0, 16.0, margin),
       child: new Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          new Text(label, style: theme.caption),
-          new Text(value, style: theme.subhead),
-        ],
+        children: children,
       ),
     );
   }
