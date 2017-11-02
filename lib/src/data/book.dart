@@ -45,6 +45,7 @@ class Book {
   }
 
   static Future<Book> get(String userId, String id) async {
+    if (id == null) return null;
     final snap = await getNode(userId).child(id).once();
     if (snap.value == null) return null;
     return new Book.fromSnapshot(snap);

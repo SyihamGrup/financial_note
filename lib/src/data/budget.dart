@@ -53,6 +53,7 @@ class Budget {
       descr     = parseString(mapValue(snapshot.value, 'descr'));
 
   static Future<Budget> get(String bookId, String id) async {
+    if (id == null) return null;
     final snap = await getNode(bookId).child(id).once();
     if (snap.value == null) return null;
     return new Budget.fromSnapshot(snap);

@@ -48,6 +48,7 @@ class Note {
       updatedAt = parseDate(mapValue(snapshot.value, 'updatedAt'));
 
   static Future<Note> get(String bookId, String id) async {
+    if (id == null) return null;
     final snap = await getNode(bookId).child(id).once();
     if (snap.value == null) return null;
     return new Note.fromSnapshot(snap);

@@ -97,6 +97,7 @@ class Transaction {
   }
 
   static Future<Transaction> get(String bookId, String id) async {
+    if (id == null) return null;
     final snap = await getNode(bookId).child(id).once();
     if (snap.value == null) return null;
     return new Transaction.fromSnapshot(snap);
