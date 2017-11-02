@@ -51,6 +51,7 @@ class _BalancePageState extends State<BalancePage> {
     final nav = Navigator.of(context);
 
     return new Scaffold(
+      backgroundColor: theme.formBackground,
       appBar: new AppBar(
         backgroundColor: theme.appBarBackground,
         textTheme: theme.appBarTextTheme,

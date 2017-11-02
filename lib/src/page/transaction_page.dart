@@ -158,6 +158,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
     return new Scaffold(
       key: _scaffoldKey,
+      backgroundColor: theme.formBackground,
       appBar: new AppBar(
         backgroundColor: theme.appBarBackground,
         textTheme: theme.appBarTextTheme,

@@ -43,13 +43,13 @@ class ContentHighlight extends StatelessWidget {
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
     final bgColor = brightness == Brightness.dark
-                  ? Colors.grey[800] : Colors.blueGrey[100];
+                  ? Colors.grey[800] : Colors.blueGrey[50];
+    final borderColor = brightness == Brightness.dark
+                      ? Colors.black54 : Colors.black12;
     return new Container(
       decoration: new BoxDecoration(
         color: bgColor,
-        boxShadow: <BoxShadow>[
-          const BoxShadow(color: const Color(0xaa000000), blurRadius: 1.0)
-        ],
+        border: new Border(bottom: new BorderSide(color: borderColor)),
       ),
       alignment: alignment,
       padding: padding,

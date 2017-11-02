@@ -30,17 +30,17 @@ class Config {
     final theme = Theme.of(context);
     if (brightness == Brightness.light) {
       return new ThemeConfig(
-        appBarBackground: Colors.white,
+        appBarBackground: Colors.grey[100],
         appBarTextTheme: theme.textTheme,
         appBarIconTheme: theme.iconTheme,
-        appBarElevation: 1.0
+        appBarElevation: 1.0,
       );
     } else {
       return new ThemeConfig(
         appBarBackground: Colors.grey[850],
         appBarTextTheme: theme.primaryTextTheme,
         appBarIconTheme: theme.primaryIconTheme,
-        appBarElevation: 1.0
+        appBarElevation: 1.0,
       );
     }
   }
@@ -51,7 +51,7 @@ class Config {
       appBarBackground: brightness == Brightness.light ? Colors.blueGrey[700] : null,
       appBarTextTheme: theme.primaryTextTheme,
       appBarIconTheme: theme.primaryIconTheme,
-      appBarElevation: 4.0
+      appBarElevation: 4.0,
     );
   }
 

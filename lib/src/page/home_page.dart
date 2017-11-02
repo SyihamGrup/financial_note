@@ -166,7 +166,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       config: widget.config,
       onItemTap: (item) {
         final params = <String, dynamic>{'id': item.id};
-        Navigator.pushNamed(context, routeWithParams(BillPage.kRouteName, params));
+        Navigator.pushNamed(context, routeWithParams(BillViewPage.kRouteName, params));
       },
       onItemsSelect: (items, index) {
         if (items.length == 0)

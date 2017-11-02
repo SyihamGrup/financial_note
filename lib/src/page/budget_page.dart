@@ -116,6 +116,7 @@ class _BudgetPageState extends State<BudgetPage> {
 
     return new Scaffold(
       key: _scaffoldKey,
+      backgroundColor: theme.formBackground,
       appBar: new AppBar(
         backgroundColor: theme.appBarBackground,
         textTheme: theme.appBarTextTheme,
