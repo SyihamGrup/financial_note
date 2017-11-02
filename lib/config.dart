@@ -30,10 +30,11 @@ class Config {
     final theme = Theme.of(context);
     if (brightness == Brightness.light) {
       return new ThemeConfig(
-        appBarBackground: Colors.grey[100],
+        appBarBackground: Colors.white,
         appBarTextTheme: theme.textTheme,
         appBarIconTheme: theme.iconTheme,
         appBarElevation: 1.0,
+        formBackground: Colors.white,
       );
     } else {
       return new ThemeConfig(
@@ -41,6 +42,7 @@ class Config {
         appBarTextTheme: theme.primaryTextTheme,
         appBarIconTheme: theme.primaryIconTheme,
         appBarElevation: 1.0,
+        formBackground: null,
       );
     }
   }
@@ -87,11 +89,13 @@ class ThemeConfig {
   TextTheme appBarTextTheme;
   IconThemeData appBarIconTheme;
   double appBarElevation;
+  Color formBackground;
 
   ThemeConfig({
     this.appBarBackground,
     this.appBarTextTheme,
     this.appBarIconTheme,
     this.appBarElevation,
+    this.formBackground,
   });
 }

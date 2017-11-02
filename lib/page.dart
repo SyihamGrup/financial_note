@@ -21,6 +21,7 @@ export 'src/page/balance_form.dart';
 export 'src/page/balance_list_page.dart';
 export 'src/page/balance_page.dart';
 export 'src/page/bill_page.dart';
+export 'src/page/bill_view_page.dart';
 export 'src/page/budget_page.dart';
 export 'src/page/budget_view_page.dart';
 export 'src/page/home_page.dart';

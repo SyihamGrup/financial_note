@@ -103,6 +103,7 @@ class Lang {
   String lblReminder()     => _('lblReminder',     'Reminder');
   String lblNone()         => _('lblNone',         'None');
   String lblTransactions() => _('lblTransactions', 'Transactions');
+  String lblType()         => _('lblType',         'Type');
 
   String msgSignInRequired() => _('msgSignInRequired', 'Sign in required');
   String msgWait()           => _('msgWait',           'Please Wait');
