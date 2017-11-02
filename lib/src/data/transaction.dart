@@ -62,22 +62,21 @@ class Transaction {
   static Future<List<Transaction>> list(
       String bookId, DateTime dateStart, DateTime dateEnd, openingBalance,
   ) async {
-    final ret = <Transaction>[];
     final snap = await getNode(bookId).orderByChild('date')
         .startAt(dateStart.toIso8601String()).endAt(dateEnd.toIso8601String())
         .once();
-    if (snap.value == null) return ret;
+    if (snap.value == null) return <Transaction>[];
 
     final items = <Transaction>[];
     final Map<String, Map<String, dynamic>> data = snap.value;
     data.forEach((key, value) {
       items.add(new Transaction.fromJson(key, value));
     });
-    items.sort((a, b) => a.date?.compareTo(b.date) ?? 0);
+    items.sort((a, b) => b.date?.compareTo(a.date) ?? 0);
 
     fillBalance(items, openingBalance);
 
-    return ret;
+    return items;
   }
 
   static void fillBalance(List<Transaction> items, double openingBalance,
