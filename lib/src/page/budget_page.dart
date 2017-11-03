@@ -71,20 +71,24 @@ class _BudgetPageState extends State<BudgetPage> {
 
   Future<bool> _handleSubmitted() async {
     final form = _formKey.currentState;
-    if (!form.validate()) {
-      _autoValidate = true;  // Start validating on every change
-      _showInSnackBar(Lang.of(context).msgFormError());
-      return false;
-    }
-
-    form.save();
     try {
+      form.save();
       await _item.save(widget.bookId);
       return true;
     } catch (e) {
       _showInSnackBar(e.message);
       return false;
     }
+  }
+
+  bool _validate() {
+    final form = _formKey.currentState;
+    if (!form.validate()) {
+      _autoValidate = true;  // Start validating on every change
+      _showInSnackBar(Lang.of(context).msgFormError());
+      return false;
+    }
+    return true;
   }
 
   String _validateTitle(String value) {
@@ -103,8 +107,8 @@ class _BudgetPageState extends State<BudgetPage> {
 
   Future<bool> _onWillPop() async {
     if (!_saveNeeded) return true;
-    final saved = await _handleSubmitted();
-    if (!saved) return await showLeaveConfirmDialog(context);
+    if (!_validate()) return await showLeaveConfirmDialog(context);
+    _handleSubmitted();
     return true;
   }
 
@@ -129,9 +133,11 @@ class _BudgetPageState extends State<BudgetPage> {
         title: new Text(widget.id == null ? lang.titleAddBudget() : lang.titleEditBudget()),
         actions: <Widget>[
           new FlatButton(
-            onPressed: () => _handleSubmitted().then((saved) {
-              if (saved) Navigator.pop(context);
-            }),
+            onPressed: () {
+              if (!_validate()) return;
+              _handleSubmitted();
+              Navigator.pop(context);
+            },
             child: new Text(lang.btnSave().toUpperCase(),
                             style: theme.appBarTextTheme.button),
           ),

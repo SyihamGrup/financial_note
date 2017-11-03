@@ -82,16 +82,9 @@ class _BillPageState extends State<BillPage> {
 
   Future<bool> _handleSubmitted() async {
     final form = _formKey.currentState;
-    if (!form.validate()) {
-      _autoValidate = true;  // Start validating on every change
-      _showInSnackBar(Lang.of(context).msgFormError());
-      return false;
-    }
-
-    form.save();
-    _fillData();
-
     try {
+      form.save();
+      _fillData();
       await _group.save(widget.bookId);
       await _group.saveItems(widget.bookId, _items);
       return true;
@@ -125,6 +118,16 @@ class _BillPageState extends State<BillPage> {
     });
   }
 
+  bool _validate() {
+    final form = _formKey.currentState;
+    if (!form.validate()) {
+      _autoValidate = true;  // Start validating on every change
+      _showInSnackBar(Lang.of(context).msgFormError());
+      return false;
+    }
+    return true;
+  }
+
   String _validateTitle(String value) {
     if (value.isEmpty) {
       return Lang.of(context).msgFieldRequired();
@@ -141,8 +144,8 @@ class _BillPageState extends State<BillPage> {
 
   Future<bool> _onWillPop() async {
     if (!_saveNeeded) return true;
-    final saved = await _handleSubmitted();
-    if (!saved) return await showLeaveConfirmDialog(context);
+    if (!_validate()) return await showLeaveConfirmDialog(context);
+    _handleSubmitted();
     return true;
   }
 
@@ -167,9 +170,11 @@ class _BillPageState extends State<BillPage> {
         title: new Text(widget.groupId == null ? lang.titleAddBill() : lang.titleEditBill()),
         actions: <Widget>[
           new FlatButton(
-            onPressed: () => _handleSubmitted().then((saved) {
-              if (saved) Navigator.pop(context);
-            }),
+            onPressed: () {
+              if (!_validate()) return;
+              _handleSubmitted();
+              Navigator.pop(context);
+            },
             child: new Text(lang.btnSave().toUpperCase(),
                             style: theme.appBarTextTheme.button),
           ),
