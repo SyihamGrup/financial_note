@@ -247,8 +247,15 @@ class Balance {
 
   static Future<double> getValue(String bookId, int year, int month) async {
     final period = new DateFormat(kPeriodFormat).format(new DateTime(year, month));
-    final snap = await getNode(bookId).child(period).once();
-    return parseDouble(snap.value);
+    final node = getNode(bookId);
+    final snap = await node.orderByKey().endAt(period).limitToLast(1).once();
+    if (snap.value == null || !(snap.value is Map)) return 0.0;
+    var value = 0.0;
+    snap.value.forEach((key, item) {
+      value = parseDouble(item);
+      return;
+    });
+    return value;
   }
 
   static Future<Null> setValue(String bookId, int year, int month, double value) async {
