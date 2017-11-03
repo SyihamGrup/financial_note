@@ -56,6 +56,7 @@ class _NotePageState extends State<NotePage> {
   Future<Null> _initData() async {
     _item = await Note.get(widget.bookId, widget.id);
     if (_item == null) _item = new Note();
+    _hasReminder = _item.reminder != null;
     _ctrl = <String, TextEditingController>{
       'title': new TextEditingController(text: _item.title ?? ''),
       'note': new TextEditingController(text: _item.note ?? ''),
