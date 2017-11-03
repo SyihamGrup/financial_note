@@ -148,61 +148,63 @@ class _BudgetPageState extends State<BudgetPage> {
       key: _formKey,
       autovalidate: _autoValidate,
       onWillPop: _onWillPop,
-      child: new ListView(
+      child: new SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        children: <Widget>[
-          // -- title --
-          new TextFormField(
-            initialValue: _ctrl != null ? _ctrl['title'].text : '',
-            controller: mapValue(_ctrl, 'title'),
-            decoration: new InputDecoration(labelText: lang.lblTitle()),
-            onSaved: (String value) => _item.title = value,
-            validator: _validateTitle,
-            autofocus: widget.id == null,
-          ),
+        child: new SingleChildScrollView(
+          child: new Column(children: [
+            // -- title --
+            new TextFormField(
+              initialValue: _ctrl != null ? _ctrl['title'].text : '',
+              controller: mapValue(_ctrl, 'title'),
+              decoration: new InputDecoration(labelText: lang.lblTitle()),
+              onSaved: (String value) => _item.title = value,
+              validator: _validateTitle,
+              autofocus: widget.id == null,
+            ),
 
-          // -- date --
-          new DateFormField(
-            label: lang.lblDate(),
-            date: _item?.date ?? new DateTime.now(),
-            onChange: (DateTime value) => _item.date = value,
-          ),
+            // -- date --
+            new DateFormField(
+              label: lang.lblDate(),
+              date: _item?.date ?? new DateTime.now(),
+              onChange: (DateTime value) => _item.date = value,
+            ),
 
-          new Row(
-            children: <Widget>[
-              // -- value --
-              new Expanded(child: new TextFormField(
-                initialValue: _ctrl != null ? _ctrl['value'].text : '',
-                controller: mapValue(_ctrl, 'value'),
-                decoration: new InputDecoration(labelText: lang.lblValue()),
-                keyboardType: TextInputType.number,
-                onSaved: (String value) => _item.value = parseDouble(value),
-                validator: _validateValue,
-              )),
+            new Row(
+              children: <Widget>[
+                // -- value --
+                new Expanded(child: new TextFormField(
+                  initialValue: _ctrl != null ? _ctrl['value'].text : '',
+                  controller: mapValue(_ctrl, 'value'),
+                  decoration: new InputDecoration(labelText: lang.lblValue()),
+                  keyboardType: TextInputType.number,
+                  onSaved: (String value) => _item.value = parseDouble(value),
+                  validator: _validateValue,
+                )),
 
-              new Container(width: 16.0),
+                new Container(width: 16.0),
 
-              // -- spent --
-              new Expanded(child: new TextFormField(
-                initialValue: _ctrl != null ? _ctrl['spent'].text : '',
-                controller: mapValue(_ctrl, 'spent'),
-                decoration: new InputDecoration(labelText: lang.lblSpent()),
-                keyboardType: TextInputType.number,
-                onSaved: (String value) => _item.spent = parseDouble(value),
-                validator: _validateValue,
-              )),
-            ],
-          ),
+                // -- spent --
+                new Expanded(child: new TextFormField(
+                  initialValue: _ctrl != null ? _ctrl['spent'].text : '',
+                  controller: mapValue(_ctrl, 'spent'),
+                  decoration: new InputDecoration(labelText: lang.lblSpent()),
+                  keyboardType: TextInputType.number,
+                  onSaved: (String value) => _item.spent = parseDouble(value),
+                  validator: _validateValue,
+                )),
+              ],
+            ),
 
-          // -- descr --
-          new TextFormField(
-            initialValue: _ctrl != null ? _ctrl['descr'].text : '',
-            controller: mapValue(_ctrl, 'descr'),
-            maxLines: 3,
-            decoration: new InputDecoration(labelText: lang.lblDescr()),
-            onSaved: (String value) => _item.descr = value,
-          ),
-        ],
+            // -- descr --
+            new TextFormField(
+              initialValue: _ctrl != null ? _ctrl['descr'].text : '',
+              controller: mapValue(_ctrl, 'descr'),
+              maxLines: 3,
+              decoration: new InputDecoration(labelText: lang.lblDescr()),
+              onSaved: (String value) => _item.descr = value,
+            ),
+          ]),
+        ),
       ),
     );
   }

@@ -133,7 +133,7 @@ class _ContentBillItem extends StatelessWidget {
             child: item.transType == null ? null
                : new Icon(item.transType == kIncome ? Icons.add : Icons.remove),
           ),
-          title: new Text(item.title, overflow: TextOverflow.ellipsis),
+          title: new Text(item.title ?? '', overflow: TextOverflow.ellipsis),
           subtitle: new Text(currFormatter.format(item.totalValue)),
           trailing: new Container(
             alignment: Alignment.topRight,

@@ -191,8 +191,8 @@ class _TransactionPageState extends State<TransactionPage> {
       key: _formKey,
       autovalidate: _autoValidate,
       onWillPop: _onWillPop,
-      child: new ListView(
-        children: <Widget>[
+      child: new SingleChildScrollView(
+        child: new Column(children: [
           // -- transType --
           new ContentHighlight(
             alignment: Alignment.center,
@@ -250,7 +250,7 @@ class _TransactionPageState extends State<TransactionPage> {
               ]),
             ]),
           ),
-        ],
+        ]),
       ),
     );
   }

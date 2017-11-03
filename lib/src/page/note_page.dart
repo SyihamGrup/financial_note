@@ -160,8 +160,8 @@ class _NotePageState extends State<NotePage> {
       key: _formKey,
       autovalidate: _autoValidate,
       onWillPop: _onWillPop,
-      child: new ListView(
-        children: <Widget>[
+      child: new SingleChildScrollView(
+        child: new Column(children: [
           // -- title --
           new Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -190,7 +190,7 @@ class _NotePageState extends State<NotePage> {
               validator: _validateNote,
             ),
           ),
-        ],
+        ]),
       ),
     );
   }

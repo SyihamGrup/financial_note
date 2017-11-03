@@ -80,11 +80,12 @@ class BillGroup {
   }
 
   static Future<List<Bill>> getItems(String bookId, String groupId) async {
-    if (groupId == null) return null;
-    final snap = await Bill.getNode(bookId).orderByChild('groupId').equalTo(groupId).once();
-    if (snap.value == null) return null;
-
     final items = <Bill>[];
+
+    if (groupId == null) return items;
+    final snap = await Bill.getNode(bookId).orderByChild('groupId').equalTo(groupId).once();
+    if (snap.value == null) return items;
+
     final Map<String, Map<String, dynamic>> data = snap.value;
     data.forEach((key, json) => items.add(new Bill.fromJson(key, json)));
     items.sort((a, b) => a.date?.compareTo(b.date) ?? 0);
@@ -103,6 +104,7 @@ class BillGroup {
 
     final node = Bill.getNode(bookId);
     for (final item in items) {
+      item.groupId = id;
       final snap = item.id != null ? node.child(item.id) : node.push();
       await snap.set(item.toJson());
       item.id = snap.key;

@@ -186,44 +186,46 @@ class _BillPageState extends State<BillPage> {
       key: _formKey,
       autovalidate: _autoValidate,
       onWillPop: _onWillPop,
-      child: new ListView(children: [
-        // -- title --
-        new Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: new TextFormField(
-            initialValue: _groupCtrl != null ? _groupCtrl['title'].text : '',
-            controller: mapValue(_groupCtrl, 'title'),
-            decoration: new InputDecoration(labelText: lang.lblTitle()),
-            onSaved: (String value) => _group.title = value,
-            validator: _validateTitle,
-            autofocus: widget.groupId == null,
+      child: new SingleChildScrollView(
+        child: new Column(children: [
+          // -- title --
+          new Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: new TextFormField(
+              initialValue: _groupCtrl != null ? _groupCtrl['title'].text : '',
+              controller: _groupCtrl != null ? _groupCtrl['title'] : null,
+              decoration: new InputDecoration(labelText: lang.lblTitle()),
+              onSaved: (String value) => _group.title = value,
+              validator: _validateTitle,
+              autofocus: widget.groupId == null,
+            ),
           ),
-        ),
 
-        new RadioGroup<int>(
-          items: <RadioItem<int>>[
-            new RadioItem(kIncome, lang.lblIncome()),
-            new RadioItem(kExpense, lang.lblExpense()),
-          ],
-          groupValue: _group?.transType,
-          onChanged: (value) => setState(() => _group.transType = value),
-        ),
-
-        // -- bill items --
-        _buildFormItems(context),
-
-        // -- note --
-        new Column(children: <Widget>[new Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: new TextFormField(
-            initialValue: _groupCtrl != null ? _groupCtrl['note'].text : '',
-            controller: _groupCtrl != null ? _groupCtrl['note'] : null,
-            maxLines: 3,
-            decoration: new InputDecoration(labelText: lang.lblNote()),
-            onSaved: (String value) => _group.note = value,
+          new RadioGroup<int>(
+            items: <RadioItem<int>>[
+              new RadioItem(kIncome, lang.lblIncome()),
+              new RadioItem(kExpense, lang.lblExpense()),
+            ],
+            groupValue: _group?.transType,
+            onChanged: (value) => setState(() => _group.transType = value),
           ),
-        )]),
-      ]),
+
+          // -- bill items --
+          _buildFormItems(context),
+
+          // -- note --
+          new Column(children: <Widget>[new Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: new TextFormField(
+              initialValue: _groupCtrl != null ? _groupCtrl['note'].text : '',
+              controller: _groupCtrl != null ? _groupCtrl['note'] : null,
+              maxLines: 3,
+              decoration: new InputDecoration(labelText: lang.lblNote()),
+              onSaved: (String value) => _group.note = value,
+            ),
+          )]),
+        ]),
+      ),
     );
   }
 
