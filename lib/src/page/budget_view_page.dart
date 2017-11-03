@@ -15,6 +15,7 @@ import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
 import 'package:financial_note/widget.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -33,6 +34,7 @@ class BudgetViewPage extends StatefulWidget {
 }
 
 class _BudgetViewPage extends State<BudgetViewPage> {
+  StreamSubscription<Event> _dataSubscr;
   Budget _item;
   List<Transaction> _transactions;
   List<Widget> _widgets;
@@ -40,7 +42,10 @@ class _BudgetViewPage extends State<BudgetViewPage> {
   @override
   void initState() {
     super.initState();
-    _initData();
+    _dataSubscr = Budget.getNode(widget.bookId).child(widget.id).onValue
+                        .listen((event) {
+      _initData();
+    });
   }
 
   Future<Null> _initData() async {
@@ -159,5 +164,11 @@ class _BudgetViewPage extends State<BudgetViewPage> {
         children: children,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (_dataSubscr != null) _dataSubscr.cancel();
   }
 }

@@ -15,6 +15,7 @@ import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
 import 'package:financial_note/widget.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -33,6 +34,9 @@ class BillViewPage extends StatefulWidget {
 }
 
 class _BillViewPage extends State<BillViewPage> {
+  StreamSubscription<Event> _groupSubscr;
+  StreamSubscription<Event> _itemSubscr;
+
   BillGroup _group;
   List<Bill> _items;
   List<Widget> _widgets;
@@ -40,7 +44,14 @@ class _BillViewPage extends State<BillViewPage> {
   @override
   void initState() {
     super.initState();
-    _initData();
+    _groupSubscr = BillGroup.getNode(widget.bookId).child(widget.id)
+                            .onValue.listen((event) {
+      _initData();
+    });
+    _itemSubscr = Bill.getNode(widget.bookId).orderByChild('groupId')
+                      .equalTo(widget.id).onValue.listen((event) {
+      _initData();
+    });
   }
 
   Future<Null> _initData() async {
@@ -159,5 +170,12 @@ class _BillViewPage extends State<BillViewPage> {
         children: children,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (_groupSubscr != null) _groupSubscr.cancel();
+    if (_itemSubscr != null) _itemSubscr.cancel();
   }
 }
