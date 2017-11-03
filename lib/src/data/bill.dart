@@ -80,6 +80,7 @@ class BillGroup {
   }
 
   static Future<List<Bill>> getItems(String bookId, String groupId) async {
+    if (groupId == null) return null;
     final snap = await Bill.getNode(bookId).orderByChild('groupId').equalTo(groupId).once();
     if (snap.value == null) return null;
 
