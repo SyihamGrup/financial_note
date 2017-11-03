@@ -109,6 +109,10 @@ class BillGroup {
   }
 
   static Future<Null> remove(String bookId, String id) async {
+    final item = await get(bookId, id);
+    if (item == null) return;
+    await item.removeItems(bookId);
+
     final node = getNode(bookId);
     await node.child(id).remove();
   }

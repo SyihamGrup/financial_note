@@ -149,7 +149,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           case 'delete':
             showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
               if (!ret) return;
-              items.forEach((val) => Bill.remove(currentBook.id, val.id));
+              items.forEach((val) => BillGroup.remove(currentBook.id, val.id));
               _billBarKey.currentState.exitActionMode();
             });
             break;
