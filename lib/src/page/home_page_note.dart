@@ -116,6 +116,9 @@ class _ContentNoteItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final selectedBg = new BoxDecoration(color: theme.highlightColor);
+    final dateFormatter = new DateFormat.MMMd();
+    final date = item.reminder != null ? dateFormatter.format(item.reminder) : '';
+    final dateStyle = theme.textTheme.body1.copyWith(fontSize: 12.0);
 
     return new SizeTransition(
       sizeFactor: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
@@ -125,6 +128,13 @@ class _ContentNoteItem extends StatelessWidget {
         child: new ListTile(
           title: new Text(item.title, overflow: TextOverflow.ellipsis),
           subtitle: new Text(item.note, overflow: TextOverflow.ellipsis),
+          trailing: item.reminder != null
+            ? new Container(
+              alignment: Alignment.topRight,
+              margin: const EdgeInsets.only(top: 20.0),
+              child: new Text(date, style: dateStyle),
+            )
+            : null,
           selected: selected,
           onTap: onTap,
           onLongPress: onLongPress,
