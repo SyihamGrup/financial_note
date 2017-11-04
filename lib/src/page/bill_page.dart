@@ -199,6 +199,20 @@ class _BillPageState extends State<BillPage> {
       onWillPop: _onWillPop,
       child: new SingleChildScrollView(
         child: new Column(children: [
+          // -- transType --
+          new ContentHighlight(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.only(right: 32.0),
+            child: new RadioGroup(
+              groupValue: _group?.transType,
+              items: <RadioItem<int>>[
+                new RadioItem<int>(kIncome, lang.lblIncome()),
+                new RadioItem<int>(kExpense, lang.lblExpense()),
+              ],
+              onChanged: (value) => setState(() => _group.transType = value),
+            )
+          ),
+
           // -- title --
           new Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -210,15 +224,6 @@ class _BillPageState extends State<BillPage> {
               validator: _validateTitle,
               autofocus: widget.groupId == null,
             ),
-          ),
-
-          new RadioGroup<int>(
-            items: <RadioItem<int>>[
-              new RadioItem(kIncome, lang.lblIncome()),
-              new RadioItem(kExpense, lang.lblExpense()),
-            ],
-            groupValue: _group?.transType,
-            onChanged: (value) => setState(() => _group.transType = value),
           ),
 
           // -- bill items --
