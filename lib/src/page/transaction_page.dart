@@ -316,7 +316,12 @@ class _TransactionPageState extends State<TransactionPage> {
         BillGroup.getItems(widget.bookId, _billGroupId).then((items) {
           setState(() {
             _bills = items;
-            _item.billId = _bills != null && _bills.length > 0 ? _bills[0].id : null;
+            if (_bills != null && _bills.length > 0) {
+              _item.billId = _bills[0].id;
+              _ctrl['value'].text = _bills[0].value.toString();
+            } else {
+              _item.billId = null;
+            }
           });
         });
       },
@@ -326,15 +331,14 @@ class _TransactionPageState extends State<TransactionPage> {
   Widget _buildBillDropdown(BuildContext context) {
     final lang = Lang.of(context);
     final items = <DropdownMenuItem<String>>[];
-    if (_bills != null) {
+    if (_bills != null && _bills.length > 0) {
       for (final item in _bills) {
         items.add(new DropdownMenuItem<String>(
           value: item.id,
           child: new Text(item.title, overflow: TextOverflow.ellipsis),
         ));
       }
-    }
-    if (items.length == 0) {
+    } else {
       items.add(new DropdownMenuItem<String>(value: '', child: new Text(lang.lblNone())));
     }
 
@@ -344,7 +348,19 @@ class _TransactionPageState extends State<TransactionPage> {
       items: items,
       onChanged: (value) {
         setState(() => _item.billId = value == '' ? null : value);
+        final bill = _getBill(_item.billId);
+        if (bill != null) {
+          _ctrl['value'].text = bill.value.toString();
+        }
       },
     );
+  }
+
+  Bill _getBill(String id) {
+    if (id == null) return null;
+    for (final bill in _bills) {
+      if (bill.id == id) return bill;
+    }
+    return null;
   }
 }
