@@ -80,7 +80,7 @@ class Budget {
     data.forEach((key, json) {
       ret.add(new Transaction.fromJson(key, json));
     });
-    ret.sort((a, b) => a.date?.compareTo(b.date) ?? 0);
+    ret.sort((a, b) => b.date?.compareTo(a.date) ?? 0);
 
     return ret;
   }
