@@ -70,8 +70,26 @@ class _BillViewPage extends State<BillViewPage> {
 
     _widgets.add(_buildItemText(
       _group.transType == kIncome ? lang.lblIncome() : lang.lblExpense(),
-      lang.lblType()
+      label: lang.lblType()
     ));
+
+    final totalWidgets = <Widget>[
+      _buildItemText(
+        formatCurrency(_group.totalValue, symbol: widget.config.currencySymbol),
+        label: lang.lblTotal(),
+      ),
+    ];
+    if (_group.paidValue != 0) {
+      totalWidgets.add(_buildItemText(
+        formatCurrency(_group.paidValue, symbol: widget.config.currencySymbol),
+        label: lang.lblPaid(),
+      ));
+    }
+    _widgets.add(new Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: totalWidgets,
+    ));
+
     if (_items.length > 1) {
       _widgets.add(new Padding(
         padding: const EdgeInsets.only(bottom: 10.0),
@@ -114,21 +132,25 @@ class _BillViewPage extends State<BillViewPage> {
       _widgets.add(new Divider());
     } else if (_items.length == 1) {
       final item = _items[0];
-      _widgets.add(_buildItemText(dateFormatter.format(item.date), lang.lblDate()));
-      _widgets.add(_buildItemText(item.title, lang.lblBillPeriod()));
+      _widgets.add(_buildItemText(
+        dateFormatter.format(item.date), label: lang.lblDate()
+      ));
+      if (_group.title != item.title) {
+        _widgets.add(_buildItemText(item.title, label: lang.lblBillPeriod()));
+      }
       _widgets.add(_buildItemText(
         formatCurrency(item.value, symbol: currencySymbol),
-        lang.lblValue())
+        label: lang.lblValue())
       );
       if (item.paidDate != null) {
         _widgets.add(_buildItemText(
-          dateFormatter.format(item.paidDate), lang.lblPaid())
+          dateFormatter.format(item.paidDate), label: lang.lblPaid())
         );
       }
       if (item.paidValue != 0) {
         _widgets.add(_buildItemText(
           formatCurrency(item.paidValue, symbol: currencySymbol),
-          lang.lblPaid())
+          label: lang.lblPaid())
         );
       }
     }
@@ -138,7 +160,7 @@ class _BillViewPage extends State<BillViewPage> {
         new Expanded(child: new Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildItemText(_group.note, lang.lblNone(), 0.0),
+            _buildItemText(_group.note, label: lang.lblNone(), margin: 0.0),
           ],
         )),
       ],
@@ -185,7 +207,11 @@ class _BillViewPage extends State<BillViewPage> {
     );
   }
 
-  Widget _buildItemText(String value, [label, double margin = 10.0]) {
+  Widget _buildItemText(String value, {
+    String label,
+    double margin = 10.0,
+    CrossAxisAlignment align: CrossAxisAlignment.start
+  }) {
     final textTheme = Theme.of(context).textTheme;
     final children = <Widget>[];
     if (label != null) children.add(new Text(label, style: textTheme.caption));
@@ -193,7 +219,7 @@ class _BillViewPage extends State<BillViewPage> {
     return new Padding(
       padding: new EdgeInsets.fromLTRB(16.0, 0.0, 16.0, margin),
       child: new Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: align,
         mainAxisSize: MainAxisSize.min,
         children: children,
       ),
