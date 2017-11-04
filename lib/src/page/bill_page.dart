@@ -107,6 +107,7 @@ class _BillPageState extends State<BillPage> {
 
     _items.forEach((item) {
       if (item.paidDate == null) item.paidValue = 0.0;
+      item.transType = _group.transType;
 
       if (_group.startDate == null || item.date.isBefore(_group.startDate)) {
         _group.startDate = item.date;

@@ -166,6 +166,7 @@ class Bill {
   String id;
   String groupId;
   String title;
+  int transType;
   DateTime date;
   double value;
   DateTime paidDate;
@@ -186,6 +187,7 @@ class Bill {
   Bill.fromJson(this.id, Map<String, dynamic> json)
     : groupId   = parseString(mapValue(json, 'groupId')),
       title     = parseString(mapValue(json, 'title')),
+      transType = parseInt(mapValue(json, 'transType')),
       date      = parseDate(mapValue(json, 'date')),
       value     = parseDouble(mapValue(json, 'value')),
       paidDate  = parseDate(mapValue(json, 'paidDate')),
@@ -196,6 +198,7 @@ class Bill {
     : id        = snapshot.key,
       groupId   = parseString(mapValue(snapshot.value, 'groupId')),
       title     = parseString(mapValue(snapshot.value, 'title')),
+      transType = parseInt(mapValue(snapshot.value, 'transType')),
       date      = parseDate(mapValue(snapshot.value, 'date')),
       value     = parseDouble(mapValue(snapshot.value, 'value')),
       paidDate  = parseDate(mapValue(snapshot.value, 'paidDate')),
@@ -229,6 +232,7 @@ class Bill {
       'id'        : id,
       'groupId'   : groupId,
       'title'     : title,
+      'transType' : transType,
       'date'      : date?.toIso8601String(),
       'value'     : value,
       'paidDate'  : paidDate?.toIso8601String(),
