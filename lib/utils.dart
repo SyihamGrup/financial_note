@@ -74,6 +74,7 @@ T mapValue<T>(Map<String, T> map, String key, [T defaultValue]) {
 }
 
 String formatCurrency(dynamic number, {int decimalDigits = 0, String symbol}) {
+  if (number == 0) return '-';
   final formatter = new NumberFormat.currency(
     symbol: symbol,
     decimalDigits: decimalDigits
