@@ -75,7 +75,12 @@ class BillGroup {
     final items = <BillGroup>[];
     final Map<String, Map<String, dynamic>> data = snap.value;
     data.forEach((key, json) => items.add(new BillGroup.fromJson(key, json)));
-    items.sort((a, b) => a.startDate?.compareTo(b.startDate) ?? 0);
+    items.sort((a, b) {
+      if (a.startDate == null || b.startDate == null) return 0;
+      if (a.startDate == null) return 1;
+      if (b.startDate == null) return -1;
+      return a.startDate.compareTo(b.startDate);
+    });
     return items;
   }
 
@@ -216,6 +221,37 @@ class Bill {
     final ref = id != null ? node.child(id) : node.push();
     await ref.set(toJson());
     id = ref.key;
+  }
+
+  Future<Null> updateGroup(String bookId) async {
+    final group = await BillGroup.get(bookId, groupId);
+    if (group == null) return;
+
+    group.startDate = null;
+    group.endDate = null;
+    group.itemsCount = 0;
+    group.totalValue = 0.0;
+    group.lastPaid = null;
+    group.paidValue = 0.0;
+
+    final items = await BillGroup.getItems(bookId, group.id);
+    if (items != null || items.length > 0) {
+      var i = 0;
+      group.itemsCount = items.length;
+      for (final item in items) {
+        // start date adalah last item, karena sort descending
+        if (i == group.itemsCount) group.startDate = item.date;
+        if (i == 0) group.endDate = item.date;
+        group.totalValue += item.value;
+        if (item.paidDate != null) {
+          group.paidValue += item.paidValue;
+          if (group.lastPaid == null) group.lastPaid = item.paidDate;
+        }
+        i++;
+      }
+    }
+
+    group.save(bookId);
   }
 
   static Future<Null> remove(String bookId, String id) async {

@@ -153,15 +153,19 @@ class Transaction {
     if (oldItem != null && oldItem.billId != null) {
       final bill = await Bill.get(bookId, oldItem.billId);
       if (bill != null) {
-        bill.paidValue -= oldItem.value;
+        bill.paidDate = oldItem.date;
+        bill.paidValue -= oldItem.value * bill.transType;
         await bill.save(bookId);
+        await bill.updateGroup(bookId);
       }
     }
     if (newItem != null && newItem.billId != null) {
       final bill = await Bill.get(bookId, newItem.billId);
       if (bill != null) {
-        bill.paidValue += newItem.value;
+        bill.paidDate = newItem.date;
+        bill.paidValue += newItem.value * bill.transType;
         await bill.save(bookId);
+        await bill.updateGroup(bookId);
       }
     }
   }
