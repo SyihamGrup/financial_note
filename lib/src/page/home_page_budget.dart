@@ -158,7 +158,17 @@ class _ContentBudgetItem extends StatelessWidget {
             ]
           ),
           title: new Text(item.title, overflow: TextOverflow.ellipsis),
-          subtitle: new Text(lang.lblTotal() + ': ' + formatCurrency(value, symbol: currencySymbol)),
+          subtitle: new Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              new Text(lang.lblTotal() + ':\n' + lang.lblSpent() + ':'),
+              new Padding(
+                padding: const EdgeInsets.only(left: 5.0),
+                child: new Text(formatCurrency(value, symbol: currencySymbol) + '\n' +
+                                formatCurrency(spent, symbol: currencySymbol)),
+              ),
+            ],
+          ),
           trailing: new Container(
             alignment: Alignment.topRight,
             margin: const EdgeInsets.only(top: 20.0),
