@@ -130,8 +130,9 @@ class _ContentBillItem extends StatelessWidget {
           leading: new CircleAvatar(
             backgroundColor: item.transType == null ? Colors.grey[600]
                : (item.transType == kIncome ? Colors.green[400] : Colors.orange[300]),
-            child: item.transType == null ? null
-               : new Icon(item.transType == kIncome ? Icons.add : Icons.remove),
+            child: item.totalValue == item.paidValue ? new Icon(Icons.done_all) :
+                   item.paidValue > 0                ? new Icon(Icons.done)
+                                                     : new Icon(Icons.attach_money)
           ),
           title: new Text(item.title ?? '', overflow: TextOverflow.ellipsis),
           subtitle: new Row(
