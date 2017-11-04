@@ -174,16 +174,18 @@ class Transaction {
     String bookId, Transaction oldItem, Transaction newItem
   ) async {
     if (oldItem != null) {
-      final year = oldItem.date.year;
-      final month = oldItem.date.month;
-      final balance = await Balance.getValue(bookId, year, month);
-      await Balance.setValue(bookId, year, month, balance - oldItem.value);
+      final id = Balance.genId(oldItem.date.year, oldItem.date.month);
+      final ref = Balance.getNode(bookId).child(id);
+      final snap = await ref.once();
+      final balance = parseDouble(snap.value);
+      await ref.set(balance - oldItem.value);
     }
     if (newItem != null) {
-      final month = newItem.date.year;
-      final year = newItem.date.month;
-      final balance = await Balance.getValue(bookId, year, month);
-      await Balance.setValue(bookId, year, month, balance + newItem.value);
+      final id = Balance.genId(newItem.date.year, newItem.date.month);
+      final ref = Balance.getNode(bookId).child(id);
+      final snap = await ref.once();
+      final balance = parseDouble(snap.value);
+      await ref.set(balance + newItem.value);
     }
   }
 
@@ -251,9 +253,9 @@ class Balance {
   }
 
   static Future<double> getValue(String bookId, int year, int month) async {
-    final period = new DateFormat(kPeriodFormat).format(new DateTime(year, month));
+    final id = genId(year, month);
     final node = getNode(bookId);
-    final snap = await node.orderByKey().endAt(period).limitToLast(1).once();
+    final snap = await node.orderByKey().endAt(id).limitToLast(1).once();
     if (snap.value == null || !(snap.value is Map)) return 0.0;
     var value = 0.0;
     snap.value.forEach((key, item) {
@@ -264,13 +266,7 @@ class Balance {
   }
 
   static Future<Null> setValue(String bookId, int year, int month, double value) async {
-    final period = new DateFormat(kPeriodFormat).format(new DateTime(year, month));
-    await getNode(bookId).child(period).set(value);
-  }
-
-  void setPeriod(int year, int month) {
-    final date = new DateTime(year, month);
-    id = new DateFormat(Balance.kPeriodFormat).format(date);
+    await getNode(bookId).child(genId(year, month)).set(value);
   }
 
   static Future<double> calculate(String bookId, int year, int month) async {
@@ -294,6 +290,10 @@ class Balance {
 
   static DatabaseReference getNode(String bookId) {
     return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
+  }
+
+  static genId(int year, int month) {
+    return new DateFormat(kPeriodFormat).format(new DateTime(year, month));
   }
 
 }
