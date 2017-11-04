@@ -134,15 +134,15 @@ class Transaction {
     if (oldItem != null && oldItem.budgetId != null) {
       final budget = await Budget.get(bookId, oldItem.budgetId);
       if (budget != null) {
-        budget.value += oldItem.value;
-        budget.save(bookId);
+        budget.spent -= -oldItem.value;
+        await budget.save(bookId);
       }
     }
     if (newItem != null && newItem.budgetId != null) {
       final budget = await Budget.get(bookId, newItem.budgetId);
       if (budget != null) {
-        budget.value -= newItem.value;
-        budget.save(bookId);
+        budget.spent += -newItem.value;
+        await budget.save(bookId);
       }
     }
   }
@@ -153,15 +153,15 @@ class Transaction {
     if (oldItem != null && oldItem.billId != null) {
       final bill = await Bill.get(bookId, oldItem.billId);
       if (bill != null) {
-        bill.value += oldItem.value;
-        bill.save(bookId);
+        bill.paidValue -= oldItem.value;
+        await bill.save(bookId);
       }
     }
     if (newItem != null && newItem.billId != null) {
       final bill = await Bill.get(bookId, newItem.billId);
       if (bill != null) {
-        bill.value -= newItem.value;
-        bill.save(bookId);
+        bill.paidValue += newItem.value;
+        await bill.save(bookId);
       }
     }
   }
@@ -173,13 +173,13 @@ class Transaction {
       final year = oldItem.date.year;
       final month = oldItem.date.month;
       final balance = await Balance.getValue(bookId, year, month);
-      Balance.setValue(bookId, year, month, balance - oldItem.value);
+      await Balance.setValue(bookId, year, month, balance - oldItem.value);
     }
     if (newItem != null) {
       final month = newItem.date.year;
       final year = newItem.date.month;
       final balance = await Balance.getValue(bookId, year, month);
-      Balance.setValue(bookId, year, month, balance + newItem.value);
+      await Balance.setValue(bookId, year, month, balance + newItem.value);
     }
   }
 
