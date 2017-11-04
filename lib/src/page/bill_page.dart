@@ -68,8 +68,11 @@ class _BillPageState extends State<BillPage> {
     _ctrls = <Map<String, TextEditingController>>[];
     _items.forEach((item) {
       _ctrls.add(<String, TextEditingController>{
-        'title': new TextEditingController(text: item.title ?? ''),
-        'value': new TextEditingController(text: item.value.toString()),
+        'title'    : new TextEditingController(text: item.title ?? ''),
+        'value'    : new TextEditingController(text: item.value.toString()),
+        'paidValue': new TextEditingController(
+          text: item.paidValue != null ? item.paidValue.toString() : '',
+        ),
       });
     });
   }
@@ -103,6 +106,8 @@ class _BillPageState extends State<BillPage> {
     _group.paidValue = 0.0;
 
     _items.forEach((item) {
+      if (item.paidDate == null) item.paidValue = 0.0;
+
       if (_group.startDate == null || item.date.isBefore(_group.startDate)) {
         _group.startDate = item.date;
       }
@@ -242,64 +247,93 @@ class _BillPageState extends State<BillPage> {
     for (final item in _items) {
       final index = _items.indexOf(item);
 
-      widgets.add(new Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
+      widgets.add(new Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: new Row(children: <Widget>[
+          // -- title --
+          new Expanded(child: new TextFormField(
+            initialValue: _ctrls[index]['title'].text,
+            controller: _ctrls[index]['title'],
+            decoration: new InputDecoration(labelText: lang.lblItem() + ' ${index + 1}'),
+            onSaved: (String value) => setState(() => item.title = value),
+            validator: _validateTitle,
+          )),
+
+          // -- delete item --
+          new Padding(
+            padding: const EdgeInsets.only(top: 24.0),
+            child: new Column(
+              children: <Widget>[
+                new IconButton(
+                  icon: kIconClose,
+                  iconSize: 20.0,
+                  onPressed: _items.length > 1 ? () {
+                    _ctrls.removeAt(index);
+                    setState(() => _items.remove(item));
+                  } : null
+                ),
+              ],
+            ),
+          ),
+        ]),
+      ));
+
+      widgets.add(new Padding(
+        padding: const EdgeInsets.fromLTRB(16.0, 0.0, 46.0, 0.0),
+        child: new Row(children: <Widget>[
           // -- date --
           new Container(
-            margin: const EdgeInsets.only(left: 16.0),
+            margin: const EdgeInsets.only(right: 16.0),
             width: 110.0,
             child: new DateFormField(
               label: lang.lblDate(),
               date: item.date ?? new DateTime.now(),
               dateFormat: new DateFormat.yMd(),
               onChange: (DateTime value) => item.date = value,
-            )
-          ),
-
-          new Expanded(
-            child: new Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: new Column(children: <Widget>[
-                // -- title --
-                new TextFormField(
-                  initialValue: _ctrls[index]['title'].text,
-                  controller: _ctrls[index]['title'],
-                  decoration: new InputDecoration(labelText: lang.lblItem() + ' ${index + 1}'),
-                  onSaved: (String value) => setState(() => item.title = value),
-                  validator: _validateTitle,
-                ),
-
-                new TextFormField(
-                  initialValue: _ctrls[index]['value'].text,
-                  controller: _ctrls[index]['value'],
-                  decoration: new InputDecoration(labelText: lang.lblValue()),
-                  keyboardType: TextInputType.number,
-                  onSaved: (String value) => setState(() => item.value = parseDouble(value)),
-                  validator: _validateValue,
-                ),
-              ]
             ),
-          )
-        ),
-
-        // -- action --
-        new Padding(
-          padding: const EdgeInsets.only(top: 24.0),
-          child: new Column(
-            children: <Widget>[
-              new IconButton(
-                icon: kIconClose,
-                iconSize: 20.0,
-                onPressed: _items.length > 1 ? () {
-                  _ctrls.removeAt(index);
-                  setState(() => _items.remove(item));
-                } : null
-              ),
-            ],
           ),
-        ),
-      ]));
+          // -- value --
+          new Expanded(child: new TextFormField(
+            initialValue: _ctrls[index]['value'].text,
+            controller: _ctrls[index]['value'],
+            decoration: new InputDecoration(labelText: lang.lblValue()),
+            keyboardType: TextInputType.number,
+            onSaved: (String value) => setState(() => item.value = parseDouble(value)),
+            validator: _validateValue,
+          )),
+        ]),
+      ));
+
+      widgets.add(new Padding(
+        padding: const EdgeInsets.fromLTRB(16.0, 0.0, 46.0, 0.0),
+        child: new Row(children: <Widget>[
+          // -- paid date --
+          new Container(
+            margin: const EdgeInsets.only(right: 16.0),
+            width: 110.0,
+            child: new DateFormField(
+              nullable: true,
+              label: lang.lblPaidDate(),
+              date: item.paidDate,
+              dateFormat: new DateFormat.yMd(),
+              onChange: (DateTime value) {
+                item.paidDate = value;
+                if (value == null)
+                  _ctrls[index]['paidValue'].text = 0.0.toString();
+              },
+            ),
+          ),
+          // -- paid value --
+          new Expanded(child: new TextFormField(
+            initialValue: _ctrls[index]['paidValue'].text,
+            controller: _ctrls[index]['paidValue'],
+            decoration: new InputDecoration(labelText: lang.lblPaidValue()),
+            keyboardType: TextInputType.number,
+            onSaved: (String value) => setState(() => item.paidValue = parseDouble(value)),
+            validator: _validateValue,
+          )),
+        ]),
+      ));
     }
 
     // -- add item --
@@ -316,8 +350,9 @@ class _BillPageState extends State<BillPage> {
         ),
         onPressed: () {
           _ctrls.add({
-            'title': new TextEditingController(),
-            'value': new TextEditingController()
+            'title'     : new TextEditingController(),
+            'value'     : new TextEditingController(),
+            'paidValue' : new TextEditingController(),
           });
           setState(() => _items.add(new Bill(date: new DateTime.now())));
         },

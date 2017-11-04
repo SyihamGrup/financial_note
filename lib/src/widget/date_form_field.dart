@@ -15,6 +15,7 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 class DateFormField extends StatelessWidget {
+  final bool nullable;
   final String label;
   final DateTime date;
   final DateTime firstDate;
@@ -24,6 +25,7 @@ class DateFormField extends StatelessWidget {
 
   DateFormField({
     Key key,
+    this.nullable : false,
     this.label,
     this.date,
     this.firstDate,
@@ -31,7 +33,7 @@ class DateFormField extends StatelessWidget {
     this.dateFormat,
     @required this.onChange
   }) : assert(onChange != null),
-       assert(date != null),
+       assert(nullable || date != null),
        super(key: key);
 
   @override
@@ -47,9 +49,15 @@ class DateFormField extends StatelessWidget {
         ),
         new Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
-          child: new DateItem(date: date, firstDate: firstDate, lastDate: lastDate,
-                              dateFormat: dateFormat, onChange: onChange,
-                              padding: 6.0),
+          child: new DateItem(
+            nullable: nullable,
+            date: date,
+            firstDate: firstDate,
+            lastDate: lastDate,
+            dateFormat: dateFormat,
+            onChange: onChange,
+            padding: 6.0,
+          ),
         ),
       ],
     );
@@ -57,6 +65,7 @@ class DateFormField extends StatelessWidget {
 }
 
 class DateItem extends StatelessWidget {
+  final bool nullable;
   final DateTime date;
   final DateTime firstDate;
   final DateTime lastDate;
@@ -66,15 +75,15 @@ class DateItem extends StatelessWidget {
 
   DateItem({
     Key key,
-    DateTime date,
+    this.nullable : false,
+    this.date,
     this.firstDate,
     this.lastDate,
     DateFormat dateFormat,
     @required this.onChange,
     this.padding: 0.0,
   }) : assert(onChange != null),
-       assert(date != null),
-       this.date = new DateTime(date.year, date.month, date.day),
+       assert(nullable || date != null),
        dateFormat = dateFormat ?? new DateFormat.yMMMEd(),
        super(key: key);
 
@@ -83,7 +92,7 @@ class DateItem extends StatelessWidget {
     final theme = Theme.of(context);
     final dropdownColor = theme.brightness == Brightness.light
                         ? Colors.grey.shade700 : Colors.white70;
-
+    final date = this.date ?? new DateTime.now();
     return new DefaultTextStyle(
       style: theme.textTheme.subhead,
       child: new Container(
@@ -97,14 +106,17 @@ class DateItem extends StatelessWidget {
               lastDate: lastDate ?? date.add(const Duration(days: 365 * 5))
             )
             .then<Null>((DateTime value) {
-              if (value == null) return;
+              if (value == null) {
+                if (nullable) onChange(null);
+                return;
+              }
               onChange(new DateTime(value.year, value.month, value.day));
             });
           },
           child: new Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              new Text(dateFormat.format(date)),
+              new Text(this.date != null ? dateFormat.format(date) : '-- -- --'),
               new Icon(Icons.arrow_drop_down, color: dropdownColor, size: 22.0),
             ],
           ),
