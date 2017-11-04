@@ -239,11 +239,24 @@ class _ContentTransactionItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
+    final lang = Lang.of(context);
     final selectedBg = new BoxDecoration(color: theme.highlightColor);
     final valueColor1 = theme.brightness == Brightness.dark
                       ? Colors.green[100] : Colors.green[700];
     final valueColor2 = theme.brightness == Brightness.dark
                       ? Colors.red[100] : Colors.red[700];
+
+    final subtitles = <Widget>[
+      new Text((item.value >= 0 ? '+' : '') +
+               formatCurrency(item.value, symbol: config.currencySymbol),
+        style: textTheme.body2.copyWith(
+          color: item.value >= 0 ? valueColor1 : valueColor2,
+          fontWeight: FontWeight.normal,
+        ),
+      )
+    ];
+    if (item.budgetId != null) subtitles.add(_buildBadge(lang.lblBudget()));
+    if (item.billId != null) subtitles.add(_buildBadge(lang.lblBill()));
 
     return new Container(
       decoration: selected ? selectedBg : null,
@@ -264,13 +277,7 @@ class _ContentTransactionItem extends StatelessWidget {
           item.title ?? '',
           style: theme.textTheme.subhead,
         ),
-        subtitle: new Text(
-          (item.value >= 0 ? '+' : '') + formatCurrency(item.value, symbol: config.currencySymbol),
-          style: textTheme.body2.copyWith(
-            color: item.value >= 0 ? valueColor1 : valueColor2,
-            fontWeight: FontWeight.normal,
-          ),
-        ),
+        subtitle: new Row(children: subtitles),
         trailing: new Container(
           alignment: Alignment.topRight,
           margin: const EdgeInsets.only(top: 14.0),
@@ -281,6 +288,23 @@ class _ContentTransactionItem extends StatelessWidget {
         ),
         onTap: onTap,
         onLongPress: onLongPress,
+      ),
+    );
+  }
+
+  Widget _buildBadge(String label) {
+    final theme = Theme.of(context);
+    return new Padding(
+      padding: const EdgeInsets.only(left: 4.0),
+      child: new Container(
+        padding: const EdgeInsets.fromLTRB(8.0, 2.0, 8.0, 2.0),
+        decoration: new BoxDecoration(
+          color: theme.highlightColor,
+          borderRadius: new BorderRadius.all(new Radius.circular(10.0)),
+        ),
+        child: new Text(label,
+          style: theme.textTheme.caption.copyWith(fontSize: 11.0),
+        ),
       ),
     );
   }
