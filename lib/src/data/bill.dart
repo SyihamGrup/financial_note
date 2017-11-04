@@ -88,7 +88,7 @@ class BillGroup {
 
     final Map<String, Map<String, dynamic>> data = snap.value;
     data.forEach((key, json) => items.add(new Bill.fromJson(key, json)));
-    items.sort((a, b) => a.date?.compareTo(b.date) ?? 0);
+    items.sort((a, b) => b.date?.compareTo(a.date) ?? 0);
     return items;
   }
 
