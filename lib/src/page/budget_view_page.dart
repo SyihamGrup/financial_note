@@ -60,32 +60,28 @@ class _BudgetViewPage extends State<BudgetViewPage> {
 
     final dateFormatter = new DateFormat.yMMMMd();
 
-    _widgets.add(new Row(
-      children: <Widget>[
-        new Expanded(child: new Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _buildItemText(dateFormatter.format(_item.date), label: lang.lblDate()),
-            _buildItemText(_item.descr, label: lang.lblDescr()),
-          ],
-        )),
-        new Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            _buildItemText(
-              formatCurrency(_item.value, symbol: widget.config.currencySymbol),
-              label: lang.lblValue(),
-              align: CrossAxisAlignment.end,
-            ),
-            _buildItemText(
-              formatCurrency(_item.spent, symbol: widget.config.currencySymbol),
-              label: lang.lblSpent(),
-              align: CrossAxisAlignment.end,
-            ),
-          ],
-        ),
-      ],
+    _widgets.add(_buildItemText(
+      dateFormatter.format(_item.date), label: lang.lblDate()
     ));
+
+    final totalWidgets = <Widget>[
+      _buildItemText(
+        formatCurrency(_item.value, symbol: widget.config.currencySymbol),
+        label: lang.lblValue(),
+      ),
+    ];
+    if (_item.spent != 0) {
+      totalWidgets.add(_buildItemText(
+        formatCurrency(_item.spent, symbol: widget.config.currencySymbol),
+        label: lang.lblSpent(),
+      ));
+    }
+    _widgets.add(new Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: totalWidgets,
+    ));
+
+    _widgets.add(_buildItemText(_item.descr, label: lang.lblDescr()));
 
     if (_transactions.length > 0) {
       _widgets.add(new Divider());
