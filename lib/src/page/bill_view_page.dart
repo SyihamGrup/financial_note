@@ -58,13 +58,15 @@ class _BillViewPage extends State<BillViewPage> {
   Future<Null> _initData() async {
     final theme = Theme.of(context);
     final lang = Lang.of(context);
+    final currencySymbol = widget.config.currencySymbol;
 
     _group = await BillGroup.get(widget.bookId, widget.id);
     if (_group == null) return;
     _items = await BillGroup.getItems(widget.bookId, _group.id);
     _widgets = <Widget>[];
 
-    final dateFormatter = new DateFormat.yMMMMd();
+    final dateFormatter = new DateFormat.yMMMEd();
+    final shortDateFormatter = new DateFormat.yMd();
 
     _widgets.add(_buildItemText(
       _group.transType == kIncome ? lang.lblIncome() : lang.lblExpense(),
@@ -77,22 +79,33 @@ class _BillViewPage extends State<BillViewPage> {
       ));
 
       for (final item in _items) {
+        var subtitle = shortDateFormatter.format(item.date);
+        if (item.paidDate != null) {
+          subtitle += '   '
+                   + lang.lblPaid() + ': ' + shortDateFormatter.format(item.paidDate);
+        }
+        if (item.paidValue != 0 && item.value != item.paidValue) {
+          subtitle += ' (' + formatCurrency(item.paidValue, symbol: currencySymbol) + ')';
+        }
         _widgets.add(new Padding(
           padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 10.0),
           child: new Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              new Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: new Icon(item.paidValue > 0 ? Icons.check : Icons.remove),
+              ),
               new Expanded(
                 child: new Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     new Text(item.title, style: theme.textTheme.subhead),
-                    new Text(dateFormatter.format(item.date),
-                             style: theme.textTheme.caption),
+                    new Text(subtitle, style: theme.textTheme.caption),
                   ],
                 ),
               ),
-              new Text(formatCurrency(item.value, symbol: widget.config.currencySymbol),
+              new Text(formatCurrency(item.value, symbol: currencySymbol),
                        style: theme.textTheme.subhead),
             ],
           ),
@@ -100,12 +113,24 @@ class _BillViewPage extends State<BillViewPage> {
       }
       _widgets.add(new Divider());
     } else if (_items.length == 1) {
-      _widgets.add(_buildItemText(dateFormatter.format(_items[0].date), lang.lblDate()));
-      _widgets.add(_buildItemText(_items[0].title, lang.lblBillPeriod()));
+      final item = _items[0];
+      _widgets.add(_buildItemText(dateFormatter.format(item.date), lang.lblDate()));
+      _widgets.add(_buildItemText(item.title, lang.lblBillPeriod()));
       _widgets.add(_buildItemText(
-        formatCurrency(_items[0].value, symbol: widget.config.currencySymbol),
+        formatCurrency(item.value, symbol: currencySymbol),
         lang.lblValue())
       );
+      if (item.paidDate != null) {
+        _widgets.add(_buildItemText(
+          dateFormatter.format(item.paidDate), lang.lblPaid())
+        );
+      }
+      if (item.paidValue != 0) {
+        _widgets.add(_buildItemText(
+          formatCurrency(item.paidValue, symbol: currencySymbol),
+          lang.lblPaid())
+        );
+      }
     }
 
     _widgets.add(new Row(
