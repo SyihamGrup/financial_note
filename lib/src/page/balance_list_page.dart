@@ -68,7 +68,7 @@ class _BalanceListPageState extends State<BalanceListPage> {
       body: new FirebaseAnimatedList(
         query: Balance.getNode(widget.bookId),
         sort: (a, b) {
-          return a.key.compareTo(b.key);
+          return b.key.compareTo(a.key);
         },
         defaultChild: const EmptyBody(),
         itemBuilder: (context, snapshot, animation, index) {
