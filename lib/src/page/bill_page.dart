@@ -283,7 +283,7 @@ class _BillPageState extends State<BillPage> {
         child: new Row(children: <Widget>[
           // -- date --
           new Container(
-            margin: const EdgeInsets.only(right: 16.0),
+            margin: const EdgeInsets.only(right: 10.0),
             width: 110.0,
             child: new DateFormField(
               label: lang.lblDate(),
@@ -309,7 +309,7 @@ class _BillPageState extends State<BillPage> {
         child: new Row(children: <Widget>[
           // -- paid date --
           new Container(
-            margin: const EdgeInsets.only(right: 16.0),
+            margin: const EdgeInsets.only(right: 10.0),
             width: 110.0,
             child: new DateFormField(
               nullable: true,
