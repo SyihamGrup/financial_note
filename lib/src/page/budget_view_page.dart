@@ -65,20 +65,22 @@ class _BudgetViewPage extends State<BudgetViewPage> {
         new Expanded(child: new Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildItemText(dateFormatter.format(_item.date), lang.lblDate()),
-            _buildItemText(_item.descr, lang.lblDescr()),
+            _buildItemText(dateFormatter.format(_item.date), label: lang.lblDate()),
+            _buildItemText(_item.descr, label: lang.lblDescr()),
           ],
         )),
         new Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             _buildItemText(
               formatCurrency(_item.value, symbol: widget.config.currencySymbol),
-              lang.lblValue()
+              label: lang.lblValue(),
+              align: CrossAxisAlignment.end,
             ),
             _buildItemText(
               formatCurrency(_item.spent, symbol: widget.config.currencySymbol),
-              lang.lblSpent()
+              label: lang.lblSpent(),
+              align: CrossAxisAlignment.end,
             ),
           ],
         ),
@@ -158,7 +160,11 @@ class _BudgetViewPage extends State<BudgetViewPage> {
     );
   }
 
-  Widget _buildItemText(String value, [label, double margin = 10.0]) {
+  Widget _buildItemText(String value, {
+    String label,
+    double margin = 10.0,
+    CrossAxisAlignment align: CrossAxisAlignment.start
+  }) {
     final textTheme = Theme.of(context).textTheme;
     final children = <Widget>[];
     if (label != null) children.add(new Text(label, style: textTheme.caption));
@@ -166,7 +172,7 @@ class _BudgetViewPage extends State<BudgetViewPage> {
     return new Padding(
       padding: new EdgeInsets.fromLTRB(16.0, 0.0, 16.0, margin),
       child: new Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: align,
         mainAxisSize: MainAxisSize.min,
         children: children,
       ),
