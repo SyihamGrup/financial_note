@@ -117,6 +117,7 @@ class Transaction {
   }
 
   static Future<Null> remove(String bookId, String id) async {
+    if (id == null) return;
     final existing = await Transaction.get(bookId, id);
 
     final node = getNode(bookId);

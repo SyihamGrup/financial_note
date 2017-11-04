@@ -10,6 +10,9 @@
 
 library utils;
 
+import 'package:intl/intl.dart';
+
+
 /// Parse double from dynamic variable.
 double parseDouble(dynamic value) {
   try {
@@ -68,4 +71,16 @@ bool parseBool(dynamic value) {
 T mapValue<T>(Map<String, T> map, String key, [T defaultValue]) {
   if (map == null || !map.containsKey(key)) return defaultValue;
   return map[key];
+}
+
+String formatCurrency(dynamic number, {int decimalDigits = 0, String symbol}) {
+  final formatter = new NumberFormat.currency(
+    symbol: symbol,
+    decimalDigits: decimalDigits
+  );
+  final absNum = number < 0 ? -number : number;
+  //if (absNum >= 1000000000) return formatter.format(number / 1000000000) + 'B';
+  //if (absNum >= 1000000) return formatter.format(number / 1000000) + 'M';
+  if (absNum >= 1000) return formatter.format(number / 1000) + 'k';
+  return formatter.format(number);
 }

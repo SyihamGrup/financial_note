@@ -14,6 +14,7 @@ import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
+import 'package:financial_note/utils.dart';
 import 'package:financial_note/widget.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
@@ -58,7 +59,6 @@ class _BudgetViewPage extends State<BudgetViewPage> {
     _widgets = <Widget>[];
 
     final dateFormatter = new DateFormat.yMMMMd();
-    final currFormatter = new NumberFormat.currency(symbol: widget.config.currencySymbol);
 
     _widgets.add(new Row(
       children: <Widget>[
@@ -72,8 +72,14 @@ class _BudgetViewPage extends State<BudgetViewPage> {
         new Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildItemText(currFormatter.format(_item.value), lang.lblValue()),
-            _buildItemText(currFormatter.format(_item.spent), lang.lblSpent()),
+            _buildItemText(
+              formatCurrency(_item.value, symbol: widget.config.currencySymbol),
+              lang.lblValue()
+            ),
+            _buildItemText(
+              formatCurrency(_item.spent, symbol: widget.config.currencySymbol),
+              lang.lblSpent()
+            ),
           ],
         ),
       ],
@@ -103,7 +109,8 @@ class _BudgetViewPage extends State<BudgetViewPage> {
                 ],
               ),
             ),
-            new Text((trans.value > 0 ? '+' : '') + currFormatter.format(trans.value),
+            new Text((trans.value > 0 ? '+' : '') +
+                     formatCurrency(trans.value, symbol: widget.config.currencySymbol),
                      style: theme.textTheme.subhead),
           ],
         ),

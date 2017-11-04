@@ -124,7 +124,6 @@ class _ContentBudgetItem extends StatelessWidget {
 
     final value = item.value ?? 0;
     final spent = item.spent ?? 0;
-    final currFormatter = new NumberFormat.currency(symbol: currencySymbol, decimalDigits: 0);
 
     final percentColor = theme.brightness == Brightness.dark
                        ? theme.accentColor : theme.primaryColor;
@@ -159,7 +158,7 @@ class _ContentBudgetItem extends StatelessWidget {
             ]
           ),
           title: new Text(item.title, overflow: TextOverflow.ellipsis),
-          subtitle: new Text(lang.lblTotal() + ': ' + currFormatter.format(value)),
+          subtitle: new Text(lang.lblTotal() + ': ' + formatCurrency(value, symbol: currencySymbol)),
           trailing: new Container(
             alignment: Alignment.topRight,
             margin: const EdgeInsets.only(top: 20.0),

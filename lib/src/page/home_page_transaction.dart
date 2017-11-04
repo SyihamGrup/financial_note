@@ -106,13 +106,8 @@ class _HomePageTransactionState extends State<HomePageTransaction>
     if (_items == null || _items.length == 0)
       return new EmptyBody(isLoading: _isLoading);
 
-    final currFormatter = new NumberFormat.currency(
-      symbol: widget.config?.currencySymbol,
-      decimalDigits: 0,
-    );
-
     return new Column(children: <Widget>[
-      _buildBalance(currFormatter),
+      _buildBalance(),
       new Expanded(child: new ListView.builder(
         padding: const EdgeInsets.only(bottom: 72.0),
         itemCount: _items.length,
@@ -121,12 +116,12 @@ class _HomePageTransactionState extends State<HomePageTransaction>
           if (_items.length <= 1) {
             return new EmptyBody();
           } else if (index == _items.length - 1) {
-            return _buildOpeningBalance(item, currFormatter);
+            return _buildOpeningBalance(item);
           } else {
             return new _ContentTransactionItem(
               context: context,
+              config: widget.config,
               item: item,
-              currFormatter: currFormatter,
               selected: _getSelectedIndex(_selectedItems, item) != -1,
               onTap: () => _onTap(item),
               onLongPress: () => _onLongPress(item),
@@ -137,7 +132,7 @@ class _HomePageTransactionState extends State<HomePageTransaction>
     ]);
   }
 
-  Widget _buildBalance(NumberFormat currFormatter) {
+  Widget _buildBalance() {
     final theme = Theme.of(context);
     final lang = Lang.of(context);
     final balance = _items.length > 0 ? _items[0].balance : 0.0;
@@ -148,13 +143,13 @@ class _HomePageTransactionState extends State<HomePageTransaction>
         style: theme.textTheme.caption,
       )),
       subtitle: new Center(child: new Text(
-        currFormatter.format(balance),
+        formatCurrency(balance, symbol: widget.config.currencySymbol),
         style: theme.textTheme.title,
       )),
     ));
   }
 
-  Widget _buildOpeningBalance(Transaction item, NumberFormat currFormatter) {
+  Widget _buildOpeningBalance(Transaction item) {
     final textTheme = Theme.of(context).textTheme;
     final lang = Lang.of(context);
 
@@ -164,7 +159,7 @@ class _HomePageTransactionState extends State<HomePageTransaction>
         style: textTheme.caption.copyWith(fontSize: 12.0),
       )),
       subtitle: new Center(child: new Text(
-        currFormatter.format(item.balance),
+        formatCurrency(item.balance, symbol: widget.config.currencySymbol),
         style: textTheme.title.copyWith(fontSize: 20.0),
       )),
     );
@@ -223,8 +218,8 @@ class _HomePageTransactionState extends State<HomePageTransaction>
 
 class _ContentTransactionItem extends StatelessWidget {
   final BuildContext context;
+  final Config config;
   final Transaction item;
-  final NumberFormat currFormatter;
 
   final GestureTapCallback onTap;
   final GestureLongPressCallback onLongPress;
@@ -232,8 +227,8 @@ class _ContentTransactionItem extends StatelessWidget {
 
   const _ContentTransactionItem({
     @required this.context,
+    @required this.config,
     @required this.item,
-    this.currFormatter,
     this.selected,
     this.onTap,
     this.onLongPress,
@@ -270,7 +265,7 @@ class _ContentTransactionItem extends StatelessWidget {
           style: theme.textTheme.subhead,
         ),
         subtitle: new Text(
-          (item.value >= 0 ? '+' : '') + currFormatter.format(item.value),
+          (item.value >= 0 ? '+' : '') + formatCurrency(item.value, symbol: config.currencySymbol),
           style: textTheme.body2.copyWith(
             color: item.value >= 0 ? valueColor1 : valueColor2,
             fontWeight: FontWeight.normal,
@@ -280,7 +275,7 @@ class _ContentTransactionItem extends StatelessWidget {
           alignment: Alignment.topRight,
           margin: const EdgeInsets.only(top: 14.0),
           child: new Text(
-            currFormatter.format(item.balance),
+            formatCurrency(item.balance, symbol: config.currencySymbol),
             style: textTheme.subhead,
           ),
         ),

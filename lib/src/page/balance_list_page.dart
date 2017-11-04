@@ -12,6 +12,7 @@ import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
+import 'package:financial_note/utils.dart';
 import 'package:financial_note/widget.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/foundation.dart';
@@ -184,7 +185,6 @@ class _ContentBalanceItem extends StatelessWidget {
     final theme = Theme.of(context);
     final selectedBg = new BoxDecoration(color: theme.highlightColor);
     final date = new DateTime(item.year, item.month);
-    final currFormatter = new NumberFormat.currency(symbol: config.currencySymbol);
 
     return new SizeTransition(
       sizeFactor: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
@@ -193,7 +193,7 @@ class _ContentBalanceItem extends StatelessWidget {
         decoration: selected ? selectedBg : null,
         child: new ListTile(
           title: new Text(new DateFormat.yMMMM().format(date)),
-          subtitle: new Text(currFormatter.format(item.value)),
+          subtitle: new Text(formatCurrency(item.value, symbol: config.currencySymbol)),
           selected: selected,
           onTap: onTap,
           onLongPress: onLongPress,

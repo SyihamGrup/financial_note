@@ -117,7 +117,6 @@ class _ContentBillItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currFormatter = new NumberFormat.currency(symbol: currencySymbol, decimalDigits: 0);
     final dateFormatter = new DateFormat.MMMd();
     final selectedBg = new BoxDecoration(color: Theme.of(context).highlightColor);
 
@@ -134,7 +133,7 @@ class _ContentBillItem extends StatelessWidget {
                : new Icon(item.transType == kIncome ? Icons.add : Icons.remove),
           ),
           title: new Text(item.title ?? '', overflow: TextOverflow.ellipsis),
-          subtitle: new Text(currFormatter.format(item.totalValue)),
+          subtitle: new Text(formatCurrency(item.totalValue, symbol: currencySymbol)),
           trailing: new Container(
             alignment: Alignment.topRight,
             margin: const EdgeInsets.only(top: 20.0),

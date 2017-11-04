@@ -14,6 +14,7 @@ import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
+import 'package:financial_note/utils.dart';
 import 'package:financial_note/widget.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
@@ -64,7 +65,6 @@ class _BillViewPage extends State<BillViewPage> {
     _widgets = <Widget>[];
 
     final dateFormatter = new DateFormat.yMMMMd();
-    final currFormatter = new NumberFormat.currency(symbol: widget.config.currencySymbol);
 
     _widgets.add(_buildItemText(
       _group.transType == kIncome ? lang.lblIncome() : lang.lblExpense(),
@@ -92,7 +92,7 @@ class _BillViewPage extends State<BillViewPage> {
                   ],
                 ),
               ),
-              new Text(currFormatter.format(item.value),
+              new Text(formatCurrency(item.value, symbol: widget.config.currencySymbol),
                        style: theme.textTheme.subhead),
             ],
           ),
@@ -102,7 +102,10 @@ class _BillViewPage extends State<BillViewPage> {
     } else if (_items.length == 1) {
       _widgets.add(_buildItemText(dateFormatter.format(_items[0].date), lang.lblDate()));
       _widgets.add(_buildItemText(_items[0].title, lang.lblBillPeriod()));
-      _widgets.add(_buildItemText(currFormatter.format(_items[0].value), lang.lblValue()));
+      _widgets.add(_buildItemText(
+        formatCurrency(_items[0].value, symbol: widget.config.currencySymbol),
+        lang.lblValue())
+      );
     }
 
     _widgets.add(new Row(
