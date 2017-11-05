@@ -161,11 +161,16 @@ class _ContentBudgetItem extends StatelessWidget {
           subtitle: new Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              new Text(lang.lblTotal() + ':\n' + lang.lblSpent() + ':'),
+              new Text(
+                lang.lblTotal() + ':' +
+                (spent > 0 ? '\n' + lang.lblSpent() + ':' : '')
+              ),
               new Padding(
                 padding: const EdgeInsets.only(left: 5.0),
-                child: new Text(formatCurrency(value, symbol: currencySymbol) + '\n' +
-                                formatCurrency(spent, symbol: currencySymbol)),
+                child: new Text(
+                  formatCurrency(value, symbol: currencySymbol) +
+                  (spent > 0 ? '\n' + formatCurrency(spent, symbol: currencySymbol) : ''),
+                ),
               ),
             ],
           ),

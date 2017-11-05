@@ -138,11 +138,19 @@ class _ContentBillItem extends StatelessWidget {
           subtitle: new Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              new Text(lang.lblTotal() + ':\n' + lang.lblPaid() + ':'),
+              new Text(
+                lang.lblTotal() + ':' +
+                (item.paidValue != 0 ? '\n' + lang.lblPaid() + ':' : '')
+              ),
               new Padding(
                 padding: const EdgeInsets.only(left: 5.0),
-                child: new Text(formatCurrency(item.totalValue, symbol: currencySymbol) + '\n' +
-                                formatCurrency(item.paidValue, symbol: currencySymbol)),
+                child: new Text(
+                  formatCurrency(item.totalValue, symbol: currencySymbol) +
+                  (item.paidValue != 0
+                    ? '\n' + formatCurrency(item.paidValue, symbol: currencySymbol)
+                    : ''
+                  ),
+                ),
               ),
             ],
           ),
