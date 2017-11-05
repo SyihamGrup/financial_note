@@ -33,7 +33,7 @@ class Config {
   Config.fromPreferences(SharedPreferences prefs)
     : _brightness = prefs.getString(kPrefTheme) == kPrefThemeDark
                   ? Brightness.dark : Brightness.light,
-    _currencySymbol = prefs.getString(kPrefCurrencySymbol) ?? 'Rp';
+    _currencySymbol = prefs.getString(kPrefCurrencySymbol) ?? '';
 
   static Future<SharedPreferences> getSharedPreferences() async {
     return await SharedPreferences.getInstance();
