@@ -9,6 +9,7 @@
  */
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,9 +61,9 @@ class Config {
     final theme = Theme.of(context);
     if (_brightness == Brightness.light) {
       return new ThemeConfig(
-        appBarBackground: Colors.white,
-        appBarTextTheme: theme.textTheme,
-        appBarIconTheme: theme.iconTheme,
+        appBarBackground: Platform.isIOS ? null : Colors.white,
+        appBarTextTheme: Platform.isIOS ? theme.primaryTextTheme : theme.textTheme,
+        appBarIconTheme: Platform.isIOS ? theme.primaryIconTheme : theme.iconTheme,
         appBarElevation: 1.0,
         formBackground: Colors.white,
       );
