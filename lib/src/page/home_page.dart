@@ -21,6 +21,7 @@ import 'package:financial_note/utils.dart';
 import 'package:financial_note/widget.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -45,6 +46,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+  final _messaging = new FirebaseMessaging();
+
   final _transBarKey = new GlobalKey<_TransactionAppBarState>();
   final _transKey = new GlobalKey<_HomePageTransactionState>();
   final _budgetBarKey = new GlobalKey<ListAppBarState<Budget>>();
@@ -77,6 +80,42 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     Transaction.getNode(currentBook.id).keepSynced(true);
     Balance.getNode(currentBook.id).keepSynced(true);
     Note.getNode(currentBook.id).keepSynced(true);
+
+    _initMessaging();
+  }
+
+  void _initMessaging() {
+    _messaging.subscribeToTopic(currentUser.uid);
+
+    _messaging.requestNotificationPermissions(
+      const IosNotificationSettings(sound: true, badge: true, alert: true)
+    );
+
+    _messaging.configure(
+      onMessage: (message) {
+        _handleMessaging(context, message);
+      },
+      onLaunch: (message) {
+        _handleMessaging(context, message, inBackground: true);
+      },
+      onResume: (message) {
+        _handleMessaging(context, message, inBackground: true);
+      },
+    );
+  }
+
+  void _handleMessaging(BuildContext context, Map<String, dynamic> message,
+                        {bool inBackground: false}) {
+    if (!inBackground) return;
+    final type = mapValue<String>(message, 'type');
+
+    if (type == kMessagingNote) {
+      // Open note page
+      final id = mapValue<String>(message, 'id');
+      if (id == null) return;
+      final params = <String, dynamic>{'id': id};
+      Navigator.pushNamed(context, routeWithParams(NotePage.kRouteName, params));
+    }
   }
 
   @override

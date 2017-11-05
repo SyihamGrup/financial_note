@@ -29,6 +29,8 @@ const kFirebaseHost = 'us-central1-financialnote-d6d95.cloudfunctions.net';
 const kOpeningBalancePath = '/getOpeningBalance';
 const kCalcOpeningBalancePath = '/calcOpeningBalance';
 
+const kMessagingNote = 'note';
+
 const kIncome = 1;
 const kExpense = -1;
 
@@ -47,6 +49,14 @@ Uri firebaseUri(String path, Map<String, dynamic> params, {
     path:   path,
     queryParameters: params,
   );
+}
+
+/// Get book dari firebase user.
+Future<Book> getBook(FirebaseUser user) async {
+  final book = await getDefaultBook(user.uid);
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString(kPrefBookId, book?.id);
+  return book;
 }
 
 /// Get book saat ini dari preference, atau buat default jika belum ada.

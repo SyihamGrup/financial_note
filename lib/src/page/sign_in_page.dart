@@ -42,26 +42,18 @@ class _SignInPageState extends State<SignInPage> {
       prefs.setString(kPrefSignInMethod, kPrefSignInGoogle);
 
       final c = await google.authentication;
-      final user = await auth.signInWithGoogle(
+      currentUser = await auth.signInWithGoogle(
         idToken: c.idToken,
         accessToken: c.accessToken
       );
-      if (user != null) {
-        currentUser = user;
-        currentBook = await _getBook();
+      if (currentUser != null) {
+        currentBook = await getBook(currentUser);
         assert(currentBook != null);
         Navigator.pushReplacementNamed(context, HomePage.kRouteName);
       }
     }
 
     setState(() => _signingIn = false);
-  }
-
-  Future<Book> _getBook() async {
-    final book = await getDefaultBook(currentUser.uid);
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString(kPrefBookId, book?.id);
-    return book;
   }
 
   @override

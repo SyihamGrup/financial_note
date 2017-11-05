@@ -11,14 +11,11 @@
 import 'dart:async';
 
 import 'package:financial_note/auth.dart';
-import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/strings.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashPage extends StatefulWidget {
   static const kRouteName = '/splash';
@@ -45,20 +42,12 @@ class _SplashPageState extends State<SplashPage> {
         Navigator.pushReplacementNamed(context, SignInPage.kRouteName);
         return;
       }
-
-      currentBook = await _getBook(currentUser);
+      currentBook = await getBook(currentUser);
       assert(currentBook != null);
       Navigator.pushReplacementNamed(context, HomePage.kRouteName);
     } catch (e) {
       setState(() => _subtitle = e.message);
     }
-  }
-
-  Future<Book> _getBook(FirebaseUser user) async {
-    final book = await getDefaultBook(user.uid);
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString(kPrefBookId, book?.id);
-    return book;
   }
 
   @override
