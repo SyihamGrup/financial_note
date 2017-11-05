@@ -8,7 +8,10 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const kPrefSignInMethod = 'signInMethod';
 const kPrefSignInGoogle = 'signInGoogle';
@@ -21,14 +24,41 @@ const kPrefCurrencySymbol = 'currencySymbol';
 const kPrefBookId = 'bookId';
 
 class Config {
-  final Brightness brightness;
-  final String currencySymbol;
+  Brightness _brightness;
+  String _currencySymbol;
 
-  const Config({this.brightness, this.currencySymbol});
+  Config({brightness, currencySymbol})
+    : _brightness = brightness, _currencySymbol = currencySymbol;
+
+  Config.fromPreferences(SharedPreferences prefs)
+    : _brightness = prefs.getString(kPrefTheme) == kPrefThemeDark
+                  ? Brightness.dark : Brightness.light,
+    _currencySymbol = prefs.getString(kPrefCurrencySymbol) ?? 'Rp';
+
+  static Future<SharedPreferences> getSharedPreferences() async {
+    return await SharedPreferences.getInstance();
+  }
+
+  Brightness get brightness => _brightness;
+
+  Future<Null> setBrightness(Brightness value) async {
+    _brightness = value;
+    final prefs = await getSharedPreferences();
+    final themeStr = value == Brightness.light ? kPrefThemeLight : kPrefThemeDark;
+    prefs.setString(kPrefTheme, themeStr);
+  }
+
+  String get currencySymbol => _currencySymbol;
+
+  Future<Null> setCurrencySymbol(String value) async {
+    _currencySymbol = value;
+    final prefs = await getSharedPreferences();
+    prefs.setString(kPrefCurrencySymbol, value);
+  }
 
   ThemeConfig getItemTheme(BuildContext context) {
     final theme = Theme.of(context);
-    if (brightness == Brightness.light) {
+    if (_brightness == Brightness.light) {
       return new ThemeConfig(
         appBarBackground: Colors.white,
         appBarTextTheme: theme.textTheme,
@@ -50,17 +80,10 @@ class Config {
   ThemeConfig getSettingTheme(BuildContext context) {
     final theme = Theme.of(context);
     return new ThemeConfig(
-      appBarBackground: brightness == Brightness.light ? Colors.blueGrey[700] : null,
+      appBarBackground: _brightness == Brightness.light ? Colors.blueGrey[700] : null,
       appBarTextTheme: theme.primaryTextTheme,
       appBarIconTheme: theme.primaryIconTheme,
       appBarElevation: 4.0,
-    );
-  }
-
-  Config copyWith({Brightness brightness, String currencySymbol}) {
-    return new Config(
-      brightness: brightness ?? this.brightness,
-      currencySymbol: currencySymbol ?? this.currencySymbol,
     );
   }
 

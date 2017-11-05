@@ -38,6 +38,7 @@ class Lang {
   }
 
   String prefUseDark()             => _('prefUseDark', 'Use Dark Theme');
+  String prefCurrSymbol()          => _('prefCurrSymbol', 'Currency Symbol');
   String prefMonthlyBalance()      => _('prefMonthlyBalance', 'Monthly Balance');
   String prefMonthlyBalanceDescr() => _('prefMonthlyBalanceDescr', 'Balances are automatically updated, but you can change it manually.');
 

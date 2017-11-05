@@ -12,10 +12,10 @@ import 'package:financial_note/config.dart';
 import 'package:financial_note/page.dart';
 import 'package:financial_note/src/page/balance_list_page.dart';
 import 'package:financial_note/strings.dart';
+import 'package:financial_note/widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatelessWidget {
   static const kRouteName = '/settings';
@@ -48,6 +48,18 @@ class SettingsPage extends StatelessWidget {
           ),
         ),
         new ListTile(
+          title: new Text(lang.prefCurrSymbol()),
+          subtitle: new Text(config.currencySymbol ?? ''),
+          onTap: () => showInputDialog(
+              context: context,
+              title: new Text(lang.prefCurrSymbol()),
+              initialValue: config.currencySymbol,
+            ).then((value) {
+              if (value == null) return;
+              config.setCurrencySymbol(value);
+            }),
+        ),
+        new ListTile(
           title: new Text(lang.prefMonthlyBalance()),
           subtitle: new Text(lang.prefMonthlyBalanceDescr()),
           onTap: () => Navigator.pushNamed(context, BalanceListPage.kRouteName),
@@ -57,12 +69,8 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _handleThemeChanged(Brightness brightness) {
-    final newConfig = config.copyWith(brightness: brightness);
-    SharedPreferences.getInstance().then((prefs) {
-      final themeStr = brightness == Brightness.light ? kPrefThemeLight : kPrefThemeDark;
-      prefs.setString(kPrefTheme, themeStr);
-    });
-    updater(newConfig);
+    config.setBrightness(brightness);
+    updater(config);
   }
 
   @override

@@ -17,7 +17,6 @@ import 'package:financial_note/strings.dart';
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 const kTitle = 'Financial Note';
 
@@ -25,16 +24,8 @@ Future<Null> main() async {
   FirebaseDatabase.instance.setPersistenceEnabled(true);
   FirebaseDatabase.instance.setPersistenceCacheSizeBytes(10 * 1000 * 1000);
 
-  runApp(new MainApp(await _initConfig()));
-}
-
-Future<Config> _initConfig() async {
-  final prefs = await SharedPreferences.getInstance();
-  return new Config(
-    brightness     : prefs.getString(kPrefTheme) == kPrefThemeDark
-                   ? Brightness.dark : Brightness.light,
-    currencySymbol : prefs.getString(kPrefCurrencySymbol) ?? 'Rp'
-  );
+  final prefs = new Config.fromPreferences(await Config.getSharedPreferences());
+  runApp(new MainApp(prefs));
 }
 
 class MainApp extends StatefulWidget {

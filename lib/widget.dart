@@ -19,6 +19,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 export 'src/widget/content.dart';
 export 'src/widget/date_form_field.dart';
+export 'src/widget/dialog.dart';
 export 'src/widget/drawer.dart';
 export 'src/widget/dropdown.dart';
 export 'src/widget/list_app_bar.dart';
