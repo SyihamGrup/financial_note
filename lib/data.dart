@@ -23,9 +23,10 @@ export 'src/data/budget.dart';
 export 'src/data/note.dart';
 export 'src/data/transaction.dart';
 
-const kFirebaseUriScheme = 'https';
+const kUriScheme = 'https';
 const kFirebaseHost = 'us-central1-financialnote-d6d95.cloudfunctions.net';
-
+const kMessagingHost = 'android.googleapis.com';
+const kMessagingPath = '/gcm/notification';
 const kOpeningBalancePath = '/getOpeningBalance';
 const kCalcOpeningBalancePath = '/calcOpeningBalance';
 
@@ -37,19 +38,6 @@ const kExpense = -1;
 // Global variable current book
 FirebaseUser currentUser;
 Book currentBook;
-
-/// Get firebase uri
-Uri firebaseUri(String path, Map<String, dynamic> params, {
-  String scheme: kFirebaseUriScheme,
-  String host: kFirebaseHost,
-}) {
-  return new Uri(
-    scheme: scheme,
-    host:   host,
-    path:   path,
-    queryParameters: params,
-  );
-}
 
 /// Get book dari firebase user.
 Future<Book> getBook(FirebaseUser user) async {

@@ -10,6 +10,7 @@
 
 library utils;
 
+import 'package:financial_note/data.dart';
 import 'package:intl/intl.dart';
 
 
@@ -84,4 +85,15 @@ String formatCurrency(dynamic number, {int decimalDigits = 0, String symbol}) {
   //if (absNum >= 1000000) return formatter.format(number / 1000000) + 'M';
   if (absNum >= 1000) return formatter.format(number / 1000) + 'k';
   return formatter.format(number);
+}
+
+/// Short function untuk membuat uri.
+Uri getUri(String host, String path,
+          {String schema: kUriScheme, Map<String, dynamic> params}) {
+  return new Uri(
+    scheme: schema,
+    host: host,
+    path: path,
+    queryParameters: params,
+  );
 }

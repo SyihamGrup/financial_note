@@ -9,17 +9,24 @@
  */
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:financial_note/config.dart';
+import 'package:financial_note/data.dart';
+import 'package:financial_note/src/data/user.dart';
+import 'package:financial_note/utils.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final auth = FirebaseAuth.instance;
 final analytics = new FirebaseAnalytics();
 
-final _googleSignIn = new GoogleSignIn();
+final googleSignIn = new GoogleSignIn();
+final messaging = new FirebaseMessaging();
 
 Future<FirebaseUser> ensureLoggedIn() async {
   var user = await auth.currentUser();
@@ -43,15 +50,37 @@ Future<FirebaseUser> ensureLoggedIn() async {
 }
 
 Future<GoogleSignInAccount> signInWithGoogle() async {
-  if (_googleSignIn.currentUser == null) {
-    await _googleSignIn.signInSilently();
+  if (googleSignIn.currentUser == null) {
+    await googleSignIn.signInSilently();
   }
-  if (_googleSignIn.currentUser == null) {
-    await _googleSignIn.signIn();
+  if (googleSignIn.currentUser == null) {
+    await googleSignIn.signIn();
   }
-  return _googleSignIn.currentUser;
+  return googleSignIn.currentUser;
 }
 
 Future<Null> signOut() async {
   return await auth.signOut();
+}
+
+Future<Map<String, dynamic>> addDeviceGroup(User user) async {
+  final httpClient = createHttpClient();
+  final uri = getUri(kMessagingHost, kMessagingPath);
+  Map<String, dynamic> data;
+  if (user.notificationKey == null) {
+    data = <String, dynamic>{
+      'operation': 'create',
+      'notification_key_name': user.uid,
+      'registration_ids': ['4', '8', '15', '16', '23', '42']
+    };
+  } else {
+    data = <String, dynamic>{
+      'operation': 'add',
+      'notification_key_name': user.uid,
+      'notification_key': user.notificationKey,
+      'registration_ids': ['4'],
+    };
+  }
+  final response = await httpClient.post(uri, body: data.toString());
+  return JSON.decode(response.body);
 }

@@ -271,14 +271,13 @@ class Balance {
 
   static Future<double> calculate(String bookId, int year, int month) async {
     final httpClient = createHttpClient();
-
     final params = <String, dynamic>{
       'bookId' : bookId,
       'year'   : year,
       'month'  : month,
     };
-    final response = await httpClient.get(firebaseUri(kCalcOpeningBalancePath, params));
-
+    final uri = getUri(kFirebaseHost, kCalcOpeningBalancePath, params: params);
+    final response = await httpClient.get(uri);
     Map<String, dynamic> json = JSON.decode(response.body);
     return parseDouble(mapValue(json, 'balance'));
   }

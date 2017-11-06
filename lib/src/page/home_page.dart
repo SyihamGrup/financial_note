@@ -85,7 +85,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   void _initMessaging() {
-    _messaging.subscribeToTopic(currentUser.uid);
+
+
 
     _messaging.requestNotificationPermissions(
       const IosNotificationSettings(sound: true, badge: true, alert: true)
