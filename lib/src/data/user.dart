@@ -21,20 +21,24 @@ class User {
   String notificationKey;
   List<String> registrationIds;
 
-  User(this._firebaseUser, {
+  User(FirebaseUser firebaseUser, {
     this.notificationKey,
     this.registrationIds,
-  });
+  }) : _firebaseUser = firebaseUser;
 
   String get uid => _firebaseUser.uid;
   String get displayName => _firebaseUser.displayName;
 
   static Future<User> get(FirebaseUser user) async {
     final snap = await getNode().child(user.uid).once();
-    return new User(user,
-      notificationKey: mapValue<String>(snap.value, 'notificationKey'),
-      registrationIds: mapValue<List<String>>(snap.value, 'registrationIds'),
-    );
+    if (snap.value != null) {
+      return new User(user,
+        notificationKey: mapValue<String>(snap.value, 'notificationKey'),
+        registrationIds: mapValue<List<String>>(snap.value, 'registrationIds'),
+      );
+    } else {
+      return new User(user);
+    }
   }
 
   Future<Null> save() async {

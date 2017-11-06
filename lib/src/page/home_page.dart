@@ -73,6 +73,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
 
+    User.getNode().child(currentUser.uid).keepSynced(true);
     Book.getNode(currentUser.uid).keepSynced(true);
     Budget.getNode(currentBook.id).keepSynced(true);
     BillGroup.getNode(currentBook.id).keepSynced(true);

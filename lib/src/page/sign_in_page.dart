@@ -14,6 +14,7 @@ import 'package:financial_note/auth.dart';
 import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
+import 'package:financial_note/src/data/user.dart';
 import 'package:financial_note/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -42,11 +43,12 @@ class _SignInPageState extends State<SignInPage> {
       prefs.setString(kPrefSignInMethod, kPrefSignInGoogle);
 
       final c = await google.authentication;
-      currentUser = await auth.signInWithGoogle(
+      final user = await auth.signInWithGoogle(
         idToken: c.idToken,
         accessToken: c.accessToken
       );
-      if (currentUser != null) {
+      if (user != null) {
+        currentUser = await User.get(user);
         currentBook = await getBook(currentUser);
         assert(currentBook != null);
         Navigator.pushReplacementNamed(context, HomePage.kRouteName);
