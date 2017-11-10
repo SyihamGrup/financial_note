@@ -61,6 +61,7 @@ class _BudgetListPageState extends State<BudgetListPage> with SelectableList<Bud
       itemBuilder: (context, snapshot, animation, index) {
         final item = new Budget.fromSnapshot(widget.bookId, snapshot);
         return new _ContentBudgetItem(
+          config: widget.config,
           item: item,
           animation: animation,
           selected: getSelectedIndex(item) != -1,
@@ -94,6 +95,7 @@ class _BudgetListPageState extends State<BudgetListPage> with SelectableList<Bud
 }
 
 class _ContentBudgetItem extends StatelessWidget {
+  final Config config;
   final String currencySymbol;
   final Budget item;
   final Animation animation;
@@ -102,13 +104,14 @@ class _ContentBudgetItem extends StatelessWidget {
   final bool selected;
 
   _ContentBudgetItem({
-    this.item,
+    @required this.config,
+    @required this.item,
     this.animation,
     this.selected,
     this.onTap,
     this.onLongPress,
     this.currencySymbol,
-  });
+  }) : assert(config != null), assert(item != null);
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +154,10 @@ class _ContentBudgetItem extends StatelessWidget {
               ),
             ]
           ),
-          title: new Text(item.title, overflow: TextOverflow.ellipsis),
+          title: new Text(item.title,
+            style: config.getTitleStyle(context, selected: selected),
+            overflow: TextOverflow.ellipsis,
+          ),
           subtitle: new Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

@@ -279,7 +279,7 @@ class _ContentTransactionItem extends StatelessWidget {
         ),
         title: new Text(
           item.title ?? '',
-          style: theme.textTheme.subhead,
+          style: config.getTitleStyle(context, selected: selected),
         ),
         subtitle: new Row(children: subtitles),
         trailing: new Container(

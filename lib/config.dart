@@ -88,6 +88,16 @@ class Config {
     );
   }
 
+  TextStyle getTitleStyle(BuildContext context, {
+    bool selected: false,
+    FontWeight fontWeight: FontWeight.w500,
+  }) {
+    return Theme.of(context).textTheme.subhead.copyWith(
+      fontWeight: fontWeight,
+      color: selected ? ListTileTheme.of(context).selectedColor : null,
+    );
+  }
+
   static ThemeData getTheme(Brightness brightness) {
     switch (brightness) {
       case Brightness.light:

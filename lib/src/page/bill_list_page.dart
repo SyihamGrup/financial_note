@@ -60,6 +60,7 @@ class _BillListPageState extends State<BillListPage> with SelectableList<BillGro
       itemBuilder: (context, snapshot, animation, index) {
         final item = new BillGroup.fromSnapshot(widget.bookId, snapshot);
         return new _ContentBillItem(
+          config: widget.config,
           item: item,
           animation: animation,
           selected: getSelectedIndex(item) != -1,
@@ -93,6 +94,7 @@ class _BillListPageState extends State<BillListPage> with SelectableList<BillGro
 }
 
 class _ContentBillItem extends StatelessWidget {
+  final Config config;
   final String currencySymbol;
   final BillGroup item;
   final Animation animation;
@@ -101,13 +103,14 @@ class _ContentBillItem extends StatelessWidget {
   final bool selected;
 
   _ContentBillItem({
-    this.item,
+    @required this.config,
+    @required this.item,
     this.animation,
     this.selected,
     this.onTap,
     this.onLongPress,
     this.currencySymbol,
-  });
+  }) : assert(config != null), assert(item != null);
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +131,10 @@ class _ContentBillItem extends StatelessWidget {
                    item.paidValue > 0                ? new Icon(Icons.done)
                                                      : new Icon(Icons.attach_money)
           ),
-          title: new Text(item.title ?? '', overflow: TextOverflow.ellipsis),
+          title: new Text(item.title ?? '',
+            style: config.getTitleStyle(context, selected: selected),
+            overflow: TextOverflow.ellipsis,
+          ),
           subtitle: new Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

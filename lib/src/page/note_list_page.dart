@@ -59,6 +59,7 @@ class _NoteListPageState extends State<NoteListPage> with SelectableList<Note> {
       itemBuilder: (context, snapshot, animation, index) {
         final item = new Note.fromSnapshot(widget.bookId, snapshot);
         return new _ContentNoteItem(
+          config: widget.config,
           item: item,
           animation: animation,
           selected: getSelectedIndex(item) != -1,
@@ -91,6 +92,7 @@ class _NoteListPageState extends State<NoteListPage> with SelectableList<Note> {
 }
 
 class _ContentNoteItem extends StatelessWidget {
+  final Config config;
   final Note item;
   final Animation animation;
   final GestureTapCallback onTap;
@@ -98,7 +100,8 @@ class _ContentNoteItem extends StatelessWidget {
   final bool selected;
 
   _ContentNoteItem({
-    this.item,
+    @required this.config,
+    @required this.item,
     this.animation,
     this.selected,
     this.onTap,
@@ -119,7 +122,10 @@ class _ContentNoteItem extends StatelessWidget {
       child: new Container(
         decoration: selected ? selectedBg : null,
         child: new ListTile(
-          title: new Text(item.title, overflow: TextOverflow.ellipsis),
+          title: new Text(item.title,
+            style: config.getTitleStyle(context, selected: selected),
+            overflow: TextOverflow.ellipsis,
+          ),
           subtitle: new Text(item.note, overflow: TextOverflow.ellipsis),
           trailing: item.reminder != null
             ? new Container(
