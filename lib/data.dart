@@ -15,8 +15,10 @@ import 'dart:async';
 import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/src/data/user.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+export 'src/data/base_data.dart';
 export 'src/data/bill.dart';
 export 'src/data/book.dart';
 export 'src/data/budget.dart';
@@ -40,6 +42,13 @@ const kExpense = -1;
 User currentUser;
 Book currentBook;
 
+/// Get node database reference
+DatabaseReference getNode(String name, String filterNode) {
+  final ref = FirebaseDatabase.instance.reference().child(name);
+  if (filterNode == null) return ref;
+  return ref.child(filterNode);
+}
+
 /// Get book dari firebase user.
 Future<Book> getBook(User user) async {
   final book = await getDefaultBook(user.uid);
@@ -53,7 +62,7 @@ Future<Book> getDefaultBook(String userId) async {
   var book = await _getBookFromPrefs(userId);
   if (book != null) return book;
 
-  book = await Book.first(userId);
+  book = await Book.of(userId).first();
   if (book != null) return book;
 
   return await Book.createDefault(userId);
@@ -64,5 +73,5 @@ Future<Book> _getBookFromPrefs(String userId) async {
   final prefs = await SharedPreferences.getInstance();
   final bookId = prefs.getString(kPrefBookId);
   if (bookId == null) return null;
-  return await Book.get(userId, bookId);
+  return await Book.of(userId).get(bookId);
 }

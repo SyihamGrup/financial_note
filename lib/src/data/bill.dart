@@ -10,11 +10,14 @@
 
 import 'dart:async';
 
+import 'package:financial_note/data.dart';
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-class BillGroup {
+class BillGroup implements Data {
   static const kNodeName = 'billsGroup';
+
+  final String bookId;
 
   String id;
   String title;
@@ -27,7 +30,7 @@ class BillGroup {
   double paidValue;
   String note;
 
-  BillGroup({
+  BillGroup(this.bookId, {
     this.id,
     this.title,
     this.transType,
@@ -40,7 +43,7 @@ class BillGroup {
     this.note,
   });
 
-  BillGroup.fromJson(this.id, Map<String, dynamic> json)
+  BillGroup.fromJson(this.bookId, this.id, Map<String, dynamic> json)
     : title      = parseString(mapValue(json, 'title')),
       transType  = parseInt(mapValue(json, 'transType')),
       startDate  = parseDate(mapValue(json, 'startDate')),
@@ -50,64 +53,61 @@ class BillGroup {
       paidValue  = parseDouble(mapValue(json, 'paidValue')),
       note       = parseString(mapValue(json, 'note'));
 
-  BillGroup.fromSnapshot(DataSnapshot snapshot)
-    : id         = snapshot.key,
-      title      = parseString(mapValue(snapshot.value, 'title')),
-      transType  = parseInt(mapValue(snapshot.value, 'transType')),
-      startDate  = parseDate(mapValue(snapshot.value, 'startDate')),
-      endDate    = parseDate(mapValue(snapshot.value, 'endDate')),
-      totalValue = parseDouble(mapValue(snapshot.value, 'totalValue')),
-      lastPaid   = parseDate(mapValue(snapshot.value, 'lastPaid')),
-      paidValue  = parseDouble(mapValue(snapshot.value, 'paidValue')),
-      note       = parseString(mapValue(snapshot.value, 'note'));
+  BillGroup.fromSnapshot(String bookId, DataSnapshot snapshot)
+    : this.fromJson(bookId, snapshot.key, snapshot.value);
 
-  static Future<BillGroup> get(String bookId, String id) async {
+  static BillGroup of(String bookId) {
+    return new BillGroup(bookId);
+  }
+
+  Future<BillGroup> get(String id) async {
     if (id == null) return null;
-    final snap = await getNode(bookId).child(id).once();
+    final snap = await getNode(kNodeName, bookId).child(id).once();
     if (snap.value == null) return null;
-    return new BillGroup.fromSnapshot(snap);
+    return new BillGroup.fromSnapshot(bookId, snap);
   }
 
-  static Future<List<BillGroup>> list(String bookId) async {
-    final snap = await getNode(bookId).once();
-    if (snap.value == null) return null;
-
+  Future<List<BillGroup>> list() async {
     final items = <BillGroup>[];
-    final Map<String, Map<String, dynamic>> data = snap.value;
-    data.forEach((key, json) => items.add(new BillGroup.fromJson(key, json)));
-    items.sort((a, b) {
-      if (a.startDate == null || b.startDate == null) return 0;
-      if (a.startDate == null) return 1;
-      if (b.startDate == null) return -1;
-      return a.startDate.compareTo(b.startDate);
-    });
-    return items;
-  }
 
-  static Future<List<Bill>> getItems(String bookId, String groupId) async {
-    final items = <Bill>[];
-
-    if (groupId == null) return items;
-    final snap = await Bill.getNode(bookId).orderByChild('groupId').equalTo(groupId).once();
+    final snap = await getNode(kNodeName, bookId).once();
     if (snap.value == null) return items;
 
     final Map<String, Map<String, dynamic>> data = snap.value;
-    data.forEach((key, json) => items.add(new Bill.fromJson(key, json)));
-    items.sort((a, b) => b.date?.compareTo(a.date) ?? 0);
+    data.forEach((key, json) {
+      items.add(new BillGroup.fromJson(bookId, key, json));
+    });
+    items.sort((a, b) => compareDate(b.startDate, a.startDate));
     return items;
   }
 
-  Future<Null> save(String bookId) async {
-    final node = getNode(bookId);
+  Future<List<Bill>> getItems(String groupId) async {
+    final items = <Bill>[];
+
+    if (groupId == null) return items;
+    final node = getNode(Bill.kNodeName, bookId);
+    final snap = await node.orderByChild('groupId').equalTo(groupId).once();
+    if (snap.value == null) return items;
+
+    final Map<String, Map<String, dynamic>> data = snap.value;
+    data.forEach((key, json) {
+      items.add(new Bill.fromJson(bookId, key, json));
+    });
+    items.sort((a, b) => compareDate(b.date, a.date));
+    return items;
+  }
+
+  Future<Null> save() async {
+    final node = getNode(kNodeName, bookId);
     final ref = id != null ? node.child(id) : node.push();
     await ref.set(toJson());
     id = ref.key;
   }
 
-  Future<Null> saveItems(String bookId, List<Bill> items) async {
-    await removeItems(bookId, exclude: items);
+  Future<Null> saveItems(List<Bill> items) async {
+    await removeItems(exclude: items);
 
-    final node = Bill.getNode(bookId);
+    final node = getNode(Bill.kNodeName, bookId);
     for (final item in items) {
       item.groupId = id;
       final snap = item.id != null ? node.child(item.id) : node.push();
@@ -116,17 +116,20 @@ class BillGroup {
     }
   }
 
-  static Future<Null> remove(String bookId, String id) async {
-    final item = await get(bookId, id);
+  Future<Null> removeById(String id) async {
+    final item = await get(id);
     if (item == null) return;
-    await item.removeItems(bookId);
-
-    final node = getNode(bookId);
-    await node.child(id).remove();
+    await item.remove();
   }
 
-  Future<Null> removeItems(String bookId, {List<Bill> exclude}) async {
-    final node = Bill.getNode(bookId);
+  Future<Null> remove() async {
+    if (id == null) return;
+    await removeItems();
+    await getNode(kNodeName, bookId).child(id).remove();
+  }
+
+  Future<Null> removeItems({List<Bill> exclude}) async {
+    final node = getNode(Bill.kNodeName, bookId);
     final existing = await node.orderByChild('groupId').equalTo(id).once();
     if (existing.value is Map) {
       existing.value.forEach((key, value) async {
@@ -142,10 +145,6 @@ class BillGroup {
       if (item.id == key) return true;
     }
     return false;
-  }
-
-  static DatabaseReference getNode(String bookId) {
-    return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
   }
 
   Map<String, dynamic> toJson({showId: false}) {
@@ -165,8 +164,10 @@ class BillGroup {
   }
 }
 
-class Bill {
+class Bill implements Data {
   static const kNodeName = 'bills';
+
+  final String bookId;
 
   String id;
   String groupId;
@@ -178,7 +179,7 @@ class Bill {
   double paidValue;
   String descr;
 
-  Bill({
+  Bill(this.bookId, {
     this.id,
     this.groupId,
     this.title,
@@ -189,7 +190,7 @@ class Bill {
     this.descr,
   });
 
-  Bill.fromJson(this.id, Map<String, dynamic> json)
+  Bill.fromJson(this.bookId, this.id, Map<String, dynamic> json)
     : groupId   = parseString(mapValue(json, 'groupId')),
       title     = parseString(mapValue(json, 'title')),
       transType = parseInt(mapValue(json, 'transType')),
@@ -199,32 +200,22 @@ class Bill {
       paidValue = parseDouble(mapValue(json, 'paidValue')),
       descr     = parseString(mapValue(json, 'descr'));
 
-  Bill.fromSnapshot(DataSnapshot snapshot)
-    : id        = snapshot.key,
-      groupId   = parseString(mapValue(snapshot.value, 'groupId')),
-      title     = parseString(mapValue(snapshot.value, 'title')),
-      transType = parseInt(mapValue(snapshot.value, 'transType')),
-      date      = parseDate(mapValue(snapshot.value, 'date')),
-      value     = parseDouble(mapValue(snapshot.value, 'value')),
-      paidDate  = parseDate(mapValue(snapshot.value, 'paidDate')),
-      paidValue = parseDouble(mapValue(snapshot.value, 'paidValue')),
-      descr     = parseString(mapValue(snapshot.value, 'descr'));
+  Bill.fromSnapshot(String bookId, DataSnapshot snapshot)
+    : this.fromJson(bookId, snapshot.key, snapshot.value);
 
-  static Future<Bill> get(String bookId, String id) async {
-    final snap = await getNode(bookId).child(id).once();
+  static Bill of(String bookId) {
+    return new Bill(bookId);
+  }
+
+  Future<Bill> get(String id) async {
+    if (id == null) return null;
+    final snap = await getNode(kNodeName, bookId).child(id).once();
     if (snap.value == null) return null;
-    return new Bill.fromSnapshot(snap);
+    return new Bill.fromSnapshot(bookId, snap);
   }
 
-  Future<Null> save(String bookId) async {
-    final node = getNode(bookId);
-    final ref = id != null ? node.child(id) : node.push();
-    await ref.set(toJson());
-    id = ref.key;
-  }
-
-  Future<Null> updateGroup(String bookId) async {
-    final group = await BillGroup.get(bookId, groupId);
+  Future<Null> updateGroup() async {
+    final group = await BillGroup.of(bookId).get(groupId);
     if (group == null) return;
 
     group.startDate = null;
@@ -234,7 +225,7 @@ class Bill {
     group.lastPaid = null;
     group.paidValue = 0.0;
 
-    final items = await BillGroup.getItems(bookId, group.id);
+    final items = await BillGroup.of(bookId).getItems(group.id);
     if (items != null || items.length > 0) {
       var i = 0;
       group.itemsCount = items.length;
@@ -251,16 +242,23 @@ class Bill {
       }
     }
 
-    group.save(bookId);
+    group.save();
   }
 
-  static Future<Null> remove(String bookId, String id) async {
-    final node = getNode(bookId);
-    await node.child(id).remove();
+  Future<Null> save() async {
+    final node = getNode(kNodeName, bookId);
+    final ref = id != null ? node.child(id) : node.push();
+    await ref.set(toJson());
+    id = ref.key;
   }
 
-  static DatabaseReference getNode(String bookId) {
-    return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
+  Future<Null> removeById(String id) async {
+    if (id == null) return;
+    await getNode(kNodeName, bookId).child(id).remove();
+  }
+
+  Future<Null> remove() async {
+    await removeById(id);
   }
 
   Map<String, dynamic> toJson({showId: false}) {

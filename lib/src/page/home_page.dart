@@ -10,27 +10,16 @@
 
 library page;
 
-import 'dart:async';
-
 import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
-import 'package:financial_note/src/page/bill_page.dart';
 import 'package:financial_note/strings.dart';
 import 'package:financial_note/utils.dart';
 import 'package:financial_note/widget.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
-
-part 'home_page_bill.dart';
-part 'home_page_budget.dart';
-part 'home_page_note.dart';
-part 'home_page_transaction.dart';
 
 class HomePage extends StatefulWidget {
   static const kRouteName = '/home';
@@ -48,47 +37,30 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   final _messaging = new FirebaseMessaging();
 
-  final _transBarKey = new GlobalKey<_TransactionAppBarState>();
-  final _transKey = new GlobalKey<_HomePageTransactionState>();
-  final _budgetBarKey = new GlobalKey<ListAppBarState<Budget>>();
-  final _budgetKey = new GlobalKey<_HomePageBudgetState>();
-  final _billBarKey = new GlobalKey<ListAppBarState<BillGroup>>();
-  final _billKey = new GlobalKey<_HomePageBillState>();
-  final _noteBarKey = new GlobalKey<ListAppBarState<Note>>();
-  final _noteKey = new GlobalKey<_HomePageNoteState>();
-
-  var _currentRoute = HomePageTransaction.kRouteName;
+  var _currentRoute = TransactionListPage.kRouteName;
 
   HomePageTransaction _homeTrans;
   HomePageBill _homeBill;
   HomePageBudget _homeBudget;
   HomePageNote _homeNote;
 
-  TransactionAppBar _appBarTrans;
-  ListAppBar<BillGroup> _appBarBill;
-  ListAppBar<Budget> _appBarBudget;
-  ListAppBar<Note> _appBarNote;
-
   @override
   void initState() {
     super.initState();
 
-    User.getNode().child(currentUser.uid).keepSynced(true);
-    Book.getNode(currentUser.uid).keepSynced(true);
-    Budget.getNode(currentBook.id).keepSynced(true);
-    BillGroup.getNode(currentBook.id).keepSynced(true);
-    Bill.getNode(currentBook.id).keepSynced(true);
-    Transaction.getNode(currentBook.id).keepSynced(true);
-    Balance.getNode(currentBook.id).keepSynced(true);
-    Note.getNode(currentBook.id).keepSynced(true);
+    getNode(User.kNodeName, null).child(currentUser.uid).keepSynced(true);
+    getNode(Book.kNodeName, currentUser.uid).keepSynced(true);
+    getNode(Budget.kNodeName, currentBook.id).keepSynced(true);
+    getNode(BillGroup.kNodeName, currentBook.id).keepSynced(true);
+    getNode(Bill.kNodeName, currentBook.id).keepSynced(true);
+    getNode(Transaction.kNodeName, currentBook.id).keepSynced(true);
+    getNode(Balance.kNodeName, currentBook.id).keepSynced(true);
+    getNode(Note.kNodeName, currentBook.id).keepSynced(true);
 
     _initMessaging();
   }
 
   void _initMessaging() {
-
-
-
     _messaging.requestNotificationPermissions(
       const IosNotificationSettings(sound: true, badge: true, alert: true)
     );
@@ -124,184 +96,25 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    _initTrans();
-    _initBill();
-    _initBudget();
-    _initNote();
-  }
-
-  void _initTrans() {
-    final lang = Lang.of(context);
-    final initialDate = new DateTime.now();
-    _appBarTrans = new TransactionAppBar(
-      key: _transBarKey,
-      initialDate: initialDate,
-      onDateChange: (date) => _transKey.currentState.setDate(date),
-      onActionModeTap: (key, items) {
-        switch (key) {
-          case 'edit':
-            final params = <String, dynamic>{'id': items[0].id};
-            Navigator.pushNamed(context, routeWithParams(TransactionPage.kRouteName, params));
-            _transBarKey.currentState.exitActionMode();
-            break;
-          case 'delete':
-            showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
-              if (!ret) return;
-              items.forEach((val) => Transaction.remove(currentBook.id, val.id));
-              _transBarKey.currentState.exitActionMode();
-            });
-            break;
-        }
-      },
-      onExitActionMode: () {
-        _transKey.currentState.clearSelection();
-      },
-    );
-
     _homeTrans = new HomePageTransaction(
-      key: _transKey,
-      bookId: widget.bookId,
-      date: initialDate,
+      context: context,
       config: widget.config,
-      onItemTap: (item) {
-        final params = <String, dynamic>{'id': item.id};
-        Navigator.pushNamed(context, routeWithParams(TransactionPage.kRouteName, params));
-      },
-      onItemsSelect: (items, index) {
-        if (items.length == 0)
-          _transBarKey.currentState.exitActionMode();
-        else
-          _transBarKey.currentState.showActionMode(items);
-      },
+      bookId: widget.bookId,
     );
-  }
-
-  void _initBill() {
-    final lang = Lang.of(context);
-    _appBarBill = new ListAppBar<BillGroup>(
-      key: _billBarKey,
-      title: lang.titleBill(),
-      onActionModeTap: (key, items) {
-        switch (key) {
-          case 'edit':
-            final params = <String, dynamic>{'id': items[0].id};
-            Navigator.pushNamed(context, routeWithParams(BillPage.kRouteName, params));
-            _billBarKey.currentState.exitActionMode();
-            break;
-          case 'delete':
-            showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
-              if (!ret) return;
-              items.forEach((val) => BillGroup.remove(currentBook.id, val.id));
-              _billBarKey.currentState.exitActionMode();
-            });
-            break;
-        }
-      },
-      onExitActionMode: () {
-        _billKey.currentState.clearSelection();
-      },
-    );
-
     _homeBill = new HomePageBill(
-      key: _billKey,
-      bookId: widget.bookId,
+      context: context,
       config: widget.config,
-      onItemTap: (item) {
-        final params = <String, dynamic>{'id': item.id};
-        Navigator.pushNamed(context, routeWithParams(BillViewPage.kRouteName, params));
-      },
-      onItemsSelect: (items, index) {
-        if (items.length == 0)
-          _billBarKey.currentState.exitActionMode();
-        else
-          _billBarKey.currentState.showActionMode(items);
-      },
+      bookId: widget.bookId,
     );
-  }
-
-  void _initBudget() {
-    final lang = Lang.of(context);
-    _appBarBudget = new ListAppBar<Budget>(
-      key: _budgetBarKey,
-      title: lang.titleBudget(),
-      onActionModeTap: (key, items) {
-        switch (key) {
-          case 'edit':
-            final params = <String, dynamic>{'id': items[0].id};
-            Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));
-            _budgetBarKey.currentState.exitActionMode();
-            break;
-          case 'delete':
-            showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
-              if (!ret) return;
-              items.forEach((val) => Budget.remove(currentBook.id, val.id));
-              _budgetBarKey.currentState.exitActionMode();
-            });
-            break;
-        }
-      },
-      onExitActionMode: () {
-        _budgetKey.currentState.clearSelection();
-      },
-    );
-
     _homeBudget = new HomePageBudget(
-      key: _budgetKey,
-      bookId: widget.bookId,
+      context: context,
       config: widget.config,
-      onItemTap: (item) {
-        final params = <String, dynamic>{'id': item.id};
-        Navigator.pushNamed(context, routeWithParams(BudgetViewPage.kRouteName, params));
-      },
-      onItemsSelect: (items, index) {
-        if (items.length == 0)
-          _budgetBarKey.currentState.exitActionMode();
-        else
-          _budgetBarKey.currentState.showActionMode(items);
-      }
+      bookId: widget.bookId,
     );
-  }
-
-  void _initNote() {
-    final lang = Lang.of(context);
-    _appBarNote = new ListAppBar<Note>(
-      key: _noteBarKey,
-      title: lang.titleNote(),
-      onActionModeTap: (key, items) {
-        switch (key) {
-          case 'edit':
-            final params = <String, dynamic>{'id': items[0].id};
-            Navigator.pushNamed(context, routeWithParams(NotePage.kRouteName, params));
-            _noteBarKey.currentState.exitActionMode();
-            break;
-          case 'delete':
-            showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
-              if (!ret) return;
-              items.forEach((val) => Note.remove(currentBook.id, val.id));
-              _noteBarKey.currentState.exitActionMode();
-            });
-            break;
-        }
-      },
-      onExitActionMode: () {
-        _noteKey.currentState.clearSelection();
-      },
-    );
-
     _homeNote = new HomePageNote(
-      key: _noteKey,
-      bookId: widget.bookId,
+      context: context,
       config: widget.config,
-      onItemTap: (item) {
-        final params = <String, dynamic>{'id': item.id};
-        Navigator.pushNamed(context, routeWithParams(NotePage.kRouteName, params));
-      },
-      onItemsSelect: (items, index) {
-        if (items.length == 0)
-          _noteBarKey.currentState.exitActionMode();
-        else
-          _noteBarKey.currentState.showActionMode(items);
-      }
+      bookId: widget.bookId,
     );
   }
 
@@ -315,40 +128,33 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    Widget appBar;
+    Widget body;
+    switch (_currentRoute) {
+      case TransactionListPage.kRouteName:
+        appBar = _homeTrans.appBar;
+        body = _homeTrans.body;
+        break;
+      case BillListPage.kRouteName:
+        appBar = _homeBill.appBar;
+        body = _homeBill.body;
+        break;
+      case BudgetListPage.kRouteName:
+        appBar = _homeBudget.appBar;
+        body = _homeBudget.body;
+        break;
+      case NoteListPage.kRouteName:
+        appBar = _homeNote.appBar;
+        body = _homeNote.body;
+        break;
+    }
+
     return new Scaffold(
-      appBar: _buildAppBar(),
+      appBar: appBar,
       drawer: new AppDrawer(selectedRoute: _currentRoute, onListTap: _onDrawerChange),
-      body: _buildBody(),
+      body: body,
       floatingActionButton: _buildFAB(),
     );
-  }
-
-  Widget _buildAppBar() {
-    switch (_currentRoute) {
-      case HomePageTransaction.kRouteName:
-        return _appBarTrans;
-      case HomePageBill.kRouteName:
-        return _appBarBill;
-      case HomePageBudget.kRouteName:
-        return _appBarBudget;
-      case HomePageNote.kRouteName:
-        return _appBarNote;
-    }
-    return new AppBar(title: new Text(Lang.of(context).title()));
-  }
-
-  Widget _buildBody() {
-    switch (_currentRoute) {
-      case HomePageTransaction.kRouteName:
-        return _homeTrans;
-      case HomePageBill.kRouteName:
-        return _homeBill;
-      case HomePageBudget.kRouteName:
-        return _homeBudget;
-      case HomePageNote.kRouteName:
-        return _homeNote;
-    }
-    return new Container();
   }
 
   Widget _buildFAB() {
@@ -357,16 +163,16 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       tooltip: Lang.of(context).btnAdd(),
       onPressed: () {
         switch (_currentRoute) {
-          case HomePageTransaction.kRouteName:
+          case TransactionListPage.kRouteName:
             Navigator.pushNamed(context, TransactionPage.kRouteName);
             return;
-          case HomePageBill.kRouteName:
+          case BillListPage.kRouteName:
             Navigator.pushNamed(context, BillPage.kRouteName);
             return;
-          case HomePageBudget.kRouteName:
+          case BudgetListPage.kRouteName:
             Navigator.pushNamed(context, BudgetPage.kRouteName);
             return;
-          case HomePageNote.kRouteName:
+          case NoteListPage.kRouteName:
             Navigator.pushNamed(context, NotePage.kRouteName);
             return;
         }

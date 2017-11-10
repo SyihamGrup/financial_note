@@ -8,138 +8,74 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
-part of page;
+part of page_note_list;
 
-class HomePageNote extends StatefulWidget {
-  static const kRouteName = '/home-notes';
+class HomePageNote {
+  final appBarKey = new GlobalKey<ListAppBarState<Note>>();
+  final bodyKey = new GlobalKey<_NoteListPageState>();
 
   final Config config;
   final String bookId;
-  final OnItemTap<Note> onItemTap;
-  final OnItemSelect<Note> onItemsSelect;
+  final BuildContext context;
+  final Lang _lang;
+
+  Widget _appBar;
+  Widget _body;
+
+  Widget get appBar => _appBar;
+  Widget get body => _body;
 
   HomePageNote({
-    Key key,
-    @required this.bookId,
-    this.onItemTap,
-    this.onItemsSelect,
-    this.config,
-  }) : assert(bookId != null),
-       super(key: key);
+    @required this.context, @required this.config, @required this.bookId,
+  }) : assert(context != null),
+       assert(config != null),
+       assert(bookId != null),
+       _lang = Lang.of(context) {
+    _initAppBar();
+    _initList();
+  }
 
-  @override
-  State<StatefulWidget> createState() => new _HomePageNoteState();
-}
-
-class _HomePageNoteState extends State<HomePageNote> {
-  final List<Note> _selectedItems = [];
-
-  @override
-  Widget build(BuildContext context) {
-    return new FirebaseAnimatedList(
-      query: Note.getNode(widget.bookId),
-      sort: (a, b) {
-        final itemA = a.value is Map && a.value.containsKey('updatedAt') ? a.value['updatedAt'] : '';
-        final itemB = b.value is Map && b.value.containsKey('updatedAt') ? b.value['updatedAt'] : '';
-        return itemB.compareTo(itemA);
+  void _initAppBar() {
+    _appBar = new ListAppBar<Note>(
+      key: appBarKey,
+      title: _lang.titleNote(),
+      onActionModeTap: (key, items) {
+        switch (key) {
+          case 'edit':
+            final params = <String, dynamic>{'id': items[0].id};
+            Navigator.pushNamed(context, routeWithParams(NotePage.kRouteName, params));
+            appBarKey.currentState.exitActionMode();
+            break;
+          case 'delete':
+            showConfirmDialog(context, new Text(_lang.msgConfirmDelete())).then((ret) {
+              if (!ret) return;
+              items.forEach((val) => Note.of(currentBook.id).removeById(val.id));
+              appBarKey.currentState.exitActionMode();
+            });
+            break;
+        }
       },
-      defaultChild: const EmptyBody(),
-      itemBuilder: (context, snapshot, animation, index) {
-        final item = new Note.fromSnapshot(snapshot);
-        return new _ContentNoteItem(
-          item: item,
-          animation: animation,
-          selected: _getSelectedIndex(_selectedItems, item) != -1,
-          onTap: () => _onTap(item),
-          onLongPress: () => _onLongPress(item),
-        );
-      }
+      onExitActionMode: () {
+        bodyKey.currentState.clearSelection();
+      },
     );
   }
 
-  void _onTap(Note item) {
-    if (_selectedItems.length > 0) {
-      final idx = _getSelectedIndex(_selectedItems, item);
-      if (idx >= 0) {
-        setState(() => _selectedItems.removeAt(idx));
-      } else {
-        setState(() => _selectedItems.add(item));
+  void _initList() {
+    _body = new NoteListPage(
+      key: bodyKey,
+      bookId: bookId,
+      config: config,
+      onItemTap: (item) {
+        final params = <String, dynamic>{'id': item.id};
+        Navigator.pushNamed(context, routeWithParams(NotePage.kRouteName, params));
+      },
+      onItemsSelect: (items, index) {
+        if (items.length == 0)
+          appBarKey.currentState.exitActionMode();
+        else
+          appBarKey.currentState.showActionMode(items);
       }
-      if (widget.onItemsSelect != null) {
-        widget.onItemsSelect(_selectedItems, idx);
-      }
-    } else {
-      if (widget.onItemTap != null) {
-        widget.onItemTap(item);
-      }
-    }
-  }
-
-  void _onLongPress(Note data) {
-    if (_selectedItems.length > 0) return;
-
-    setState(() => _selectedItems.add(data));
-    if (widget.onItemsSelect != null) {
-      widget.onItemsSelect(_selectedItems, 0);
-    }
-  }
-
-  int _getSelectedIndex(List<Note> items, Note item) {
-    if (items == null) return -1;
-    for (int i = 0; i < items.length; i++) {
-      if (items[i].id == item.id) return i;
-    }
-    return -1;
-  }
-
-  void clearSelection() {
-    setState(() => _selectedItems.clear());
-  }
-}
-
-class _ContentNoteItem extends StatelessWidget {
-  final Note item;
-  final Animation animation;
-  final GestureTapCallback onTap;
-  final GestureLongPressCallback onLongPress;
-  final bool selected;
-
-  _ContentNoteItem({
-    this.item,
-    this.animation,
-    this.selected,
-    this.onTap,
-    this.onLongPress,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final selectedBg = new BoxDecoration(color: theme.highlightColor);
-    final dateFormatter = new DateFormat.MMMd();
-    final date = item.reminder != null ? dateFormatter.format(item.reminder) : '';
-    final dateStyle = theme.textTheme.body1.copyWith(fontSize: 12.0);
-
-    return new SizeTransition(
-      sizeFactor: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
-      axisAlignment: 0.0,
-      child: new Container(
-        decoration: selected ? selectedBg : null,
-        child: new ListTile(
-          title: new Text(item.title, overflow: TextOverflow.ellipsis),
-          subtitle: new Text(item.note, overflow: TextOverflow.ellipsis),
-          trailing: item.reminder != null
-            ? new Container(
-              alignment: Alignment.topRight,
-              margin: const EdgeInsets.only(top: 20.0),
-              child: new Text(date, style: dateStyle),
-            )
-            : null,
-          selected: selected,
-          onTap: onTap,
-          onLongPress: onLongPress,
-        ),
-      ),
     );
   }
 }

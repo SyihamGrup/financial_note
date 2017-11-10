@@ -29,7 +29,9 @@ class BalanceForm extends StatefulWidget {
        super(key: key);
 
   @override
-  State<StatefulWidget> createState() => new BalanceFormState(item);
+  State<StatefulWidget> createState() {
+    return new BalanceFormState(item ?? new Balance(bookId));
+  }
 }
 
 class BalanceFormState extends State<BalanceForm> {
@@ -39,11 +41,11 @@ class BalanceFormState extends State<BalanceForm> {
   var _autoValidate = false;
   var _saveNeeded = true;
 
-  BalanceFormState(Balance item)
-    : _item = item ?? new Balance(),
-    _ctrl = {
-      'value': new TextEditingController(text: item?.value?.toString() ?? ''),
-    };
+  BalanceFormState(this._item)
+    : assert(_item != null),
+      _ctrl = {
+        'value': new TextEditingController(text: _item.value?.toString() ?? ''),
+      };
 
   void discard() {
     _saveNeeded = false;
@@ -57,7 +59,7 @@ class BalanceFormState extends State<BalanceForm> {
     }
     form.save();
     try {
-      await Balance.setValue(widget.bookId, _item.year, _item.month, _item.value);
+      await Balance.of(widget.bookId).setValue(_item.year, _item.month, _item.value);
       return true;
     } catch (e) {
       return false;

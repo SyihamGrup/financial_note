@@ -53,8 +53,8 @@ class _BudgetPageState extends State<BudgetPage> {
   }
 
   Future<Null> _initData() async {
-    _item = await Budget.get(widget.bookId, widget.id);
-    if (_item == null) _item = new Budget(date: new DateTime.now());
+    _item = await Budget.of(widget.bookId).get(widget.id);
+    if (_item == null) _item = new Budget(widget.bookId, date: new DateTime.now());
     _ctrl = <String, TextEditingController>{
       'title': new TextEditingController(text: _item.title ?? ''),
       'value': new TextEditingController(text: _item.value.toString()),
@@ -73,7 +73,7 @@ class _BudgetPageState extends State<BudgetPage> {
     final form = _formKey.currentState;
     try {
       form.save();
-      await _item.save(widget.bookId);
+      await _item.save();
       return true;
     } catch (e) {
       _showInSnackBar(e.message);

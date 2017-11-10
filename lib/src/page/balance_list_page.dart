@@ -37,10 +37,10 @@ class BalanceListPage extends StatefulWidget {
   State<StatefulWidget> createState() => new _BalanceListPageState();
 }
 
-class _BalanceListPageState extends State<BalanceListPage> {
+class _BalanceListPageState extends State<BalanceListPage> with SelectableList<Balance> {
   final _appBarKey = new GlobalKey<ListAppBarState<Balance>>();
   final _dialogKey = new GlobalKey<BalanceFormState>();
-  final List<Balance> _selectedItems = [];
+  List<Balance> _selectedItems = [];
 
   @override
   Widget build(BuildContext context) {
@@ -53,12 +53,12 @@ class _BalanceListPageState extends State<BalanceListPage> {
         onActionModeTap: (key, items) {
           switch (key) {
             case 'edit':
-              _onItemTap(items[0]);
+              onItemTap(items[0]);
               break;
             case 'delete':
               showConfirmDialog(context, new Text(lang.msgConfirmDelete())).then((ret) {
                 if (!ret) return;
-                items.forEach((val) => Balance.remove(currentBook.id, val.id));
+                items.forEach((val) => Balance.of(currentBook.id).remove(val.id));
                 _appBarKey.currentState.exitActionMode();
               });
               break;
@@ -67,20 +67,18 @@ class _BalanceListPageState extends State<BalanceListPage> {
         onExitActionMode: () => clearSelection(),
       ),
       body: new FirebaseAnimatedList(
-        query: Balance.getNode(widget.bookId),
-        sort: (a, b) {
-          return b.key.compareTo(a.key);
-        },
+        query: getNode(Balance.kNodeName, widget.bookId),
+        sort: (a, b) => b.key.compareTo(a.key),
         defaultChild: const EmptyBody(),
         itemBuilder: (context, snapshot, animation, index) {
-          final item = new Balance.fromSnapshot(snapshot);
+          final item = new Balance.fromSnapshot(currentBook.id, snapshot);
           return new _ContentBalanceItem(
             config: widget.config,
             item: item,
             animation: animation,
-            selected: _getSelectedIndex(_selectedItems, item) != -1,
-            onTap: () => _onTap(item),
-            onLongPress: () => _onLongPress(item),
+            selected: getSelectedIndex(item) != -1,
+            onTap: () => onListTap(item),
+            onLongPress: () => onListLongPress(item),
           );
         }
       ),
@@ -91,7 +89,26 @@ class _BalanceListPageState extends State<BalanceListPage> {
     );
   }
 
-  void _onItemTap(Balance item) {
+  @override
+  int getSelectedIndex(Balance item) {
+    if (_selectedItems == null) return -1;
+    for (int i = 0; i < _selectedItems.length; i++) {
+      if (_selectedItems[i].id == item.id) return i;
+    }
+    return -1;
+  }
+
+  @override
+  void onSelectionChange(List<Balance> items, int index) {
+    setState(() => _selectedItems = items);
+    if (items.length == 0)
+      _appBarKey.currentState.exitActionMode();
+    else
+      _appBarKey.currentState.showActionMode(items);
+  }
+
+  @override
+  void onItemTap(Balance item) {
     final lang = Lang.of(context);
     final dateFormatter = new DateFormat.yMMMM();
     showDialog(
@@ -121,45 +138,6 @@ class _BalanceListPageState extends State<BalanceListPage> {
         ],
       ),
     );
-  }
-
-  void _onTap(Balance item) {
-    if (_selectedItems.length > 0) {
-      final idx = _getSelectedIndex(_selectedItems, item);
-      if (idx >= 0) {
-        setState(() => _selectedItems.removeAt(idx));
-      } else {
-        setState(() => _selectedItems.add(item));
-      }
-      _onItemsSelect(_selectedItems, idx);
-    } else {
-      _onItemTap(item);
-    }
-  }
-
-  void _onLongPress(Balance data) {
-    if (_selectedItems.length > 0) return;
-    setState(() => _selectedItems.add(data));
-    _onItemsSelect(_selectedItems, 0);
-  }
-
-  void _onItemsSelect(List<Balance> items, int index) {
-    if (items.length == 0)
-      _appBarKey.currentState.exitActionMode();
-    else
-      _appBarKey.currentState.showActionMode(items);
-  }
-
-  int _getSelectedIndex(List<Balance> items, Balance item) {
-    if (items == null) return -1;
-    for (int i = 0; i < items.length; i++) {
-      if (items[i].id == item.id) return i;
-    }
-    return -1;
-  }
-
-  void clearSelection() {
-    setState(() => _selectedItems.clear());
   }
 }
 

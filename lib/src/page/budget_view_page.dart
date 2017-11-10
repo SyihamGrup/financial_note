@@ -43,8 +43,8 @@ class _BudgetViewPage extends State<BudgetViewPage> {
   @override
   void initState() {
     super.initState();
-    _dataSubscr = Budget.getNode(widget.bookId).child(widget.id).onValue
-                        .listen((event) {
+    _dataSubscr = getNode(Budget.kNodeName, widget.bookId).child(widget.id)
+                  .onValue.listen((event) {
       _initData();
     });
   }
@@ -53,9 +53,9 @@ class _BudgetViewPage extends State<BudgetViewPage> {
     final theme = Theme.of(context);
     final lang = Lang.of(context);
 
-    _item = await Budget.get(widget.bookId, widget.id);
+    _item = await Budget.of(widget.bookId).get(widget.id);
     if (_item == null) return;
-    _transactions = await _item.getTransactions(widget.bookId);
+    _transactions = await _item.getTransactions();
     _widgets = <Widget>[];
 
     final dateFormatter = new DateFormat.yMMMMd();

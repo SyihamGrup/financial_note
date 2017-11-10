@@ -10,57 +10,66 @@
 
 import 'dart:async';
 
+import 'package:financial_note/data.dart';
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-class Book {
+class Book implements Data {
   static const kNodeName = 'books';
+
+  final String userId;
 
   String id;
   String title;
   String descr;
 
-  Book({this.id, this.title, this.descr});
+  Book(this.userId, {this.id, this.title, this.descr});
 
-  Book.fromJson(this.id, Map<String, dynamic> json)
+  Book.fromJson(this.userId, this.id, Map<String, dynamic> json)
     : title = parseString(mapValue(json, 'title')),
       descr = parseString(mapValue(json, 'descr'));
 
-  Book.fromSnapshot(DataSnapshot snapshot)
-    : id    = snapshot.key,
-      title = parseString(mapValue(snapshot.value, 'title')),
-      descr = parseString(mapValue(snapshot.value, 'descr'));
+  Book.fromSnapshot(String userId, DataSnapshot snapshot)
+    : this.fromJson(userId, snapshot.key, snapshot.value);
 
-  static Future<Book> first(String userId) async {
-    final ref = FirebaseDatabase.instance.reference().child(kNodeName).child(userId);
-    final snap = await ref.limitToFirst(1).once();
+  static Book of(String userId) {
+    return new Book(userId);
+  }
+
+  Future<Book> first() async {
+    final node = getNode(kNodeName, userId);
+    final snap = await node.limitToFirst(1).once();
     if (snap.value == null) return null;
 
     Book book;
     Map<String, Map<String, dynamic>> items = snap.value;
     items.forEach((key, value) {
-      book = new Book.fromJson(key, value);
+      book = new Book.fromJson(userId, key, value);
     });
     return book;
   }
 
-  static Future<Book> get(String userId, String id) async {
+  Future<Book> get(String id) async {
     if (id == null) return null;
-    final snap = await getNode(userId).child(id).once();
+    final snap = await getNode(kNodeName, userId).child(id).once();
     if (snap.value == null) return null;
-    return new Book.fromSnapshot(snap);
+    return new Book.fromSnapshot(userId, snap);
   }
 
-  Future<Null> save(String userId) async {
-    final node = getNode(userId);
+  Future<Null> save() async {
+    final node = getNode(kNodeName, userId);
     final ref = id != null ? node.child(id) : node.push();
     await ref.set(toJson());
     id = ref.key;
   }
 
-  static Future<Null> remove(String userId, String id) async {
-    final node = getNode(userId);
-    await node.child(id).remove();
+  Future<Null> removeById(String id) async {
+    if (id == null) return;
+    await getNode(kNodeName, userId).child(id).remove();
+  }
+
+  Future<Null> remove() async {
+    await removeById(id);
   }
 
   static Future<Book> createDefault(String userId) async {
@@ -68,15 +77,11 @@ class Book {
       'title' : 'Default',
       'descr' : 'Default book'
     };
-    final ref = FirebaseDatabase.instance.reference().child(kNodeName).child(userId);
-    final newItem = ref.push();
+    final node = getNode(kNodeName, userId);
+    final newItem = node.push();
     await newItem.set(data);
 
-    return new Book.fromJson(newItem.key, data);
-  }
-
-  static DatabaseReference getNode(String userId) {
-    return FirebaseDatabase.instance.reference().child(kNodeName).child(userId);
+    return new Book.fromJson(userId, newItem.key, data);
   }
 
   Map<String, dynamic> toJson({showId: false}) {

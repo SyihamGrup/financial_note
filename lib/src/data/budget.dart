@@ -14,8 +14,10 @@ import 'package:financial_note/data.dart';
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-class Budget {
+class Budget implements Data {
   static const kNodeName = 'budgets';
+
+  final String bookId;
 
   String id;
   String title;
@@ -25,7 +27,7 @@ class Budget {
   bool isExpire;
   String descr;
 
-  Budget({
+  Budget(this.bookId, {
     this.id,
     this.title,
     this.date,
@@ -35,7 +37,7 @@ class Budget {
     this.descr,
   });
 
-  Budget.fromJson(this.id, Map<String, dynamic> json)
+  Budget.fromJson(this.bookId, this.id, Map<String, dynamic> json)
     : title     = parseString(mapValue(json, 'title')),
       date      = parseDate(mapValue(json, 'date')),
       value     = parseDouble(mapValue(json, 'value')),
@@ -43,62 +45,64 @@ class Budget {
       isExpire  = parseBool(mapValue(json, 'isExpire')),
       descr     = parseString(mapValue(json, 'descr'));
 
-  Budget.fromSnapshot(DataSnapshot snapshot)
-    : id        = snapshot.key,
-      title     = parseString(mapValue(snapshot.value, 'title')),
-      date      = parseDate(mapValue(snapshot.value, 'date')),
-      value     = parseDouble(mapValue(snapshot.value, 'value')),
-      spent     = parseDouble(mapValue(snapshot.value, 'spent')),
-      isExpire  = parseBool(mapValue(snapshot.value, 'isExpire', false)),
-      descr     = parseString(mapValue(snapshot.value, 'descr'));
+  Budget.fromSnapshot(String bookId, DataSnapshot snapshot)
+    : this.fromJson(bookId, snapshot.key, snapshot.value);
 
-  static Future<Budget> get(String bookId, String id) async {
+  static Budget of(String bookId) {
+    return new Budget(bookId);
+  }
+
+  Future<Budget> get(String id) async {
     if (id == null) return null;
-    final snap = await getNode(bookId).child(id).once();
+    final snap = await getNode(kNodeName, bookId).child(id).once();
     if (snap.value == null) return null;
-    return new Budget.fromSnapshot(snap);
+    return new Budget.fromSnapshot(bookId, snap);
   }
 
-  static Future<List<Budget>> list(String bookId) async {
-    final snap = await getNode(bookId).once();
-    if (snap.value == null) return null;
-
+  Future<List<Budget>> list() async {
     final items = <Budget>[];
-    final Map<String, Map<String, dynamic>> data = snap.value;
-    data.forEach((key, json) => items.add(new Budget.fromJson(key, json)));
-    items.sort((a, b) => a.date?.compareTo(b.date) ?? 0);
-    return items;
-  }
 
-  Future<List<Transaction>> getTransactions(String bookId) async {
-    final ret = <Transaction>[];
-    final node = Transaction.getNode(bookId);
-    final snap = await node.orderByChild('budgetId').equalTo(id).once();
-    if (snap.value == null) return ret;
+    final snap = await getNode(kNodeName, bookId).once();
+    if (snap.value == null) return items;
 
     final Map<String, Map<String, dynamic>> data = snap.value;
     data.forEach((key, json) {
-      ret.add(new Transaction.fromJson(key, json));
+      items.add(new Budget.fromJson(bookId, key, json));
     });
-    ret.sort((a, b) => b.date?.compareTo(a.date) ?? 0);
-
-    return ret;
+    items.sort((a, b) => compareDate(b.date, a.date));
+    return items;
   }
 
-  Future<Null> save(String bookId) async {
-    final node = getNode(bookId);
+  Future<List<Transaction>> getTransactions() async {
+    final items = <Transaction>[];
+
+    final node = getNode(Transaction.kNodeName, bookId);
+    final snap = await node.orderByChild('budgetId').equalTo(id).once();
+    if (snap.value == null) return items;
+
+    final Map<String, Map<String, dynamic>> data = snap.value;
+    data.forEach((key, json) {
+      items.add(new Transaction.fromJson(bookId, key, json));
+    });
+    items.sort((a, b) => compareDate(b.date, a.date));
+
+    return items;
+  }
+
+  Future<Null> save() async {
+    final node = getNode(kNodeName, bookId);
     final ref = id != null ? node.child(id) : node.push();
     await ref.set(toJson());
     id = ref.key;
   }
 
-  static Future<Null> remove(String bookId, String id) async {
-    final node = getNode(bookId);
-    await node.child(id).remove();
+  Future<Null> removeById(String id) async {
+    if (id == null) return;
+    await getNode(kNodeName, bookId).child(id).remove();
   }
 
-  static DatabaseReference getNode(String bookId) {
-    return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
+  Future<Null> remove() async {
+    await removeById(id);
   }
 
   Map<String, dynamic> toJson({showId: false}) {

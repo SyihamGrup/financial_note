@@ -19,7 +19,7 @@ class AppDrawer extends StatelessWidget {
   final ValueChanged<String> onListTap;
 
   const AppDrawer({String selectedRoute, this.onListTap})
-    :  this.selectedRoute  = selectedRoute ?? HomePageTransaction.kRouteName;
+    :  this.selectedRoute  = selectedRoute ?? TransactionListPage.kRouteName;
 
   @override
   Widget build(BuildContext context) {
@@ -47,29 +47,29 @@ class AppDrawer extends StatelessWidget {
           new ListTile(
             leading: kIconHome,
             title: new Text(Lang.of(context).drawerHome()),
-            selected: selectedRoute == HomePageTransaction.kRouteName,
-            onTap: () => listTapped(context, HomePageTransaction.kRouteName),
+            selected: selectedRoute == TransactionListPage.kRouteName,
+            onTap: () => listTapped(context, TransactionListPage.kRouteName),
           ),
 
           new ListTile(
             leading: kIconBill,
             title: new Text(Lang.of(context).drawerBills()),
-            selected: selectedRoute == HomePageBill.kRouteName,
-            onTap: () => listTapped(context, HomePageBill.kRouteName),
+            selected: selectedRoute == BillListPage.kRouteName,
+            onTap: () => listTapped(context, BillListPage.kRouteName),
           ),
 
           new ListTile(
             leading: kIconBudget,
             title: new Text(Lang.of(context).drawerBudgets()),
-            selected: selectedRoute == HomePageBudget.kRouteName,
-            onTap: () => listTapped(context, HomePageBudget.kRouteName),
+            selected: selectedRoute == BudgetListPage.kRouteName,
+            onTap: () => listTapped(context, BudgetListPage.kRouteName),
           ),
 
           new ListTile(
             leading: kIconNote,
             title: new Text(Lang.of(context).drawerNotes()),
-            selected: selectedRoute == HomePageNote.kRouteName,
-            onTap: () => listTapped(context, HomePageNote.kRouteName),
+            selected: selectedRoute == NoteListPage.kRouteName,
+            onTap: () => listTapped(context, NoteListPage.kRouteName),
           ),
 
           const Divider(),

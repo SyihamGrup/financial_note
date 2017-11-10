@@ -41,7 +41,7 @@ class _BalancePageState extends State<BalancePage> {
   }
 
   Future<Null> _initData() async {
-    _item = await Balance.get(widget.bookId, widget.id);
+    _item = await Balance.of(widget.bookId).get(widget.id);
   }
 
   @override

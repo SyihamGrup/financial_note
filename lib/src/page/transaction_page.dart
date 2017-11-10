@@ -71,12 +71,12 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   Future<Null> _initData() async {
-    _item = await Transaction.get(widget.bookId, widget.id);
+    _item = await Transaction.of(widget.bookId).get(widget.id);
     if (_item != null) {
       _transType = _item.value > 0 ? kIncome : kExpense;
       _item.value = _item.value.abs();
     } else {
-      _item = new Transaction(date: new DateTime.now());
+      _item = new Transaction(widget.bookId, date: new DateTime.now());
     }
 
     _ctrl = <String, TextEditingController>{
@@ -86,21 +86,21 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   Future<Null> _initBudgets() async {
-    _budgets = await Budget.list(widget.bookId);
+    _budgets = await Budget.of(widget.bookId).list();
   }
 
   Future<Null> _initBills() async {
-    _billsGroup = await BillGroup.list(widget.bookId);
+    _billsGroup = await BillGroup.of(widget.bookId).list();
 
     if (_item.billId != null) {
-      final bill = await Bill.get(widget.bookId, _item.billId);
+      final bill = await Bill.of(widget.bookId).get(_item.billId);
       if (bill != null) _billGroupId = bill.groupId;
     }
     if (_billsGroup == null && _billsGroup.length > 0) {
       _billGroupId = _billsGroup[0].id;
     }
     if (_billGroupId != null) {
-      _bills = await BillGroup.getItems(widget.bookId, _billGroupId);
+      _bills = await BillGroup.of(widget.bookId).getItems(_billGroupId);
     }
   }
 
@@ -115,7 +115,7 @@ class _TransactionPageState extends State<TransactionPage> {
     try {
       form.save();
       _item.value = _item.value * _transType;
-      await _item.save(widget.bookId);
+      await _item.save();
       return true;
     } catch (e) {
       _showInSnackBar(e.message);
@@ -313,7 +313,7 @@ class _TransactionPageState extends State<TransactionPage> {
           });
           return;
         }
-        BillGroup.getItems(widget.bookId, _billGroupId).then((items) {
+        BillGroup.of(widget.bookId).getItems(_billGroupId).then((items) {
           setState(() {
             _bills = items;
             if (_bills != null && _bills.length > 0) {

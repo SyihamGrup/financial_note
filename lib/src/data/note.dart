@@ -10,11 +10,14 @@
 
 import 'dart:async';
 
+import 'package:financial_note/data.dart';
 import 'package:financial_note/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-class Note {
+class Note implements Data {
   static const kNodeName = 'notes';
+
+  final String bookId;
 
   String id;
   String title;
@@ -23,7 +26,7 @@ class Note {
   DateTime createdAt;
   DateTime updatedAt;
 
-  Note({
+  Note(this.bookId, {
     this.id,
     this.title,
     this.note,
@@ -32,42 +35,41 @@ class Note {
     this.updatedAt,
   });
 
-  Note.fromJson(this.id, Map<String, dynamic> json)
+  Note.fromJson(this.bookId, this.id, Map<String, dynamic> json)
     : title     = parseString(mapValue(json, 'title')),
       note      = parseString(mapValue(json, 'note')),
       reminder  = parseDate(mapValue(json, 'reminder')),
       createdAt = parseDate(mapValue(json, 'createdAt')),
       updatedAt = parseDate(mapValue(json, 'updatedAt'));
 
-  Note.fromSnapshot(DataSnapshot snapshot)
-    : id        = snapshot.key,
-      title     = parseString(mapValue(snapshot.value, 'title')),
-      note      = parseString(mapValue(snapshot.value, 'note')),
-      reminder  = parseDate(mapValue(snapshot.value, 'reminder')),
-      createdAt = parseDate(mapValue(snapshot.value, 'createdAt')),
-      updatedAt = parseDate(mapValue(snapshot.value, 'updatedAt'));
+  Note.fromSnapshot(String bookId, DataSnapshot snapshot)
+    : this.fromJson(bookId, snapshot.key, snapshot.value);
 
-  static Future<Note> get(String bookId, String id) async {
-    if (id == null) return null;
-    final snap = await getNode(bookId).child(id).once();
-    if (snap.value == null) return null;
-    return new Note.fromSnapshot(snap);
+  static Note of(String bookId) {
+    return new Note(bookId);
   }
 
-  Future<Null> save(String bookId) async {
-    final node = getNode(bookId);
+  Future<Note> get(String id) async {
+    if (id == null) return null;
+    final snap = await getNode(kNodeName, bookId).child(id).once();
+    if (snap.value == null) return null;
+    return new Note.fromSnapshot(bookId, snap);
+  }
+
+  Future<Null> save() async {
+    final node = getNode(kNodeName, bookId);
     final ref = id != null ? node.child(id) : node.push();
     await ref.set(toJson());
     id = ref.key;
   }
 
-  static Future<Null> remove(String bookId, String id) async {
-    final node = getNode(bookId);
-    await node.child(id).remove();
+  Future<Null> removeById(String id) async {
+    if (id == null) return;
+    await getNode(kNodeName, bookId).child(id).remove();
   }
 
-  static DatabaseReference getNode(String bookId) {
-    return FirebaseDatabase.instance.reference().child(kNodeName).child(bookId);
+  Future<Null> remove() async {
+    await removeById(id);
   }
 
   Map<String, dynamic> toJson({showId: false}) {

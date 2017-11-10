@@ -10,9 +10,9 @@
 
 import 'dart:async';
 
+import 'package:financial_note/data.dart';
 import 'package:financial_note/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 class User {
   static const kNodeName = 'users';
@@ -30,7 +30,7 @@ class User {
   String get displayName => _firebaseUser.displayName;
 
   static Future<User> get(FirebaseUser user) async {
-    final snap = await getNode().child(user.uid).once();
+    final snap = await getNode(kNodeName, null).child(user.uid).once();
     if (snap.value != null) {
       return new User(user,
         notificationKey: mapValue<String>(snap.value, 'notificationKey'),
@@ -42,16 +42,13 @@ class User {
   }
 
   Future<Null> save() async {
-    final ref = getNode().child(_firebaseUser.uid);
+    final ref = getNode(kNodeName, null).child(_firebaseUser.uid);
     await ref.set(toJson());
   }
 
   static Future<Null> remove(String id) async {
-    await getNode().child(id).remove();
-  }
-
-  static DatabaseReference getNode() {
-    return FirebaseDatabase.instance.reference().child(kNodeName);
+    if (id == null) return;
+    await getNode(kNodeName, null).child(id).remove();
   }
 
   Map<String, dynamic> toJson({showId: false}) {

@@ -45,12 +45,12 @@ class _BillViewPage extends State<BillViewPage> {
   @override
   void initState() {
     super.initState();
-    _groupSubscr = BillGroup.getNode(widget.bookId).child(widget.id)
-                            .onValue.listen((event) {
+    _groupSubscr = getNode(BillGroup.kNodeName, widget.bookId).child(widget.id)
+                   .onValue.listen((event) {
       _initData();
     });
-    _itemSubscr = Bill.getNode(widget.bookId).orderByChild('groupId')
-                      .equalTo(widget.id).onValue.listen((event) {
+    _itemSubscr = getNode(Bill.kNodeName, widget.bookId).orderByChild('groupId')
+                  .equalTo(widget.id).onValue.listen((event) {
       _initData();
     });
   }
@@ -60,9 +60,9 @@ class _BillViewPage extends State<BillViewPage> {
     final lang = Lang.of(context);
     final currencySymbol = widget.config.currencySymbol;
 
-    _group = await BillGroup.get(widget.bookId, widget.id);
+    _group = await BillGroup.of(widget.bookId).get(widget.id);
     if (_group == null) return;
-    _items = await BillGroup.getItems(widget.bookId, _group.id);
+    _items = await BillGroup.of(widget.bookId).getItems(_group.id);
     _widgets = <Widget>[];
 
     final dateFormatter = new DateFormat.yMMMEd();

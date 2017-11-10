@@ -54,8 +54,8 @@ class _NotePageState extends State<NotePage> {
   }
 
   Future<Null> _initData() async {
-    _item = await Note.get(widget.bookId, widget.id);
-    if (_item == null) _item = new Note();
+    _item = await Note.of(widget.bookId).get(widget.id);
+    if (_item == null) _item = new Note(widget.bookId);
     _hasReminder = _item.reminder != null;
     _ctrl = <String, TextEditingController>{
       'title': new TextEditingController(text: _item.title ?? ''),
@@ -75,7 +75,7 @@ class _NotePageState extends State<NotePage> {
       form.save();
       if (_item.createdAt == null) _item.createdAt = new DateTime.now();
       _item.updatedAt = new DateTime.now();
-      await _item.save(widget.bookId);
+      await _item.save();
       return true;
     } catch (e) {
       _showInSnackBar(e.message);

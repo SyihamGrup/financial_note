@@ -54,16 +54,16 @@ class _BillPageState extends State<BillPage> {
   }
 
   Future<Null> _initData() async {
-    _group = await BillGroup.get(widget.bookId, widget.groupId);
-    if (_group == null) _group = new BillGroup();
+    _group = await BillGroup.of(widget.bookId).get(widget.groupId);
+    if (_group == null) _group = new BillGroup(widget.bookId);
     _groupCtrl = <String, TextEditingController>{
       'title': new TextEditingController(text: _group.title ?? ''),
       'note': new TextEditingController(text: _group.note ?? ''),
     };
 
-    _items = await BillGroup.getItems(widget.bookId, _group.id);
+    _items = await BillGroup.of(widget.bookId).getItems(_group.id);
     if (_items == null || _items.length == 0) {
-      _items = <Bill>[new Bill(date: new DateTime.now())];
+      _items = <Bill>[new Bill(widget.bookId, date: new DateTime.now())];
     }
     _ctrls = <Map<String, TextEditingController>>[];
     _items.forEach((item) {
@@ -88,8 +88,8 @@ class _BillPageState extends State<BillPage> {
     try {
       form.save();
       _fillData();
-      await _group.save(widget.bookId);
-      await _group.saveItems(widget.bookId, _items);
+      await _group.save();
+      await _group.saveItems(_items);
       return true;
     } catch (e) {
       _showInSnackBar(e.message);
@@ -360,7 +360,7 @@ class _BillPageState extends State<BillPage> {
             'value'     : new TextEditingController(),
             'paidValue' : new TextEditingController(),
           });
-          setState(() => _items.add(new Bill(date: new DateTime.now())));
+          setState(() => _items.add(new Bill(widget.bookId, date: new DateTime.now())));
         },
       ),
     ));
