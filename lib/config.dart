@@ -92,9 +92,15 @@ class Config {
     bool selected: false,
     FontWeight fontWeight: FontWeight.w500,
   }) {
+    final theme = Theme.of(context);
+    Color selectedColor;
+//    if (selected) {
+//      selectedColor = theme.brightness == Brightness.light
+//                    ? theme.primaryColor : theme.accentColor;
+//    }
     return Theme.of(context).textTheme.subhead.copyWith(
       fontWeight: fontWeight,
-      color: selected ? ListTileTheme.of(context).selectedColor : null,
+      color: selectedColor,
     );
   }
 

@@ -114,9 +114,12 @@ class _ContentBillItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final lang = Lang.of(context);
     final dateFormatter = new DateFormat.MMMd();
     final selectedBg = new BoxDecoration(color: Theme.of(context).highlightColor);
+    final iconColor = theme.brightness == Brightness.light
+                    ? Colors.black54 : Colors.white70;
 
     return new SizeTransition(
       sizeFactor: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
@@ -127,9 +130,9 @@ class _ContentBillItem extends StatelessWidget {
           leading: new CircleAvatar(
             backgroundColor: item.transType == null ? Colors.grey[600]
                : (item.transType == kIncome ? Colors.green[400] : Colors.orange[300]),
-            child: item.totalValue == item.paidValue ? new Icon(Icons.done_all) :
-                   item.paidValue > 0                ? new Icon(Icons.done)
-                                                     : new Icon(Icons.attach_money)
+            child: item.totalValue == item.paidValue ? new Icon(Icons.done_all, color: iconColor) :
+                   item.paidValue > 0                ? new Icon(Icons.done, color: iconColor)
+                                                     : new Icon(Icons.attach_money, color: iconColor)
           ),
           title: new Text(item.title ?? '',
             style: config.getTitleStyle(context, selected: selected),
