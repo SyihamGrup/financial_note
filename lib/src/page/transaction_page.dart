@@ -223,6 +223,7 @@ class _TransactionPageState extends State<TransactionPage> {
                 decoration: new InputDecoration(labelText: lang.lblTitle()),
                 onSaved: (String value) => _item.title = value,
                 validator: _validateTitle,
+                autofocus: widget.id == null,
               ),
 
               // -- date --
