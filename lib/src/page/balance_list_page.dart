@@ -170,9 +170,7 @@ class _ContentBalanceItem extends StatelessWidget {
       child: new Container(
         decoration: selected ? selectedBg : null,
         child: new ListTile(
-          title: new Text(new DateFormat.yMMMM().format(date),
-            style: config.getTitleStyle(context, selected: selected),
-          ),
+          title: new Text(new DateFormat.yMMMM().format(date)),
           subtitle: new Text(formatCurrency(item.value, symbol: config.currencySymbol)),
           selected: selected,
           onTap: onTap,
