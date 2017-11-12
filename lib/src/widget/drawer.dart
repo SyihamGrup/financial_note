@@ -8,6 +8,8 @@
  *   - Adi Sayoga <adisayoga@gmail.com>
  */
 
+import 'dart:async';
+
 import 'package:financial_note/auth.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
@@ -133,7 +135,7 @@ class _AppDrawerState extends State<AppDrawer> {
 
       new ListTile(
         title: new Text(lang.drawerHelp()),
-        onTap: () => listTapped(context, null),
+        onTap: () => showHelpDialog(),
       ),
 
       new AboutListTile(
@@ -174,6 +176,27 @@ class _AppDrawerState extends State<AppDrawer> {
         }),
       ),
     ];
+  }
+
+  Future<Null> showHelpDialog() async {
+    final theme = Theme.of(context);
+    final lang = Lang.of(context);
+    final aboutTextStyle = theme.textTheme.body2;
+    final linkStyle = aboutTextStyle.copyWith(color: theme.accentColor);
+
+    await showDialog(context: context, child: new AlertDialog(
+      title: new Text(lang.drawerHelp()),
+      content: new RichText(text: new TextSpan(children: [
+        new TextSpan(text: lang.msgHelp(), style: aboutTextStyle),
+        new TextSpan(text: ' adisayoga@gmail.com', style: linkStyle),
+      ])),
+      actions: [
+        new FlatButton(
+           child: new Text(lang.btnClose().toUpperCase()),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
+    ));
   }
 
   void listTapped(BuildContext context, String routeName) {

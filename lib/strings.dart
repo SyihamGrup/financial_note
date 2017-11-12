@@ -87,6 +87,7 @@ class Lang {
   String btnAddItem()      => _('btnAddItem',      'Add Item');
   String btnEdit()         => _('btnEdit',         'Edit');
   String btnSave()         => _('btnSave',         'Save');
+  String btnClose()        => _('btnClose',        'Close');
 
   String lblIncome()       => _('lblIncome',       'Income');
   String lblExpense()      => _('lblExpense',      'Expense');
@@ -121,4 +122,5 @@ class Lang {
   String msgFieldRequired()  => _('msgFieldRequired',  'This field is required');
   String msgConfirmLeave()   => _('msgConfirmLeave',   'Your data will be lost. Are you sure to leave this form?');
   String msgConfirmDelete()  => _('msgConfirmDelete',  'Are you sure to delete this item(s)?');
+  String msgHelp()           => _('msgHelp',           'For more information, please contact me at');
 }
