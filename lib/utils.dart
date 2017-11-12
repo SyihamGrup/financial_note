@@ -87,6 +87,11 @@ String formatCurrency(dynamic number, {int decimalDigits = 0, String symbol}) {
   return formatter.format(number);
 }
 
+String formatDate(DateTime date, [String pattern = 'yyyy-MM-dd HH:mm:ss']) {
+  final formatter = new DateFormat(pattern);
+  return formatter.format(date);
+}
+
 /// Short function untuk membuat uri.
 Uri getUri(String host, String path,
           {String schema: kUriScheme, Map<String, dynamic> params}) {

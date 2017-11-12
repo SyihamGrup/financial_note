@@ -10,6 +10,8 @@
 
 library page;
 
+import 'dart:async';
+
 import 'package:financial_note/config.dart';
 import 'package:financial_note/data.dart';
 import 'package:financial_note/page.dart';
@@ -19,6 +21,7 @@ import 'package:financial_note/widget.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 class HomePage extends StatefulWidget {
@@ -35,8 +38,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+  static const notificationChannel = const MethodChannel(kNotificationChannel);
   final _messaging = new FirebaseMessaging();
-
   var _currentRoute = TransactionListPage.kRouteName;
 
   HomePageTransaction _homeTrans;
@@ -65,30 +68,54 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       const IosNotificationSettings(sound: true, badge: true, alert: true)
     );
 
+    // TODO: Ganti subscribe to topic dengan device group
+    _messaging.subscribeToTopic(currentBook.id);
+
     _messaging.configure(
       onMessage: (message) {
-        _handleMessaging(context, message);
-      },
-      onLaunch: (message) {
-        _handleMessaging(context, message, inBackground: true);
+        print('Messaging on message');
+        final action = mapValue<String>(message, 'action');
+        if (action == kScheduleNotification) {
+          final id = mapValue<String>(message, 'ref_id');
+          _scheduleNoteNotification(id);
+        }
       },
       onResume: (message) {
-        _handleMessaging(context, message, inBackground: true);
+        print('Messaging on resume');
+        _handleOnResume(message);
       },
+      onLaunch: (message) {
+        print('Messaging on launch');
+        _handleOnResume(message);
+      }
     );
   }
 
-  void _handleMessaging(BuildContext context, Map<String, dynamic> message,
-                        {bool inBackground: false}) {
-    if (!inBackground) return;
-    final type = mapValue<String>(message, 'type');
+  Future<Null> _scheduleNoteNotification(String id) async {
+    final note = await Note.of(widget.bookId).get(id);
+    if (note == null || note.reminder == null) return;
 
-    if (type == kMessagingNote) {
-      // Open note page
-      final id = mapValue<String>(message, 'id');
-      if (id == null) return;
-      final params = <String, dynamic>{'id': id};
-      Navigator.pushNamed(context, routeWithParams(NotePage.kRouteName, params));
+    try {
+      final args = <String, dynamic>{
+        'date'    : formatDate(note.reminder, 'yyyy-MM-dd HH:mm:ss'),
+        'ticker'  : note.note,
+        'title'   : note.title,
+        'content' : note.note,
+        'action'  : kShowNote,
+        'ref_id'  : note.id,
+      };
+      await notificationChannel.invokeMethod(kScheduleNotification, args);
+    } on PlatformException catch (e) {
+      print(e);
+    }
+  }
+
+  void _handleOnResume(Map<String, dynamic> message) {
+    final action = mapValue<String>(message, 'action');
+    if (action == kShowNote) {
+      final id = mapValue<String>(message, 'ref_id');
+      final route = routeWithParams(NotePage.kRouteName, <String, dynamic>{'id': id});
+      Navigator.pushNamed(context, route);
     }
   }
 

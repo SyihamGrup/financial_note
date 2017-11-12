@@ -26,14 +26,18 @@ export 'src/data/note.dart';
 export 'src/data/transaction.dart';
 export 'src/data/user.dart';
 
+const kMessagingKey = 'AAAA7qN8kBM:APA91bEonGWnktNOzcMHE0Xe9dXYrax8f8qk5hcfcrYFTzFKG7cnO-YOsQgOejXAzAZtcktQWu0j5CPGUCfwtf3fzlFYze9AAEMOKuV5aGA3EDBhexJUZU9BIzMBs37uULgf83G0nksr';
+
 const kUriScheme = 'https';
 const kFirebaseHost = 'us-central1-financialnote-d6d95.cloudfunctions.net';
-const kMessagingHost = 'android.googleapis.com';
-const kMessagingPath = '/gcm/notification';
+const kMessagingHost = 'fcm.googleapis.com';
+const kMessagingPath = '/fcm/send';
 const kOpeningBalancePath = '/getOpeningBalance';
 const kCalcOpeningBalancePath = '/calcOpeningBalance';
 
-const kMessagingNote = 'note';
+const kNotificationChannel = 'financialnote.adisayoga.com/notification';
+const kScheduleNotification = 'schedule_notification';
+const kShowNote = 'show_note';
 
 const kIncome = 1;
 const kExpense = -1;

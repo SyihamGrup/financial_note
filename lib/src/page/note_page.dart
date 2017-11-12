@@ -76,6 +76,7 @@ class _NotePageState extends State<NotePage> {
       if (_item.createdAt == null) _item.createdAt = new DateTime.now();
       _item.updatedAt = new DateTime.now();
       await _item.save();
+      if (_item.reminder != null) await _item.scheduleNotification();
       return true;
     } catch (e) {
       _showInSnackBar(e.message);
