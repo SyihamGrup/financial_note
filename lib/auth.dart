@@ -60,7 +60,8 @@ Future<GoogleSignInAccount> signInWithGoogle() async {
 }
 
 Future<Null> signOut() async {
-  return await auth.signOut();
+  await auth.signOut();
+  await googleSignIn.signOut();
 }
 
 Future<Map<String, dynamic>> addDeviceGroup(User user) async {

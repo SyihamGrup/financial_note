@@ -72,6 +72,7 @@ class Lang {
   String drawerSettings() => _('drawerSettings', 'Settings');
   String drawerHelp()     => _('drawerHelp',     'Help & Feedback');
   String drawerAbout()    => _('drawerAbout',    'About Financial Note');
+  String drawerLogout()   => _('drawerLogout',   'Logout');
 
   String menuSearch()  => _('menuSearch', 'Search');
   String menuEdit()    => _('menuEdit',   'Edit');

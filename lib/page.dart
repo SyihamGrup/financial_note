@@ -42,6 +42,7 @@ const kIconHome = const Icon(Icons.home);
 const kIconBill = const Icon(Icons.monetization_on);
 const kIconBudget = const Icon(Icons.insert_chart);
 const kIconNote = const Icon(Icons.note);
+const kIconSignOut = const Icon(Icons.exit_to_app);
 
 const kIconBack = const Icon(Icons.arrow_back);
 const kIconClose = const Icon(Icons.close);
