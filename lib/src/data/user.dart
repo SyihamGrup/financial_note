@@ -28,6 +28,7 @@ class User {
 
   String get uid => _firebaseUser.uid;
   String get displayName => _firebaseUser.displayName;
+  String get email => _firebaseUser.email;
 
   static Future<User> get(FirebaseUser user) async {
     final snap = await getNode(kNodeName, null).child(user.uid).once();
