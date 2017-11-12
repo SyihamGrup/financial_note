@@ -120,7 +120,7 @@ class _BalanceListPageState extends State<BalanceListPage> with SelectableList<B
           bookId: widget.bookId,
           item: item,
         ),
-        actions: <Widget>[
+        actions: [
           new FlatButton(
             onPressed: () {
               _dialogKey.currentState.discard();

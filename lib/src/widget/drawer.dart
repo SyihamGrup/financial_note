@@ -29,7 +29,7 @@ class AppDrawer extends StatelessWidget {
 
     return new Drawer(
       child: new ListView(
-        children: <Widget>[
+        children: [
           new DrawerHeader(
             decoration: new BoxDecoration(image: new DecorationImage(
               image: new ExactAssetImage('assets/drawer_header.jpg'),
@@ -88,9 +88,9 @@ class AppDrawer extends StatelessWidget {
             icon: null,
             applicationVersion: 'July 2017 Preview',
             applicationLegalese: '© 2017 Adi Sayoga',
-            aboutBoxChildren: <Widget>[new Padding(
+            aboutBoxChildren: [new Padding(
               padding: const EdgeInsets.only(top: 24.0),
-              child: new RichText(text: new TextSpan(children: <TextSpan>[
+              child: new RichText(text: new TextSpan(children: [
                 new TextSpan(
                   text: 'Flutter is an early-stage, open-source project to help '
                         'developers build high-performance, high-fidelity, mobile '

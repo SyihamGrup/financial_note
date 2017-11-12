@@ -56,18 +56,18 @@ class _BillPageState extends State<BillPage> {
   Future<Null> _initData() async {
     _group = await BillGroup.of(widget.bookId).get(widget.groupId);
     if (_group == null) _group = new BillGroup(widget.bookId);
-    _groupCtrl = <String, TextEditingController>{
+    _groupCtrl = {
       'title': new TextEditingController(text: _group.title ?? ''),
       'note': new TextEditingController(text: _group.note ?? ''),
     };
 
     _items = await BillGroup.of(widget.bookId).getItems(_group.id);
     if (_items == null || _items.length == 0) {
-      _items = <Bill>[new Bill(widget.bookId, date: new DateTime.now())];
+      _items = [new Bill(widget.bookId, date: new DateTime.now())];
     }
-    _ctrls = <Map<String, TextEditingController>>[];
+    _ctrls = [];
     _items.forEach((item) {
-      _ctrls.add(<String, TextEditingController>{
+      _ctrls.add({
         'title'    : new TextEditingController(text: item.title ?? ''),
         'value'    : new TextEditingController(text: item.value.toString()),
         'paidValue': new TextEditingController(
@@ -174,7 +174,7 @@ class _BillPageState extends State<BillPage> {
           nav.pop();
         }),
         title: new Text(widget.groupId == null ? lang.titleAddBill() : lang.titleEditBill()),
-        actions: <Widget>[
+        actions: [
           new FlatButton(
             onPressed: () {
               if (!_validate()) return;
@@ -203,9 +203,9 @@ class _BillPageState extends State<BillPage> {
           new ContentHighlight(
             alignment: Alignment.center,
             padding: const EdgeInsets.only(right: 32.0),
-            child: new RadioGroup(
+            child: new RadioGroup<int>(
               groupValue: _group?.transType,
-              items: <RadioItem<int>>[
+              items: [
                 new RadioItem<int>(kIncome, lang.lblIncome()),
                 new RadioItem<int>(kExpense, lang.lblExpense()),
               ],
@@ -230,7 +230,7 @@ class _BillPageState extends State<BillPage> {
           _buildFormItems(context),
 
           // -- note --
-          new Column(children: <Widget>[new Padding(
+          new Column(children: [new Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: new TextFormField(
               initialValue: _groupCtrl != null ? _groupCtrl['note'].text : '',
@@ -255,7 +255,7 @@ class _BillPageState extends State<BillPage> {
 
       widgets.add(new Padding(
         padding: const EdgeInsets.only(left: 16.0),
-        child: new Row(children: <Widget>[
+        child: new Row(children: [
           // -- title --
           new Expanded(child: new TextFormField(
             initialValue: _ctrls[index]['title'].text,
@@ -269,7 +269,7 @@ class _BillPageState extends State<BillPage> {
           new Padding(
             padding: const EdgeInsets.only(top: 24.0),
             child: new Column(
-              children: <Widget>[
+              children: [
                 new IconButton(
                   icon: kIconClose,
                   iconSize: 20.0,
@@ -286,7 +286,7 @@ class _BillPageState extends State<BillPage> {
 
       widgets.add(new Padding(
         padding: const EdgeInsets.fromLTRB(16.0, 0.0, 46.0, 0.0),
-        child: new Row(children: <Widget>[
+        child: new Row(children: [
           // -- date --
           new Container(
             margin: const EdgeInsets.only(right: 10.0),
@@ -312,7 +312,7 @@ class _BillPageState extends State<BillPage> {
 
       widgets.add(new Padding(
         padding: const EdgeInsets.fromLTRB(16.0, 0.0, 46.0, 0.0),
-        child: new Row(children: <Widget>[
+        child: new Row(children: [
           // -- paid date --
           new Container(
             margin: const EdgeInsets.only(right: 10.0),
@@ -349,7 +349,7 @@ class _BillPageState extends State<BillPage> {
         color: Theme.of(context).buttonColor,
         child: new Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
             kIconAdd,
             new Text(lang.btnAddItem().toUpperCase()),
           ],

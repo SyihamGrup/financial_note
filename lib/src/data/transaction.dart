@@ -71,7 +71,7 @@ class Transaction implements Data {
     final snap = await getNode(kNodeName, bookId).orderByChild('date')
         .startAt(dateStart.toIso8601String()).endAt(dateEnd.toIso8601String())
         .once();
-    if (snap.value == null) return <Transaction>[];
+    if (snap.value == null) return [];
 
     final items = <Transaction>[];
     final Map<String, Map<String, dynamic>> data = snap.value;
@@ -193,7 +193,7 @@ class Transaction implements Data {
   }
 
   Map<String, dynamic> toJson({showId: false, showBalance: false}) {
-    final json = <String, dynamic>{
+    final json = {
       'id'       : id,
       'billId'   : billId,
       'budgetId' : budgetId,
@@ -252,7 +252,7 @@ class Balance {
 
   Future<double> calculate(int year, int month) async {
     final httpClient = createHttpClient();
-    final params = <String, dynamic>{
+    final params = {
       'bookId' : bookId,
       'year'   : year,
       'month'  : month,

@@ -33,7 +33,7 @@ class SettingsPage extends StatelessWidget {
 
     return new ListView(
       padding: const EdgeInsets.symmetric(vertical: 20.0),
-      children: <Widget>[
+      children: [
         new ListTile(
           title: new Text(lang.prefUseDark()),
           onTap: () {

@@ -36,7 +36,7 @@ Future<String> showInputDialog({
         initialValue: initialValue,
         keyboardType: keyboardType,
       ),
-      actions: <Widget>[
+      actions: [
         new FlatButton(
           onPressed: () {
             Navigator.pop(context, false);

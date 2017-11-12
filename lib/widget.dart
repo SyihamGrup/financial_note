@@ -41,7 +41,7 @@ Future<bool> showConfirmDialog(BuildContext context, Widget content, [Widget tit
     child: new AlertDialog(
       title: title,
       content: content,
-      actions: <Widget>[
+      actions: [
         new FlatButton(
           onPressed: () => Navigator.pop(context, false),
           child: new Text(lang.btnNo().toUpperCase()),

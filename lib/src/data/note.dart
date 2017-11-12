@@ -78,14 +78,14 @@ class Note implements Data {
     // TODO: Ganti send to topic ke send to device group
     final httpClient = createHttpClient();
     final uri = getUri(kMessagingHost, kMessagingPath);
-    final headers = <String, String>{
+    final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'key=$kMessagingKey',
     };
-    final json = <String, dynamic>{
+    final json = {
       'priority': 'high',
       'to': '/topics/${currentBook.id}',
-      'data': <String, String>{
+      'data': {
         'action': kScheduleNotification,
         'ref_id': id,
         'click_action': 'FLUTTER_NOTIFICATION_CLICK',
@@ -98,7 +98,7 @@ class Note implements Data {
   }
 
   Map<String, dynamic> toJson({showId: false}) {
-    final json = <String, dynamic>{
+    final json = {
       'id'        : id,
       'title'     : title,
       'note'      : note,

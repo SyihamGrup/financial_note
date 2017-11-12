@@ -113,7 +113,7 @@ class _TransactionListPageState extends State<TransactionListPage>
 
   @override
   Widget build(BuildContext context) {
-    return new Stack(children: <Widget>[
+    return new Stack(children: [
       _buildBody(context),
       buildListProgress(_animation, isLoading: _isLoading),
     ]);
@@ -123,7 +123,7 @@ class _TransactionListPageState extends State<TransactionListPage>
     if (_items == null || _items.length == 0)
       return new EmptyBody(isLoading: _isLoading);
 
-    return new Column(children: <Widget>[
+    return new Column(children: [
       _buildBalance(),
       new Expanded(child: new ListView.builder(
         padding: const EdgeInsets.only(bottom: 72.0),
@@ -250,7 +250,7 @@ class _ContentTransactionItem extends StatelessWidget {
     final valueColor2 = theme.brightness == Brightness.dark
                       ? Colors.red[100] : Colors.red[700];
 
-    final subtitles = <Widget>[
+    final subtitles = [
       new Text((item.value >= 0 ? '+' : '') +
                formatCurrency(item.value, symbol: config.currencySymbol),
         style: textTheme.body2.copyWith(
@@ -268,7 +268,7 @@ class _ContentTransactionItem extends StatelessWidget {
         dense: true,
         leading: new Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
             new Text(new DateFormat.MMM().format(item.date),
               style: textTheme.caption
             ),
@@ -400,7 +400,7 @@ class _TransactionAppBarState extends State<TransactionAppBar> {
       onTap: () => _onMonthTap(context),
       child: new Container(
         height: kToolbarHeight,
-        child: new Row(children: <Widget>[
+        child: new Row(children: [
           new Text(new DateFormat.yMMM().format(_filterDate),
               style: Theme.of(context).primaryTextTheme.title),
           new Icon(Icons.arrow_drop_down),

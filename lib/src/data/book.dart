@@ -73,7 +73,7 @@ class Book implements Data {
   }
 
   static Future<Book> createDefault(String userId) async {
-    final data = <String, dynamic>{
+    final data = {
       'title' : 'Default',
       'descr' : 'Default book'
     };
@@ -85,7 +85,7 @@ class Book implements Data {
   }
 
   Map<String, dynamic> toJson({showId: false}) {
-    final json = <String, dynamic>{
+    final json = {
       'id'    : id,
       'title' : title,
       'descr' : descr,

@@ -41,7 +41,7 @@ class DateFormField extends StatelessWidget {
     final theme = Theme.of(context);
     return new Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
+      children: [
         new Padding(
           padding: const EdgeInsets.only(top: 16.0),
           child: new Text(label,
@@ -115,7 +115,7 @@ class DateItem extends StatelessWidget {
           },
           child: new Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
+            children: [
               new Text(this.date != null ? dateFormat.format(date) : '-- -- --'),
               new Icon(Icons.arrow_drop_down, color: dropdownColor, size: 22.0),
             ],
@@ -159,7 +159,7 @@ class DateTimeItem extends StatelessWidget {
 
     return new DefaultTextStyle(
       style: theme.textTheme.subhead,
-      child: new Row(children: <Widget>[
+      child: new Row(children: [
         new Container(
           padding: new EdgeInsets.only(top: padding),
           child: new InkWell(
@@ -176,7 +176,7 @@ class DateTimeItem extends StatelessWidget {
             },
             child: new Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
+              children: [
                 new Text(dateFormat.format(date)),
                 new Icon(Icons.arrow_drop_down, color: dropdownColor, size: 22.0),
               ],
@@ -197,7 +197,7 @@ class DateTimeItem extends StatelessWidget {
             },
             child: new Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
+              children: [
                 new Text(time.format(context)),
                 new Icon(Icons.arrow_drop_down, color: dropdownColor, size: 22.0),
               ],
@@ -233,7 +233,7 @@ class MonthFormField extends StatelessWidget {
     final theme = Theme.of(context);
     return new Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
+      children: [
         new Padding(
           padding: const EdgeInsets.only(top: 16.0),
           child: new Text(label,
@@ -287,7 +287,7 @@ class MonthItem extends StatelessWidget {
           },
           child: new Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
+            children: [
               new Text(dateFormat.format(date)),
               new Icon(Icons.arrow_drop_down, color: dropdownColor, size: 22.0),
             ],

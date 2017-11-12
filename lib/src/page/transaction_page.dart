@@ -79,7 +79,7 @@ class _TransactionPageState extends State<TransactionPage> {
       _item = new Transaction(widget.bookId, date: new DateTime.now());
     }
 
-    _ctrl = <String, TextEditingController>{
+    _ctrl = {
       'title': new TextEditingController(text: _item.title ?? ''),
       'value': new TextEditingController(text: _item.value.toString()),
     };
@@ -174,7 +174,7 @@ class _TransactionPageState extends State<TransactionPage> {
         }),
         title: new Text(widget.id == null ? lang.titleAddTransaction()
                                           : lang.titleEditTransaction()),
-        actions: <Widget>[
+        actions: [
           new FlatButton(
             onPressed: () {
               if (!_validate()) return;
@@ -203,9 +203,9 @@ class _TransactionPageState extends State<TransactionPage> {
           new ContentHighlight(
             alignment: Alignment.center,
             padding: const EdgeInsets.only(right: 32.0),
-            child: new RadioGroup(
+            child: new RadioGroup<int>(
               groupValue: _transType,
-              items: <RadioItem<int>>[
+              items: [
                 new RadioItem<int>(kIncome, lang.lblIncome()),
                 new RadioItem<int>(kExpense, lang.lblExpense()),
               ],
@@ -215,7 +215,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
           new Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: new Column(children: <Widget>[
+            child: new Column(children: [
               // -- title --
               new TextFormField(
                 initialValue: _ctrl != null ? _ctrl['title'].text : '',
@@ -233,11 +233,11 @@ class _TransactionPageState extends State<TransactionPage> {
                 onChange: (DateTime value) => _item.date = value,
               ),
 
-              new Column(children: <Widget>[
+              new Column(children: [
                 // -- budgetId --
                 _buildBudgetDropdown(context),
 
-                new Row(children: <Widget>[
+                new Row(children: [
                   // -- groupId --
                   new Expanded(child: _buildGroupDropdown(context)),
                   new Padding(padding: const EdgeInsets.only(left: 16.0)),
@@ -264,7 +264,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
   Widget _buildBudgetDropdown(BuildContext context) {
     final lang = Lang.of(context);
-    final items = <DropdownMenuItem<String>>[
+    final items = [
       new DropdownMenuItem<String>(value: '', child: new Text(lang.lblNone())),
     ];
     if (_budgets != null) {
@@ -288,7 +288,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
   Widget _buildGroupDropdown(BuildContext context) {
     final lang = Lang.of(context);
-    final items = <DropdownMenuItem<String>>[
+    final items = [
       new DropdownMenuItem<String>(value: '', child: new Text(lang.lblNone())),
     ];
     if (_billsGroup != null) {
@@ -310,7 +310,7 @@ class _TransactionPageState extends State<TransactionPage> {
         if (_billGroupId == null) {
           setState(() {
             _item.billId = null;
-            _bills = <Bill>[];
+            _bills = [];
           });
           return;
         }

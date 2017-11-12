@@ -96,7 +96,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     if (note == null || note.reminder == null) return;
 
     try {
-      final args = <String, dynamic>{
+      final args = {
         'date'    : formatDate(note.reminder, 'yyyy-MM-dd HH:mm:ss'),
         'ticker'  : note.note,
         'title'   : note.title,
@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     final action = valueOf<String>(message, 'action');
     if (action == kShowNote) {
       final id = valueOf<String>(message, 'ref_id');
-      final route = buildRoute(NotePage.kRouteName, <String, dynamic>{'id': id});
+      final route = buildRoute(NotePage.kRouteName, {'id': id});
       Navigator.pushNamed(context, route);
     }
   }

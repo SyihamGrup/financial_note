@@ -140,7 +140,7 @@ class _ContentBillItem extends StatelessWidget {
           ),
           subtitle: new Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
+            children: [
               new Text(
                 lang.lblTotal() + ':' +
                 (item.paidValue != 0 ? '\n' + lang.lblPaid() + ':' : '')

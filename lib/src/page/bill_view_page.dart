@@ -63,7 +63,7 @@ class _BillViewPage extends State<BillViewPage> {
     _group = await BillGroup.of(widget.bookId).get(widget.id);
     if (_group == null) return;
     _items = await BillGroup.of(widget.bookId).getItems(_group.id);
-    _widgets = <Widget>[];
+    _widgets = [];
 
     final dateFormatter = new DateFormat.yMMMEd();
     final shortDateFormatter = new DateFormat.yMd();
@@ -73,7 +73,7 @@ class _BillViewPage extends State<BillViewPage> {
       label: lang.lblType()
     ));
 
-    final totalWidgets = <Widget>[
+    final totalWidgets = [
       _buildItemText(
         formatCurrency(_group.totalValue, symbol: widget.config.currencySymbol),
         label: lang.lblTotal(),
@@ -109,7 +109,7 @@ class _BillViewPage extends State<BillViewPage> {
           padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 10.0),
           child: new Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
+            children: [
               new Padding(
                 padding: const EdgeInsets.only(right: 10.0),
                 child: new Icon(item.paidValue > 0 ? Icons.check : Icons.remove),
@@ -117,7 +117,7 @@ class _BillViewPage extends State<BillViewPage> {
               new Expanded(
                 child: new Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
+                  children: [
                     new Text(item.title, style: theme.textTheme.subhead),
                     new Text(subtitle, style: theme.textTheme.caption),
                   ],
@@ -156,10 +156,10 @@ class _BillViewPage extends State<BillViewPage> {
     }
 
     _widgets.add(new Row(
-      children: <Widget>[
+      children: [
         new Expanded(child: new Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             _buildItemText(_group.note, label: lang.lblNone(), margin: 0.0),
           ],
         )),
@@ -180,10 +180,10 @@ class _BillViewPage extends State<BillViewPage> {
         iconTheme: theme.appBarIconTheme,
         elevation: theme.appBarElevation,
         title: new Text(title, overflow: TextOverflow.ellipsis),
-        actions: <Widget>[
+        actions: [
           new FlatButton(
             onPressed: () {
-              final params = <String, dynamic>{'id': _group.id};
+              final params = {'id': _group.id};
               Navigator.pushNamed(context, buildRoute(BillPage.kRouteName, params));
             },
             child: new Text(lang.btnEdit().toUpperCase(),

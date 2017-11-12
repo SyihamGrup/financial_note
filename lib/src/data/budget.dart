@@ -106,7 +106,7 @@ class Budget implements Data {
   }
 
   Map<String, dynamic> toJson({showId: false}) {
-    final json = <String, dynamic>{
+    final json = {
       'id'        : id,
       'title'     : title,
       'date'      : date?.toIso8601String(),

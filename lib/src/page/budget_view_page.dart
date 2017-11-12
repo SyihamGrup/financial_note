@@ -56,7 +56,7 @@ class _BudgetViewPage extends State<BudgetViewPage> {
     _item = await Budget.of(widget.bookId).get(widget.id);
     if (_item == null) return;
     _transactions = await _item.getTransactions();
-    _widgets = <Widget>[];
+    _widgets = [];
 
     final dateFormatter = new DateFormat.yMMMMd();
 
@@ -64,7 +64,7 @@ class _BudgetViewPage extends State<BudgetViewPage> {
       dateFormatter.format(_item.date), label: lang.lblDate()
     ));
 
-    final totalWidgets = <Widget>[
+    final totalWidgets = [
       _buildItemText(
         formatCurrency(_item.value, symbol: widget.config.currencySymbol),
         label: lang.lblValue(),
@@ -96,11 +96,11 @@ class _BudgetViewPage extends State<BudgetViewPage> {
         padding: const EdgeInsets.fromLTRB(16.0, 10.0, 16.0, 0.0),
         child: new Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             new Expanded(
               child: new Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
+                children: [
                   new Text(trans.title, style: theme.textTheme.subhead),
                   new Text(dateFormatter.format(trans.date),
                            style: theme.textTheme.caption),
@@ -129,10 +129,10 @@ class _BudgetViewPage extends State<BudgetViewPage> {
         iconTheme: theme.appBarIconTheme,
         elevation: theme.appBarElevation,
         title: new Text(title, overflow: TextOverflow.ellipsis),
-        actions: <Widget>[
+        actions: [
           new FlatButton(
             onPressed: () {
-              final params = <String, dynamic>{'id': _item.id};
+              final params = {'id': _item.id};
               Navigator.pushNamed(context, buildRoute(BudgetPage.kRouteName, params));
             },
             child: new Text(lang.btnEdit().toUpperCase(),

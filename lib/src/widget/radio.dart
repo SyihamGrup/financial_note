@@ -30,7 +30,7 @@ class RadioGroup<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final widgets = <Widget>[];
     items.forEach((item) {
-      widgets.add(new Row(children: <Widget>[
+      widgets.add(new Row(children: [
         new Radio(
           value: item.value,
           groupValue: groupValue,

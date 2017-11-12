@@ -62,7 +62,7 @@ class _BalancePageState extends State<BalancePage> {
           nav.pop();
         }),
         title: new Text(widget.id == null ? lang.titleAddBalance() : lang.titleEditBalance()),
-        actions: <Widget>[
+        actions: [
           new FlatButton(
             onPressed: () => _formKey.currentState.save().then((saved) {
               if (saved) Navigator.pop(context);

@@ -55,7 +55,7 @@ class _BudgetPageState extends State<BudgetPage> {
   Future<Null> _initData() async {
     _item = await Budget.of(widget.bookId).get(widget.id);
     if (_item == null) _item = new Budget(widget.bookId, date: new DateTime.now());
-    _ctrl = <String, TextEditingController>{
+    _ctrl = {
       'title': new TextEditingController(text: _item.title ?? ''),
       'value': new TextEditingController(text: _item.value.toString()),
       'spent': new TextEditingController(text: _item.spent.toString()),
@@ -131,7 +131,7 @@ class _BudgetPageState extends State<BudgetPage> {
           nav.pop();
         }),
         title: new Text(widget.id == null ? lang.titleAddBudget() : lang.titleEditBudget()),
-        actions: <Widget>[
+        actions: [
           new FlatButton(
             onPressed: () {
               if (!_validate()) return;
@@ -176,7 +176,7 @@ class _BudgetPageState extends State<BudgetPage> {
             ),
 
             new Row(
-              children: <Widget>[
+              children: [
                 // -- value --
                 new Expanded(child: new TextFormField(
                   initialValue: _ctrl != null ? _ctrl['value'].text : '',

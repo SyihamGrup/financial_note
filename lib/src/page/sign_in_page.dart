@@ -72,13 +72,13 @@ class _SignInPageState extends State<SignInPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
 
-          children: <Widget>[
+          children: [
             new Text(lang.title(), style: theme.primaryTextTheme.display1),
             new Container(
               padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
               child: new Text(msg, style: theme.primaryTextTheme.body1),
             ),
-            new Row(children: <Widget>[
+            new Row(children: [
               new Expanded(child: new RaisedButton(
                 onPressed: !_signingIn ? () => signIn(context) : null,
                 child: new Text(lang.btnSignInGoogle(), style: theme.accentTextTheme.button),

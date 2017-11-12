@@ -131,10 +131,8 @@ class _MainAppState extends State<MainApp> {
     return new MaterialApp(
       title: widget.title,
       theme: Config.getTheme(_config.brightness),
-      localizationsDelegates: <_LocalizationsDelegate>[
-        new _LocalizationsDelegate()
-      ],
-      supportedLocales: const <Locale>[
+      localizationsDelegates: [new _LocalizationsDelegate()],
+      supportedLocales: const [
         const Locale('en', 'US'),
         const Locale('id', 'ID'),
       ],

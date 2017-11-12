@@ -68,13 +68,13 @@ Future<Map<String, dynamic>> addDeviceGroup(User user) async {
   final uri = getUri(kMessagingHost, kMessagingPath);
   Map<String, dynamic> data;
   if (user.notificationKey == null) {
-    data = <String, dynamic>{
+    data = {
       'operation': 'create',
       'notification_key_name': user.uid,
       'registration_ids': ['4', '8', '15', '16', '23', '42']
     };
   } else {
-    data = <String, dynamic>{
+    data = {
       'operation': 'add',
       'notification_key_name': user.uid,
       'notification_key': user.notificationKey,

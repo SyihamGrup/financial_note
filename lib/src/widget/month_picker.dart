@@ -81,10 +81,10 @@ class _MonthPickerDialogState extends State<_MonthPickerDialog> {
           padding: const EdgeInsets.all(8.0),
           child: new Column(
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
+            children: [
 
             new Row(
-             children: <Widget>[
+             children: [
                new IconButton(icon: const Icon(Icons.chevron_left), onPressed: _incrementYear),
                new Expanded(child: new Text(
                  "${_selectedDate.year}",
@@ -102,7 +102,7 @@ class _MonthPickerDialogState extends State<_MonthPickerDialog> {
               crossAxisSpacing: 4.0,
               padding: const EdgeInsets.only(top: 8.0),
               childAspectRatio: orientation == Orientation.portrait ? 1.5 : 2.0,
-              children: <Widget>[
+              children: [
                 _buildMonth(1,  selected: _selectedDate.month == 1),
                 _buildMonth(2,  selected: _selectedDate.month == 2),
                 _buildMonth(3,  selected: _selectedDate.month == 3),

@@ -42,7 +42,7 @@ class HomePageBudget {
       onActionModeTap: (key, items) {
         switch (key) {
           case 'edit':
-            final params = <String, dynamic>{'id': items[0].id};
+            final params = {'id': items[0].id};
             Navigator.pushNamed(context, buildRoute(BudgetPage.kRouteName, params));
             appBarKey.currentState.exitActionMode();
             break;
@@ -67,7 +67,7 @@ class HomePageBudget {
       bookId: bookId,
       config: config,
       onItemTap: (item) {
-        final params = <String, dynamic>{'id': item.id};
+        final params = {'id': item.id};
         Navigator.pushNamed(context, buildRoute(BudgetViewPage.kRouteName, params));
       },
       onItemsSelect: (items, index) {

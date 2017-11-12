@@ -57,7 +57,7 @@ class _NotePageState extends State<NotePage> {
     _item = await Note.of(widget.bookId).get(widget.id);
     if (_item == null) _item = new Note(widget.bookId);
     _hasReminder = _item.reminder != null;
-    _ctrl = <String, TextEditingController>{
+    _ctrl = {
       'title': new TextEditingController(text: _item.title ?? ''),
       'note': new TextEditingController(text: _item.note ?? ''),
     };
@@ -145,7 +145,7 @@ class _NotePageState extends State<NotePage> {
           nav.pop();
         }),
         title: new Text(widget.id == null ? lang.titleAddNote() : lang.titleEditNote()),
-        actions: <Widget>[
+        actions: [
           new FlatButton(
             onPressed: () {
               if (!_validate()) return;
@@ -207,7 +207,7 @@ class _NotePageState extends State<NotePage> {
     final theme = Theme.of(context);
     final lang = Lang.of(context);
 
-    final widgets = <Widget>[
+    final widgets = [
       new Checkbox(value: _hasReminder, onChanged: _onReminderChange),
       new GestureDetector(
         child: new Text(lang.lblReminder(), style: theme.textTheme.subhead),

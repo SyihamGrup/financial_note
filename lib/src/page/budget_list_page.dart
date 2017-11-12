@@ -139,7 +139,7 @@ class _ContentBudgetItem extends StatelessWidget {
         child: new ListTile(
           leading: new Stack(
             alignment: AlignmentDirectional.bottomCenter,
-            children: <Widget>[
+            children: [
               new Container(
                 margin: const EdgeInsets.symmetric(horizontal: 8.0),
                 height: 40.0,
@@ -160,7 +160,7 @@ class _ContentBudgetItem extends StatelessWidget {
           ),
           subtitle: new Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
+            children: [
               new Text(
                 lang.lblTotal() + ':' +
                 (spent > 0 ? '\n' + lang.lblSpent() + ':' : '')

@@ -52,7 +52,7 @@ class User {
   }
 
   Map<String, dynamic> toJson({showId: false}) {
-    return <String, dynamic>{
+    return {
       'notificationKey' : notificationKey,
       'registrationIds' : registrationIds,
     };
