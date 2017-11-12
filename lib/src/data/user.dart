@@ -33,8 +33,8 @@ class User {
     final snap = await getNode(kNodeName, null).child(user.uid).once();
     if (snap.value != null) {
       return new User(user,
-        notificationKey: mapValue<String>(snap.value, 'notificationKey'),
-        registrationIds: mapValue<List<String>>(snap.value, 'registrationIds'),
+        notificationKey: valueOf<String>(snap.value, 'notificationKey'),
+        registrationIds: valueOf<List<String>>(snap.value, 'registrationIds'),
       );
     } else {
       return new User(user);

@@ -38,11 +38,11 @@ class Note implements Data {
   });
 
   Note.fromJson(this.bookId, this.id, Map<String, dynamic> json)
-    : title     = parseString(mapValue(json, 'title')),
-      note      = parseString(mapValue(json, 'note')),
-      reminder  = parseDate(mapValue(json, 'reminder')),
-      createdAt = parseDate(mapValue(json, 'createdAt')),
-      updatedAt = parseDate(mapValue(json, 'updatedAt'));
+    : title     = parseString(valueOf(json, 'title')),
+      note      = parseString(valueOf(json, 'note')),
+      reminder  = parseDate(valueOf(json, 'reminder')),
+      createdAt = parseDate(valueOf(json, 'createdAt')),
+      updatedAt = parseDate(valueOf(json, 'updatedAt'));
 
   Note.fromSnapshot(String bookId, DataSnapshot snapshot)
     : this.fromJson(bookId, snapshot.key, snapshot.value);

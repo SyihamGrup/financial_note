@@ -74,9 +74,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     _messaging.configure(
       onMessage: (message) {
         print('Messaging on message');
-        final action = mapValue<String>(message, 'action');
+        final action = valueOf<String>(message, 'action');
         if (action == kScheduleNotification) {
-          final id = mapValue<String>(message, 'ref_id');
+          final id = valueOf<String>(message, 'ref_id');
           _scheduleNoteNotification(id);
         }
       },
@@ -111,9 +111,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   void _handleOnResume(Map<String, dynamic> message) {
-    final action = mapValue<String>(message, 'action');
+    final action = valueOf<String>(message, 'action');
     if (action == kShowNote) {
-      final id = mapValue<String>(message, 'ref_id');
+      final id = valueOf<String>(message, 'ref_id');
       final route = routeWithParams(NotePage.kRouteName, <String, dynamic>{'id': id});
       Navigator.pushNamed(context, route);
     }

@@ -26,8 +26,8 @@ class Book implements Data {
   Book(this.userId, {this.id, this.title, this.descr});
 
   Book.fromJson(this.userId, this.id, Map<String, dynamic> json)
-    : title = parseString(mapValue(json, 'title')),
-      descr = parseString(mapValue(json, 'descr'));
+    : title = parseString(valueOf(json, 'title')),
+      descr = parseString(valueOf(json, 'descr'));
 
   Book.fromSnapshot(String userId, DataSnapshot snapshot)
     : this.fromJson(userId, snapshot.key, snapshot.value);

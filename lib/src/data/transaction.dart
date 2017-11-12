@@ -43,13 +43,13 @@ class Transaction implements Data {
   });
 
   Transaction.fromJson(this.bookId, this.id, Map<String, dynamic> json)
-    : billId    = parseString(mapValue(json, 'billId')),
-      budgetId  = parseString(mapValue(json, 'budgetId')),
-      title     = parseString(mapValue(json, 'title')),
-      date      = parseDate(mapValue(json, 'date')),
-      value     = parseDouble(mapValue(json, 'value')),
-      balance   = parseDouble(mapValue(json, 'balance')),
-      note      = parseString(mapValue(json, 'note'));
+    : billId    = parseString(valueOf(json, 'billId')),
+      budgetId  = parseString(valueOf(json, 'budgetId')),
+      title     = parseString(valueOf(json, 'title')),
+      date      = parseDate(valueOf(json, 'date')),
+      value     = parseDouble(valueOf(json, 'value')),
+      balance   = parseDouble(valueOf(json, 'balance')),
+      note      = parseString(valueOf(json, 'note'));
 
   Transaction.fromSnapshot(String bookId, DataSnapshot snapshot)
     : this.fromJson(bookId, snapshot.key, snapshot.value);
@@ -260,7 +260,7 @@ class Balance {
     final uri = getUri(kFirebaseHost, kCalcOpeningBalancePath, params: params);
     final response = await httpClient.get(uri);
     Map<String, dynamic> json = JSON.decode(response.body);
-    return parseDouble(mapValue(json, 'balance'));
+    return parseDouble(valueOf(json, 'balance'));
   }
 
   Future<Balance> get(String id) async {

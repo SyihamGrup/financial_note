@@ -175,7 +175,7 @@ class _NotePageState extends State<NotePage> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: new TextFormField(
               initialValue: _ctrl != null ? _ctrl['title'].text : '',
-              controller: mapValue(_ctrl, 'title'),
+              controller: valueOf(_ctrl, 'title'),
               decoration: new InputDecoration(labelText: lang.lblTitle()),
               onSaved: (String value) => _item.title = value,
               validator: _validateTitle,
@@ -191,7 +191,7 @@ class _NotePageState extends State<NotePage> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: new TextFormField(
               initialValue: _ctrl != null ? _ctrl['note'].text : '',
-              controller: mapValue(_ctrl, 'note'),
+              controller: valueOf(_ctrl, 'note'),
               maxLines: 15,
               decoration: new InputDecoration(labelText: lang.lblDescr()),
               onSaved: (String value) => _item.note = value,

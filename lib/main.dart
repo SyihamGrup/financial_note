@@ -46,7 +46,7 @@ Widget _getRoute(
   ValueChanged<Config> configUpdater
 ) {
   final route = getRouteParams(settings);
-  final id = mapValue<String>(route.params, 'id');
+  final id = valueOf<String>(route.params, 'id');
 
   switch (route.name) {
     // Sign In

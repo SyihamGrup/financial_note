@@ -219,7 +219,7 @@ class _TransactionPageState extends State<TransactionPage> {
               // -- title --
               new TextFormField(
                 initialValue: _ctrl != null ? _ctrl['title'].text : '',
-                controller: mapValue(_ctrl, 'title'),
+                controller: valueOf(_ctrl, 'title'),
                 decoration: new InputDecoration(labelText: lang.lblTitle()),
                 onSaved: (String value) => _item.title = value,
                 validator: _validateTitle,
@@ -248,7 +248,7 @@ class _TransactionPageState extends State<TransactionPage> {
                 // -- value --
                 new TextFormField(
                   initialValue: _ctrl != null ? _ctrl['value'].text : '',
-                  controller: mapValue(_ctrl, 'value'),
+                  controller: valueOf(_ctrl, 'value'),
                   decoration: new InputDecoration(labelText: lang.lblValue()),
                   keyboardType: TextInputType.number,
                   onSaved: (String value) => _item.value = parseDouble(value),

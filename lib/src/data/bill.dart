@@ -44,14 +44,14 @@ class BillGroup implements Data {
   });
 
   BillGroup.fromJson(this.bookId, this.id, Map<String, dynamic> json)
-    : title      = parseString(mapValue(json, 'title')),
-      transType  = parseInt(mapValue(json, 'transType')),
-      startDate  = parseDate(mapValue(json, 'startDate')),
-      endDate    = parseDate(mapValue(json, 'endDate')),
-      totalValue = parseDouble(mapValue(json, 'totalValue')),
-      lastPaid   = parseDate(mapValue(json, 'lastPaid')),
-      paidValue  = parseDouble(mapValue(json, 'paidValue')),
-      note       = parseString(mapValue(json, 'note'));
+    : title      = parseString(valueOf(json, 'title')),
+      transType  = parseInt(valueOf(json, 'transType')),
+      startDate  = parseDate(valueOf(json, 'startDate')),
+      endDate    = parseDate(valueOf(json, 'endDate')),
+      totalValue = parseDouble(valueOf(json, 'totalValue')),
+      lastPaid   = parseDate(valueOf(json, 'lastPaid')),
+      paidValue  = parseDouble(valueOf(json, 'paidValue')),
+      note       = parseString(valueOf(json, 'note'));
 
   BillGroup.fromSnapshot(String bookId, DataSnapshot snapshot)
     : this.fromJson(bookId, snapshot.key, snapshot.value);
@@ -191,14 +191,14 @@ class Bill implements Data {
   });
 
   Bill.fromJson(this.bookId, this.id, Map<String, dynamic> json)
-    : groupId   = parseString(mapValue(json, 'groupId')),
-      title     = parseString(mapValue(json, 'title')),
-      transType = parseInt(mapValue(json, 'transType')),
-      date      = parseDate(mapValue(json, 'date')),
-      value     = parseDouble(mapValue(json, 'value')),
-      paidDate  = parseDate(mapValue(json, 'paidDate')),
-      paidValue = parseDouble(mapValue(json, 'paidValue')),
-      descr     = parseString(mapValue(json, 'descr'));
+    : groupId   = parseString(valueOf(json, 'groupId')),
+      title     = parseString(valueOf(json, 'title')),
+      transType = parseInt(valueOf(json, 'transType')),
+      date      = parseDate(valueOf(json, 'date')),
+      value     = parseDouble(valueOf(json, 'value')),
+      paidDate  = parseDate(valueOf(json, 'paidDate')),
+      paidValue = parseDouble(valueOf(json, 'paidValue')),
+      descr     = parseString(valueOf(json, 'descr'));
 
   Bill.fromSnapshot(String bookId, DataSnapshot snapshot)
     : this.fromJson(bookId, snapshot.key, snapshot.value);

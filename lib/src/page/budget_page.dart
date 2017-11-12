@@ -161,7 +161,7 @@ class _BudgetPageState extends State<BudgetPage> {
             // -- title --
             new TextFormField(
               initialValue: _ctrl != null ? _ctrl['title'].text : '',
-              controller: mapValue(_ctrl, 'title'),
+              controller: valueOf(_ctrl, 'title'),
               decoration: new InputDecoration(labelText: lang.lblTitle()),
               onSaved: (String value) => _item.title = value,
               validator: _validateTitle,
@@ -180,7 +180,7 @@ class _BudgetPageState extends State<BudgetPage> {
                 // -- value --
                 new Expanded(child: new TextFormField(
                   initialValue: _ctrl != null ? _ctrl['value'].text : '',
-                  controller: mapValue(_ctrl, 'value'),
+                  controller: valueOf(_ctrl, 'value'),
                   decoration: new InputDecoration(labelText: lang.lblValue()),
                   keyboardType: TextInputType.number,
                   onSaved: (String value) => _item.value = parseDouble(value),
@@ -192,7 +192,7 @@ class _BudgetPageState extends State<BudgetPage> {
                 // -- spent --
                 new Expanded(child: new TextFormField(
                   initialValue: _ctrl != null ? _ctrl['spent'].text : '',
-                  controller: mapValue(_ctrl, 'spent'),
+                  controller: valueOf(_ctrl, 'spent'),
                   decoration: new InputDecoration(labelText: lang.lblSpent()),
                   keyboardType: TextInputType.number,
                   onSaved: (String value) => _item.spent = parseDouble(value),
@@ -204,7 +204,7 @@ class _BudgetPageState extends State<BudgetPage> {
             // -- descr --
             new TextFormField(
               initialValue: _ctrl != null ? _ctrl['descr'].text : '',
-              controller: mapValue(_ctrl, 'descr'),
+              controller: valueOf(_ctrl, 'descr'),
               maxLines: 3,
               decoration: new InputDecoration(labelText: lang.lblDescr()),
               onSaved: (String value) => _item.descr = value,

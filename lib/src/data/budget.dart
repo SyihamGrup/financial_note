@@ -38,12 +38,12 @@ class Budget implements Data {
   });
 
   Budget.fromJson(this.bookId, this.id, Map<String, dynamic> json)
-    : title     = parseString(mapValue(json, 'title')),
-      date      = parseDate(mapValue(json, 'date')),
-      value     = parseDouble(mapValue(json, 'value')),
-      spent     = parseDouble(mapValue(json, 'spent')),
-      isExpire  = parseBool(mapValue(json, 'isExpire')),
-      descr     = parseString(mapValue(json, 'descr'));
+    : title     = parseString(valueOf(json, 'title')),
+      date      = parseDate(valueOf(json, 'date')),
+      value     = parseDouble(valueOf(json, 'value')),
+      spent     = parseDouble(valueOf(json, 'spent')),
+      isExpire  = parseBool(valueOf(json, 'isExpire')),
+      descr     = parseString(valueOf(json, 'descr'));
 
   Budget.fromSnapshot(String bookId, DataSnapshot snapshot)
     : this.fromJson(bookId, snapshot.key, snapshot.value);
