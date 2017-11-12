@@ -45,7 +45,7 @@ Widget _getRoute(
   Config config,
   ValueChanged<Config> configUpdater
 ) {
-  final route = getRouteParams(settings);
+  final route = getRoute(settings);
   final id = valueOf<String>(route.params, 'id');
 
   switch (route.name) {

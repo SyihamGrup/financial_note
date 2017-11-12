@@ -69,14 +69,14 @@ String buildRoute(String routeName, Map<String, dynamic> params) {
 
 /// Get route name dan parameter dari route RouteSettings
 /// settings.name tidak boleh null
-RouteParams getRouteParams(RouteSettings settings) {
+RouteEntity getRoute(RouteSettings settings) {
   assert(settings.name != null);
   final routes = settings.name.split('?');
-  return new RouteParams(routes[0], routes.length > 1 ? JSON.decode(routes[1]) : null);
+  return new RouteEntity(routes[0], routes.length > 1 ? JSON.decode(routes[1]) : null);
 }
 
-class RouteParams {
+class RouteEntity {
   String name;
   Map<String, dynamic> params;
-  RouteParams(this.name, this.params);
+  RouteEntity(this.name, this.params);
 }
