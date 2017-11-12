@@ -45,7 +45,7 @@ class HomePageTransaction {
         switch (key) {
           case 'edit':
             final params = <String, dynamic>{'id': items[0].id};
-            Navigator.pushNamed(context, routeWithParams(TransactionPage.kRouteName, params));
+            Navigator.pushNamed(context, buildRoute(TransactionPage.kRouteName, params));
             appBarKey.currentState.exitActionMode();
             break;
           case 'delete':
@@ -72,7 +72,7 @@ class HomePageTransaction {
       config: config,
       onItemTap: (item) {
         final params = <String, dynamic>{'id': item.id};
-        Navigator.pushNamed(context, routeWithParams(TransactionPage.kRouteName, params));
+        Navigator.pushNamed(context, buildRoute(TransactionPage.kRouteName, params));
       },
       onItemsSelect: (items, index) {
         if (items.length == 0)

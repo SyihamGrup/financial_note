@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     final action = valueOf<String>(message, 'action');
     if (action == kShowNote) {
       final id = valueOf<String>(message, 'ref_id');
-      final route = routeWithParams(NotePage.kRouteName, <String, dynamic>{'id': id});
+      final route = buildRoute(NotePage.kRouteName, <String, dynamic>{'id': id});
       Navigator.pushNamed(context, route);
     }
   }

@@ -43,7 +43,7 @@ class HomePageNote {
         switch (key) {
           case 'edit':
             final params = <String, dynamic>{'id': items[0].id};
-            Navigator.pushNamed(context, routeWithParams(NotePage.kRouteName, params));
+            Navigator.pushNamed(context, buildRoute(NotePage.kRouteName, params));
             appBarKey.currentState.exitActionMode();
             break;
           case 'delete':
@@ -68,7 +68,7 @@ class HomePageNote {
       config: config,
       onItemTap: (item) {
         final params = <String, dynamic>{'id': item.id};
-        Navigator.pushNamed(context, routeWithParams(NotePage.kRouteName, params));
+        Navigator.pushNamed(context, buildRoute(NotePage.kRouteName, params));
       },
       onItemsSelect: (items, index) {
         if (items.length == 0)

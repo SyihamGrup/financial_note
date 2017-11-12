@@ -43,7 +43,7 @@ class HomePageBudget {
         switch (key) {
           case 'edit':
             final params = <String, dynamic>{'id': items[0].id};
-            Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));
+            Navigator.pushNamed(context, buildRoute(BudgetPage.kRouteName, params));
             appBarKey.currentState.exitActionMode();
             break;
           case 'delete':
@@ -68,7 +68,7 @@ class HomePageBudget {
       config: config,
       onItemTap: (item) {
         final params = <String, dynamic>{'id': item.id};
-        Navigator.pushNamed(context, routeWithParams(BudgetViewPage.kRouteName, params));
+        Navigator.pushNamed(context, buildRoute(BudgetViewPage.kRouteName, params));
       },
       onItemsSelect: (items, index) {
         if (items.length == 0)

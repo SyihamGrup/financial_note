@@ -43,7 +43,7 @@ class HomePageBill {
         switch (key) {
           case 'edit':
             final params = <String, dynamic>{'id': items[0].id};
-            Navigator.pushNamed(context, routeWithParams(BillPage.kRouteName, params));
+            Navigator.pushNamed(context, buildRoute(BillPage.kRouteName, params));
             appBarKey.currentState.exitActionMode();
             break;
           case 'delete':
@@ -68,7 +68,7 @@ class HomePageBill {
       config: config,
       onItemTap: (item) {
         final params = <String, dynamic>{'id': item.id};
-        Navigator.pushNamed(context, routeWithParams(BillViewPage.kRouteName, params));
+        Navigator.pushNamed(context, buildRoute(BillViewPage.kRouteName, params));
       },
       onItemsSelect: (items, index) {
         if (items.length == 0)

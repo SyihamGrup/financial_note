@@ -62,7 +62,7 @@ Widget buildListProgress(Listenable animation, {isLoading: false}) {
 }
 
 /// Push named navigator dengan params.
-String routeWithParams(String routeName, Map<String, dynamic> params) {
+String buildRoute(String routeName, Map<String, dynamic> params) {
   if (params != null) routeName += '?' + JSON.encode(params);
   return routeName;
 }

@@ -184,7 +184,7 @@ class _BillViewPage extends State<BillViewPage> {
           new FlatButton(
             onPressed: () {
               final params = <String, dynamic>{'id': _group.id};
-              Navigator.pushNamed(context, routeWithParams(BillPage.kRouteName, params));
+              Navigator.pushNamed(context, buildRoute(BillPage.kRouteName, params));
             },
             child: new Text(lang.btnEdit().toUpperCase(),
                             style: theme.appBarTextTheme.button),

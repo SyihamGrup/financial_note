@@ -133,7 +133,7 @@ class _BudgetViewPage extends State<BudgetViewPage> {
           new FlatButton(
             onPressed: () {
               final params = <String, dynamic>{'id': _item.id};
-              Navigator.pushNamed(context, routeWithParams(BudgetPage.kRouteName, params));
+              Navigator.pushNamed(context, buildRoute(BudgetPage.kRouteName, params));
             },
             child: new Text(lang.btnEdit().toUpperCase(),
                             style: theme.appBarTextTheme.button),
