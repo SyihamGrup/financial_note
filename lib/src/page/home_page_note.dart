@@ -16,6 +16,7 @@ class HomePageNote {
 
   final Config config;
   final String bookId;
+  final ValueChanged<bool> onActionModeChange;
   final BuildContext context;
   final Lang _lang;
 
@@ -27,6 +28,7 @@ class HomePageNote {
 
   HomePageNote({
     @required this.context, @required this.config, @required this.bookId,
+    this.onActionModeChange,
   }) : assert(context != null),
        assert(config != null),
        assert(bookId != null),
@@ -55,8 +57,12 @@ class HomePageNote {
             break;
         }
       },
+      onStartActionMode: () {
+        if (onActionModeChange != null) onActionModeChange(true);
+      },
       onExitActionMode: () {
         bodyKey.currentState.clearSelection();
+        if (onActionModeChange != null) onActionModeChange(false);
       },
     );
   }

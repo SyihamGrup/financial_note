@@ -18,6 +18,7 @@ class ListAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final Size preferredSize;
   final String title;
   final OnActionTap<List<T>> onActionModeTap;
+  final VoidCallback onStartActionMode;
   final VoidCallback onExitActionMode;
   final Color backgroundColor;
 
@@ -25,6 +26,7 @@ class ListAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
     Key key,
     this.title,
     this.onActionModeTap,
+    this.onStartActionMode,
     this.onExitActionMode,
     this.backgroundColor,
   }) : preferredSize = new Size.fromHeight(kToolbarHeight),
@@ -39,13 +41,16 @@ class ListAppBarState<T> extends State<ListAppBar> {
   var _items = <T>[];
 
   void showActionMode(List<T> items) {
+    if (_isActionMode) return;
     setState(() {
       _isActionMode = true;
       _items = items;
     });
+    if (widget.onStartActionMode != null) widget.onStartActionMode();
   }
 
   void exitActionMode() {
+    if (!_isActionMode) return;
     setState(() => _isActionMode = false);
     if (widget.onExitActionMode != null) widget.onExitActionMode();
   }

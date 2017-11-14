@@ -320,11 +320,16 @@ class TransactionAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Size preferredSize;
 
   final OnActionTap<List<Transaction>> onActionModeTap;
+  final VoidCallback onStartActionMode;
   final VoidCallback onExitActionMode;
 
   TransactionAppBar({
-    Key key, DateTime initialDate, this.onDateChange, this.onActionModeTap,
-    this.onExitActionMode
+    Key key,
+    DateTime initialDate,
+    this.onDateChange,
+    this.onActionModeTap,
+    this.onStartActionMode,
+    this.onExitActionMode,
   }) : this.initialDate = initialDate ?? new DateTime.now(),
       preferredSize = new Size.fromHeight(kToolbarHeight),
       super(key: key);
@@ -341,13 +346,16 @@ class _TransactionAppBarState extends State<TransactionAppBar> {
   _TransactionAppBarState(this._filterDate);
 
   void showActionMode(List<Transaction> items) {
+    if (_isActionMode) return;
     setState(() {
       _isActionMode = true;
       _items = items;
     });
+    if (widget.onStartActionMode != null) widget.onStartActionMode();
   }
 
   void exitActionMode() {
+    if (!_isActionMode) return;
     setState(() => _isActionMode = false);
     if (widget.onExitActionMode != null) widget.onExitActionMode();
   }

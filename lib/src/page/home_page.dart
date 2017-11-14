@@ -39,8 +39,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   static const notificationChannel = const MethodChannel(kNotificationChannel);
+  final _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _messaging = new FirebaseMessaging();
   var _currentRoute = TransactionListPage.kRouteName;
+  var _canExit = false;
+  var _isActionMode = false;
 
   HomePageTransaction _homeTrans;
   HomePageBill _homeBill;
@@ -127,21 +130,25 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       context: context,
       config: widget.config,
       bookId: widget.bookId,
+      onActionModeChange: (isActionMode) => _isActionMode = isActionMode,
     );
     _homeBill = new HomePageBill(
       context: context,
       config: widget.config,
       bookId: widget.bookId,
+      onActionModeChange: (isActionMode) => _isActionMode = isActionMode,
     );
     _homeBudget = new HomePageBudget(
       context: context,
       config: widget.config,
       bookId: widget.bookId,
+      onActionModeChange: (isActionMode) => _isActionMode = isActionMode,
     );
     _homeNote = new HomePageNote(
       context: context,
       config: widget.config,
       bookId: widget.bookId,
+      onActionModeChange: (isActionMode) => _isActionMode = isActionMode,
     );
   }
 
@@ -176,11 +183,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         break;
     }
 
-    return new Scaffold(
-      appBar: appBar,
-      drawer: new AppDrawer(selectedRoute: _currentRoute, onListTap: _onDrawerChange),
-      body: body,
-      floatingActionButton: _buildFAB(),
+    return new WillPopScope(
+      onWillPop: _onWillPop,
+      child: new Scaffold(
+        key: _scaffoldKey,
+        appBar: appBar,
+        drawer: new AppDrawer(selectedRoute: _currentRoute, onListTap: _onDrawerChange),
+        body: body,
+        floatingActionButton: _buildFAB(),
+      ),
     );
   }
 
@@ -206,4 +217,31 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       },
     );
   }
+
+  Future<bool> _onWillPop() async {
+    if (_isActionMode) return true;
+
+    if (_currentRoute != TransactionListPage.kRouteName) {
+      setState(() => _currentRoute = TransactionListPage.kRouteName);
+      return false;
+    }
+
+    if (_canExit) {
+      _canExit = false; // Reset can exit in case back to foreground
+      return true;
+    }
+    _showInSnackBar(Lang.of(context).msgBackAgainToExit());
+    _canExit = true;
+    new Timer(const Duration(seconds: 1), () {
+      _canExit = false;
+    });
+    return false;
+  }
+
+  void _showInSnackBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: new Text(value),
+    ));
+  }
+
 }

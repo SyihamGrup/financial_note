@@ -111,16 +111,17 @@ class Lang {
   String lblTransactions() => _('lblTransactions', 'Transactions');
   String lblType()         => _('lblType',         'Type');
 
-  String msgSignInRequired() => _('msgSignInRequired', 'Sign in required');
-  String msgWait()           => _('msgWait',           'Please Wait');
-  String msgSaving()         => _('msgSaving',         'Saving…');
-  String msgSaved()          => _('msgSaved',          'Data saved');
-  String msgEmptyData()      => _('msgEmptyData',      'No data');
-  String msgLoading()        => _('msgLoading',        'Loading…');
-  String msgFormHasError()   => _('msgFormHasError',   'This form has errors');
-  String msgFormError()      => _('msgFixFormError',   'Please fix the errors in red before submitting');
-  String msgFieldRequired()  => _('msgFieldRequired',  'This field is required');
-  String msgConfirmLeave()   => _('msgConfirmLeave',   'Your data will be lost. Are you sure to leave this form?');
-  String msgConfirmDelete()  => _('msgConfirmDelete',  'Are you sure to delete this item(s)?');
-  String msgHelp()           => _('msgHelp',           'For more information, please contact me at');
+  String msgSignInRequired()  => _('msgSignInRequired',  'Sign in required');
+  String msgWait()            => _('msgWait',            'Please Wait');
+  String msgSaving()          => _('msgSaving',          'Saving…');
+  String msgSaved()           => _('msgSaved',           'Data saved');
+  String msgEmptyData()       => _('msgEmptyData',       'No data');
+  String msgLoading()         => _('msgLoading',         'Loading…');
+  String msgFormHasError()    => _('msgFormHasError',    'This form has errors');
+  String msgFormError()       => _('msgFixFormError',    'Please fix the errors in red before submitting');
+  String msgFieldRequired()   => _('msgFieldRequired',   'This field is required');
+  String msgConfirmLeave()    => _('msgConfirmLeave',    'Your data will be lost. Are you sure to leave this form?');
+  String msgConfirmDelete()   => _('msgConfirmDelete',   'Are you sure to delete this item(s)?');
+  String msgHelp()            => _('msgHelp',            'For more information, please contact me at');
+  String msgBackAgainToExit() => _('msgBackAgainToExit', 'Press back again to exit');
 }
