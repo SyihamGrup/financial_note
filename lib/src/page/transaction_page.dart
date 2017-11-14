@@ -58,7 +58,7 @@ class _TransactionPageState extends State<TransactionPage> {
   String _billGroupId;
 
   var _autoValidate = false;
-  var _saveNeeded = false;
+  var _saveNeeded = true;
 
   _TransactionPageState({int transType: kExpense}) : _transType = transType;
 
