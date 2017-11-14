@@ -141,14 +141,22 @@ class Transaction implements Data {
     if (oldItem != null && oldItem.budgetId != null) {
       final budget = await Budget.of(bookId).get(oldItem.budgetId);
       if (budget != null) {
-        budget.spent -= -oldItem.value;
+        if (oldItem.value > 0) {
+          budget.value -= oldItem.value;
+        } else {
+          budget.spent -= -oldItem.value;
+        }
         await budget.save();
       }
     }
     if (newItem != null && newItem.budgetId != null) {
       final budget = await Budget.of(bookId).get(newItem.budgetId);
       if (budget != null) {
-        budget.spent += -newItem.value;
+        if (newItem.value > 0) {
+          budget.value += newItem.value;
+        } else {
+          budget.spent += -newItem.value;
+        }
         await budget.save();
       }
     }
