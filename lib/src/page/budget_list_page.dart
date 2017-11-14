@@ -129,7 +129,9 @@ class _ContentBudgetItem extends StatelessWidget {
     final dateFormatter = new DateFormat.MMMd();
     final date = item.date != null ? dateFormatter.format(item.date) : '';
     final dateStyle = theme.textTheme.body1.copyWith(fontSize: 12.0);
-    final percent = value == 0 ? 0 : (spent / value > 1 ? 1 : spent / value);
+    var percent = value == 0 ? 0 : spent / value;
+    if (percent > 1) percent = 1;
+    if (percent < 0) percent = 0;
 
     return new SizeTransition(
       sizeFactor: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
