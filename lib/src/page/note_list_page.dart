@@ -126,7 +126,7 @@ class _ContentNoteItem extends StatelessWidget {
             style: config.getTitleStyle(context, selected: selected),
             overflow: TextOverflow.ellipsis,
           ),
-          subtitle: new Text(item.note, overflow: TextOverflow.ellipsis),
+          subtitle: new Text(item.note, overflow: TextOverflow.ellipsis, maxLines: 2),
           trailing: item.reminder != null
             ? new Container(
               alignment: Alignment.topRight,
