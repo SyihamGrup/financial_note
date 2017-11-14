@@ -113,7 +113,9 @@ class _ContentNoteItem extends StatelessWidget {
     final theme = Theme.of(context);
     final selectedBg = new BoxDecoration(color: theme.highlightColor);
     final dateFormatter = new DateFormat.MMMd();
+    final timeFormatter = new DateFormat.jm();
     final date = item.reminder != null ? dateFormatter.format(item.reminder) : '';
+    final time = item.reminder != null ? timeFormatter.format(item.reminder) : '';
     final dateStyle = theme.textTheme.body1.copyWith(fontSize: 12.0);
 
     return new SizeTransition(
@@ -130,8 +132,8 @@ class _ContentNoteItem extends StatelessWidget {
           trailing: item.reminder != null
             ? new Container(
               alignment: Alignment.topRight,
-              margin: const EdgeInsets.only(top: 20.0),
-              child: new Text(date, style: dateStyle),
+              margin: const EdgeInsets.only(top: 16.0),
+              child: new Text('$date\n$time', style: dateStyle, textAlign: TextAlign.right),
             )
             : null,
           selected: selected,
