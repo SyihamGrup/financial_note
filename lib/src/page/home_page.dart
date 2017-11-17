@@ -232,7 +232,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     }
     _showInSnackBar(Lang.of(context).msgBackAgainToExit());
     _canExit = true;
-    new Timer(const Duration(seconds: 1), () {
+    new Timer(const Duration(seconds: 3), () {
       _canExit = false;
     });
     return false;
