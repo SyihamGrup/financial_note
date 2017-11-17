@@ -74,7 +74,7 @@ class HomePageNote {
       config: config,
       onItemTap: (item) {
         final params = {'id': item.id};
-        Navigator.pushNamed(context, buildRoute(NotePage.kRouteName, params));
+        Navigator.pushNamed(context, buildRoute(NoteViewPage.kRouteName, params));
       },
       onItemsSelect: (items, index) {
         if (items.length == 0)

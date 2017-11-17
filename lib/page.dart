@@ -29,6 +29,7 @@ export 'src/page/budget_view_page.dart';
 export 'src/page/home_page.dart';
 export 'src/page/note_list_page.dart';
 export 'src/page/note_page.dart';
+export 'src/page/note_view_page.dart';
 export 'src/page/selectable_list.dart';
 export 'src/page/settings_page.dart';
 export 'src/page/sign_in_page.dart';

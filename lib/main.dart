@@ -93,6 +93,10 @@ Widget _getRoute(
     case NotePage.kRouteName:
       return new NotePage(config: config, bookId: currentBook?.id, id: id);
 
+    // View note page
+    case NoteViewPage.kRouteName:
+      return new NoteViewPage(config: config, bookId: currentBook?.id, id: id);
+
     // Splash
     case '/':
       return new SplashPage();
