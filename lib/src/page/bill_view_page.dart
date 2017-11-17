@@ -31,10 +31,10 @@ class BillViewPage extends StatefulWidget {
     : assert(config != null), assert(bookId != null), assert(id != null);
 
   @override
-  State<StatefulWidget> createState() => new _BillViewPage();
+  State<StatefulWidget> createState() => new _BillViewPageState();
 }
 
-class _BillViewPage extends State<BillViewPage> {
+class _BillViewPageState extends State<BillViewPage> {
   StreamSubscription<Event> _groupSubscr;
   StreamSubscription<Event> _itemSubscr;
 

@@ -31,10 +31,10 @@ class BudgetViewPage extends StatefulWidget {
     : assert(config != null), assert(bookId != null), assert(id != null);
 
   @override
-  State<StatefulWidget> createState() => new _BudgetViewPage();
+  State<StatefulWidget> createState() => new _BudgetViewPageState();
 }
 
-class _BudgetViewPage extends State<BudgetViewPage> {
+class _BudgetViewPageState extends State<BudgetViewPage> {
   StreamSubscription<Event> _dataSubscr;
   Budget _item;
   List<Transaction> _transactions;
