@@ -64,6 +64,7 @@ class Lang {
   String titleConfirmation()    => _('titleConfirmation',    'Confirmation');
   String titleValidate()        => _('titleValidate',        'Validate');
   String titleLeave()           => _('titleLeave',           'Leave?');
+  String titleDelete()          => _('titleDelete',          'Delete?');
 
   String drawerHome()     => _('drawerHome',     'Home');
   String drawerBills()    => _('drawerBills',    'Bills');

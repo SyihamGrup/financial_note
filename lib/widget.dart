@@ -55,6 +55,13 @@ Future<bool> showConfirmDialog(BuildContext context, Widget content, [Widget tit
   );
 }
 
+Future<bool> showDeleteConfirmDialog(BuildContext context, [Widget content, Widget title]) async {
+  final lang = Lang.of(context);
+  if (content == null) content = new Text(lang.msgConfirmDelete());
+  if (title == null) title = new Text(lang.titleDelete());
+  return await showConfirmDialog(context, content, title);
+}
+
 Future<bool> showLeaveConfirmDialog(BuildContext context) async {
   return await showConfirmDialog(
     context,

@@ -56,8 +56,7 @@ class _BalanceListPageState extends State<BalanceListPage> with SelectableList<B
               onItemTap(items[0]);
               break;
             case 'delete':
-              showConfirmDialog(context, new Text(lang.msgConfirmDelete()),
-                                         new Text(lang.titleConfirmation())).then((ret) {
+              showDeleteConfirmDialog(context).then((ret) {
                 if (!ret) return;
                 items.forEach((val) => Balance.of(currentBook.id).remove(val.id));
                 _appBarKey.currentState.exitActionMode();

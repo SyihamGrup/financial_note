@@ -51,7 +51,7 @@ class HomePageTransaction {
             appBarKey.currentState.exitActionMode();
             break;
           case 'delete':
-            showConfirmDialog(context, new Text(_lang.msgConfirmDelete())).then((ret) {
+            showDeleteConfirmDialog(context).then((ret) {
               if (!ret) return;
               items.forEach((val) => Transaction.of(currentBook.id).removeById(val.id));
               appBarKey.currentState.exitActionMode();
