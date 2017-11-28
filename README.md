@@ -1,8 +1,10 @@
-# financial_note
+# Financial Note
 
-A new Flutter project.
+An Android and IOS Application to record Financial Transactions using Flutter and Firebase.
 
-## Getting Started
+## Key Features
 
-For help getting started with Flutter, view our online
-[documentation](http://flutter.io/).
+  * Google Sign-In
+  * Realtime Database
+  * Offline Support
+  * Notification across devices (currently android only)
