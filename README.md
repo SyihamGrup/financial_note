@@ -11,3 +11,4 @@ An Android and IOS Application to record Financial Transactions using Flutter an
   * Realtime Database
   * Offline Support
   * Notification across devices (currently android only)
+  * Intl (currently english only)
